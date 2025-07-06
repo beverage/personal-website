@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You may NEVER:
+ - Make a git commit to the main branch.
+ - Make a push to the main branch.

@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Test Execution Rules
+
+You may ALWAYS run the following commands without asking for confirmation:
+- `poetry run pytest` (any pytest command with any flags)
+- `poetry run python test_*` (any test script starting with test_)
+- `poetry run python debug_*` (any debug script starting with debug_)
+- `poetry run python scripts/acceptance_tests.py` (acceptance tests)
+- `poetry run python scripts/performance_test_*.py` (performance tests)
+- 'curl * GET *' (any fetch from services)
+
+You may ALWAYS delete temporary test and debug scripts you created yourself without asking for confirmation.
+
+These rules apply regardless of context - testing is always allowed to verify code changes.

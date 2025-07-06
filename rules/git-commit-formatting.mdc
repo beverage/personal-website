@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+All git commits must have a descriptive title line followed by a detailed body explaining the changes

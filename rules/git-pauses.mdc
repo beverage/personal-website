@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Before running git rebase, git commit, or git push, show the command and wait for user confirmation

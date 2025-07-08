@@ -77,22 +77,39 @@ export const useStarField = ({
       ctx.fillStyle = 'transparent';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      let visibleStars = 0;
+      let culledStars = 0;
+      
       starsRef.current.forEach(star => {
-        star.update(speed, rollSpeed, deltaTime);
-        
-        const projected = star.project(canvas.width, canvas.height);
-        if (projected.visible) {
-          renderTwinkleStar(
-            ctx,
-            projected.x,
-            projected.y,
-            projected.size,
-            projected.opacity * opacity,
-            currentTime,
-            variant
-          );
+        // Fast visibility pre-check using current position + aspect-ratio margin
+        if (star.isLikelyVisible()) {
+          // Full update with rotation for potentially visible stars
+          star.update(speed, rollSpeed, deltaTime);
+          
+          const projected = star.project(canvas.width, canvas.height);
+          if (projected.visible) {
+            renderTwinkleStar(
+              ctx,
+              projected.x,
+              projected.y,
+              projected.size,
+              projected.opacity * opacity,
+              currentTime,
+              variant
+            );
+            visibleStars++;
+          }
+        } else {
+          // Minimal update for off-screen stars (no rotation, just forward movement)
+          star.updateMinimal(speed, deltaTime);
+          culledStars++;
         }
       });
+
+      // Debug: Log performance stats occasionally
+      if (Math.floor(currentTime / 16) % 120 === 0) { // Every 2 seconds
+        console.log(`StarField performance: ${visibleStars} visible, ${culledStars} culled (${Math.round(culledStars/(visibleStars+culledStars)*100)}% saved)`);
+      }
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -134,8 +151,14 @@ export const useStarField = ({
 
 // Convenience hook with preset configurations
 export const useStarFieldPreset = (variant: TwinkleVariant, opacity: number = 1.0) => {
+  // Mobile detection: screen width < 768px (common mobile breakpoint)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // Reduce star count by 50% on mobile for better performance
+  const starCount = isMobile ? 2000 : 4000;
+  
   return useStarField({
-    starCount: 4000,
+    starCount,
     speed: 1000,
     rollSpeed: -1.5,
     opacity,

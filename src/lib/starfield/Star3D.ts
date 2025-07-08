@@ -1,3 +1,8 @@
+// Constants for performance
+const SQRT_2 = Math.sqrt(2);
+const BASE_SPAWN_SIZE = 120000;
+const BASE_SCALE_DENOMINATOR = 800;
+
 export class Star3D {
   canvasWidth: number;
   canvasHeight: number;
@@ -5,6 +10,7 @@ export class Star3D {
   y: number;
   z: number;
   intensity: number;
+  private cachedScaleFactor: number;
 
   constructor(canvasWidth: number = 1920, canvasHeight: number = 1080) {
     this.canvasWidth = canvasWidth;
@@ -13,21 +19,55 @@ export class Star3D {
     this.y = 0;
     this.z = 0;
     this.intensity = Math.random() * 0.7 + 0.3;
+    this.cachedScaleFactor = this.calculateScaleFactor();
     this.reset();
+  }
+
+  private calculateScaleFactor(): number {
+    const maxDimension = Math.max(this.canvasWidth, this.canvasHeight);
+    return (maxDimension / BASE_SCALE_DENOMINATOR) * SQRT_2;
   }
 
   updateCanvasSize(width: number, height: number) {
     this.canvasWidth = width;
     this.canvasHeight = height;
+    this.cachedScaleFactor = this.calculateScaleFactor();
   }
 
   reset() {
-    const maxDimension = Math.max(this.canvasWidth, this.canvasHeight);
-    const scaleFactor = maxDimension / 800;
-    
-    this.x = (Math.random() - 0.5) * 120000 * scaleFactor;
-    this.y = (Math.random() - 0.5) * 120000 * scaleFactor;  
+    this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;
+    this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;  
     this.z = 10000 + Math.random() * 40000;
+  }
+
+  // Fast visibility pre-check using current projected position
+  isLikelyVisible(focalLength = 200): boolean {
+    if (this.z <= 0) return false;
+    
+    // Project to current screen coordinates (same as project() method)
+    const screenX = this.canvasWidth / 2 + (this.x / this.z) * focalLength;
+    const screenY = this.canvasHeight / 2 + (this.y / this.z) * focalLength;
+    
+    // Calculate margin based on screen aspect ratio
+    const aspectRatio = Math.max(this.canvasWidth, this.canvasHeight) / Math.min(this.canvasWidth, this.canvasHeight);
+    const margin = 50 * aspectRatio; // 50px base margin scaled by aspect ratio
+    
+    // Check if within screen bounds plus margin
+    return screenX >= -margin && screenX <= this.canvasWidth + margin && 
+           screenY >= -margin && screenY <= this.canvasHeight + margin;
+  }
+
+  // Minimal update for off-screen stars (only forward movement and wrap)
+  updateMinimal(forwardSpeed: number, deltaTime: number) {
+    this.z -= forwardSpeed * deltaTime;
+    
+    const wrapThreshold = 50;
+    if (this.z <= wrapThreshold) {
+      const overshoot = wrapThreshold - this.z;
+      this.z = 50000 + overshoot;
+      this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;
+      this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;
+    }
   }
 
   update(forwardSpeed: number, rollSpeed: number, deltaTime: number) {
@@ -37,10 +77,8 @@ export class Star3D {
     if (this.z <= wrapThreshold) {
       const overshoot = wrapThreshold - this.z;
       this.z = 50000 + overshoot;
-      const maxDimension = Math.max(this.canvasWidth, this.canvasHeight);
-      const scaleFactor = maxDimension / 800;
-      this.x = (Math.random() - 0.5) * 120000 * scaleFactor;
-      this.y = (Math.random() - 0.5) * 120000 * scaleFactor;
+      this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;
+      this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor;
     }
 
     const rollAngle = rollSpeed * deltaTime * Math.PI / 180;

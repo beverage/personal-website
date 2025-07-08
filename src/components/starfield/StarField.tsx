@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStarField } from '@/hooks';
+import { useOptimalStarCount } from '@/hooks/useMobileDetection';
 import { TwinkleVariant } from '@/lib/starfield';
 
 interface StarFieldProps {
@@ -18,13 +19,18 @@ export const StarField: React.FC<StarFieldProps> = ({
   opacity = 1.0,
   className = '',
   style,
-  starCount = 4000,
+  starCount,
   speed = 1000,
   rollSpeed = -1.5,
 }) => {
+  // Robust mobile/low-power detection with automatic star count optimization
+  // Only apply if starCount wasn't explicitly provided
+  const optimalStarCount = useOptimalStarCount(4000);
+  const effectiveStarCount = starCount ?? optimalStarCount;
+  
   // Always use the same hook - provide defaults for preset behavior
   const canvasRef = useStarField({ 
-    starCount, 
+    starCount: effectiveStarCount, 
     speed, 
     rollSpeed, 
     opacity, 

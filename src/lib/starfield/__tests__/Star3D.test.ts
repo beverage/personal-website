@@ -12,7 +12,7 @@ describe('Star3D', () => {
 
   it('initializes with random position within bounds', () => {
     const maxDimension = Math.max(width, height);
-    const scaleFactor = maxDimension / 800;
+    const scaleFactor = (maxDimension / 800) * Math.sqrt(2); // Account for diagonal rotation
     const bound = 120000 * scaleFactor / 2; // Half of the total range
     
     expect(star.x).toBeGreaterThanOrEqual(-bound);
@@ -65,5 +65,53 @@ describe('Star3D', () => {
     // Position should have changed due to rotation
     expect(star.x).not.toBe(initialX);
     expect(star.y).not.toBe(initialY);
+  });
+
+  // New tests for visibility culling
+  it('correctly identifies likely visible stars using current position', () => {
+    // Star near center of screen
+    star.x = 0;
+    star.y = 0;
+    star.z = 1000;
+    expect(star.isLikelyVisible()).toBe(true);
+    
+    // Star just off screen edge (should still be visible with margin)
+    star.x = star.z * (width/2 + 60) / 200; // Just outside screen with margin
+    star.y = 0;
+    star.z = 1000;
+    expect(star.isLikelyVisible()).toBe(true);
+    
+    // Star far off screen (beyond margin)
+    star.x = star.z * (width/2 + 200) / 200; // Well beyond margin
+    star.y = 0;
+    star.z = 1000;
+    expect(star.isLikelyVisible()).toBe(false);
+    
+    // Star behind viewer
+    star.x = 0;
+    star.y = 0;
+    star.z = -100;
+    expect(star.isLikelyVisible()).toBe(false);
+  });
+
+  it('moves star forward with minimal update', () => {
+    const initialZ = star.z;
+    const initialX = star.x;
+    const initialY = star.y;
+    
+    star.updateMinimal(1000, 0.016); // 60fps frame
+    
+    // Should move forward
+    expect(star.z).toBeLessThan(initialZ);
+    
+    // Should NOT rotate (x,y should be unchanged)
+    expect(star.x).toBe(initialX);
+    expect(star.y).toBe(initialY);
+  });
+
+  it('resets star when it passes through viewer with minimal update', () => {
+    star.z = 40; // Behind viewer (below wrap threshold of 50)
+    star.updateMinimal(1000, 0.016);
+    expect(star.z).toBeGreaterThan(50000); // Should be reset to far distance
   });
 }); 

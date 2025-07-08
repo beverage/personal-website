@@ -1,582 +1,219 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Grid, Eye } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Eye, Star } from 'lucide-react';
+import Link from 'next/link';
+import { StarField } from '@/components';
+import { getVariantInfo, type TwinkleVariant } from '@/lib/starfield';
 
-// 3D Star class for deep space distances
-class Star3D {
-  canvasWidth: number;
-  canvasHeight: number;
-  x: number;
-  y: number;
-  z: number;
-  intensity: number;
+const TWINKLE_VARIANTS: TwinkleVariant[] = [
+  'twinkle',
+  'twinkle-small', 
+  'twinkle-compact',
+  'twinkle-minimal',
+  'twinkle-pulse'
+];
 
-  constructor(canvasWidth: number = 1920, canvasHeight: number = 1080) {
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.intensity = Math.random() * 0.7 + 0.3;
-    this.reset();
-  }
+const StarFieldDemo: React.FC<{ variant: TwinkleVariant }> = ({ variant }) => {
+  const info = getVariantInfo(variant);
+  
+  return (
+    <div className="h-full w-full bg-black relative overflow-hidden rounded-lg border border-gray-800">
+      <StarField variant={variant} opacity={1.0} />
+      
+      {/* Overlay with variant info */}
+      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-lg p-3 max-w-xs">
+        <div className="flex items-center gap-2 mb-1">
+          <Star className="h-4 w-4 text-blue-400" />
+          <h3 className="font-semibold text-white">{info.title}</h3>
+          {info.isWinner && (
+            <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full font-medium">
+              WINNER
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-gray-300">{info.description}</p>
+        
+        <div className="mt-2 text-xs text-gray-400">
+          <div>Size: {Math.round(info.config.sizeMultiplier * 100)}%</div>
+          <div>Glow: {info.config.glowMultiplier}x</div>
+          {info.config.isPulsing && <div className="text-purple-400">• Pulsing</div>}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  updateCanvasSize(width: number, height: number) {
-    this.canvasWidth = width;
-    this.canvasHeight = height;
-  }
-
-  reset() {
-    const maxDimension = Math.max(this.canvasWidth, this.canvasHeight);
-    const scaleFactor = maxDimension / 800;
-    
-    this.x = (Math.random() - 0.5) * 120000 * scaleFactor;
-    this.y = (Math.random() - 0.5) * 120000 * scaleFactor;  
-    this.z = 10000 + Math.random() * 40000;
-  }
-
-  update(forwardSpeed: number, rollSpeed: number, deltaTime: number) {
-    this.z -= forwardSpeed * deltaTime;
-    
-    const wrapThreshold = 50;
-    if (this.z <= wrapThreshold) {
-      const overshoot = wrapThreshold - this.z;
-      this.z = 50000 + overshoot;
-      const maxDimension = Math.max(this.canvasWidth, this.canvasHeight);
-      const scaleFactor = maxDimension / 800;
-      this.x = (Math.random() - 0.5) * 120000 * scaleFactor;
-      this.y = (Math.random() - 0.5) * 120000 * scaleFactor;
-    }
-
-    const rollAngle = rollSpeed * deltaTime * Math.PI / 180;
-    const cos = Math.cos(rollAngle);
-    const sin = Math.sin(rollAngle);
-    const newX = this.x * cos - this.y * sin;
-    const newY = this.x * sin + this.y * cos;
-    this.x = newX;
-    this.y = newY;
-  }
-
-  project(screenWidth: number, screenHeight: number, focalLength = 200) {
-    const screenX = screenWidth / 2 + (this.x / this.z) * focalLength;
-    const screenY = screenHeight / 2 + (this.y / this.z) * focalLength;
-    
-    const size = Math.max(0.5, Math.min(2, (20000 / this.z) * 1.5));
-    const opacity = this.intensity * Math.min(1, (50000 / this.z));
-    
-    return {
-      x: screenX,
-      y: screenY,
-      size,
-      opacity: Math.max(0.1, Math.min(1, opacity)),
-      visible: screenX >= -10 && screenX <= screenWidth + 10 && 
-               screenY >= -10 && screenY <= screenHeight + 10 &&
-               this.z > 0
-    };
-  }
+export default function VariantsPage() {
+  const [selectedVariant, setSelectedVariant] = useState<TwinkleVariant>('twinkle-compact');
+  const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
+  
+  const selectedInfo = getVariantInfo(selectedVariant);
+  
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <div className="relative z-10 p-6 border-b border-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Twinkle Star Variants</h1>
+              <p className="text-gray-400">Explore the 5 different twinkle effects</p>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex border border-gray-700 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('single')}
+                  className={`px-4 py-2 transition-colors ${
+                    viewMode === 'single' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-2 transition-colors ${
+                    viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <div className="w-4 h-4 grid grid-cols-2 gap-0.5">
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                    <div className="bg-current rounded-sm"></div>
+                  </div>
+                </button>
+              </div>
+              
+              <Link
+                href="/"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                ← Back to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="relative">
+        {viewMode === 'single' ? (
+          <SingleVariantView 
+            selectedVariant={selectedVariant} 
+            onVariantChange={setSelectedVariant} 
+            selectedInfo={selectedInfo}
+          />
+        ) : (
+          <GridVariantView onVariantSelect={setSelectedVariant} />
+        )}
+      </div>
+    </div>
+  );
 }
 
-// Starfield Hook with Custom Rendering
-const useStarField = (
-  starCount: number, 
-  speed: number, 
-  rollSpeed: number, 
-  opacity: number = 1,
-  renderStyle: 'gradient' | 'multilayer' | 'spikes' | 'twinkle' | 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse' = 'gradient'
-) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const starsRef = useRef<Star3D[]>([]);
-  const animationRef = useRef<number>(0);
-  const lastTimeRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const width = window?.innerWidth || 1920;
-    const height = window?.innerHeight || 1080;
-    starsRef.current = Array.from({ length: starCount }, () => new Star3D(width, height));
-
-    const animate = (currentTime: number) => {
-      if (!canvasRef.current) return;
-      
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const deltaTime = lastTimeRef.current ? (currentTime - lastTimeRef.current) / 1000 : 0;
-      lastTimeRef.current = currentTime;
-
-      ctx.fillStyle = 'transparent';
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      starsRef.current.forEach(star => {
-        star.update(speed, rollSpeed, deltaTime);
-        
-        const projected = star.project(canvas.width, canvas.height);
-        if (projected.visible) {
-          renderStar(ctx, projected.x, projected.y, projected.size, projected.opacity * opacity, renderStyle, currentTime);
-        }
-      });
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    const resizeCanvas = () => {
-      if (canvasRef.current) {
-        canvasRef.current.width = canvasRef.current.offsetWidth;
-        canvasRef.current.height = canvasRef.current.offsetHeight;
-        
-        starsRef.current.forEach(star => {
-          star.updateCanvasSize(canvasRef.current!.width, canvasRef.current!.height);
-        });
-      }
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [starCount, speed, rollSpeed, opacity, renderStyle]);
-
-  return canvasRef;
-};
-
-// Custom star rendering function with size variations
-const renderStar = (
-  ctx: CanvasRenderingContext2D, 
-  x: number, 
-  y: number, 
-  size: number, 
-  opacity: number, 
-  style: 'gradient' | 'multilayer' | 'spikes' | 'twinkle' | 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse',
-  time: number
-) => {
-  switch (style) {
-    case 'gradient':
-      // Radial gradient glow
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
-      gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity})`);
-      gradient.addColorStop(0.2, `rgba(255, 255, 255, ${opacity * 0.8})`);
-      gradient.addColorStop(0.4, `rgba(220, 240, 255, ${opacity * 0.4})`);
-      gradient.addColorStop(0.7, `rgba(180, 220, 255, ${opacity * 0.2})`);
-      gradient.addColorStop(1, `rgba(150, 200, 255, 0)`);
-      
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 4, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'multilayer':
-      // Multi-layer composite
-      // Outer glow
-      ctx.fillStyle = `rgba(150, 180, 255, ${opacity * 0.1})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Medium halo
-      ctx.fillStyle = `rgba(200, 220, 255, ${opacity * 0.3})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Bright core
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.9})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'spikes':
-      // Cross spikes pattern
-      const spikeLength = size * 8;
-      const spikeWidth = size * 0.5;
-      
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.6})`;
-      
-      // Horizontal spike
-      ctx.fillRect(x - spikeLength/2, y - spikeWidth/2, spikeLength, spikeWidth);
-      
-      // Vertical spike
-      ctx.fillRect(x - spikeWidth/2, y - spikeLength/2, spikeWidth, spikeLength);
-      
-      // Bright center
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle':
-      // Original twinkling
-      const twinkle = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShift = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      
-      const tGradient = ctx.createRadialGradient(x, y, 0, x, y, size * 3);
-      tGradient.addColorStop(0, `rgba(255, ${255 * colorShift}, ${255 * colorShift}, ${opacity * twinkle})`);
-      tGradient.addColorStop(0.3, `rgba(${255 * colorShift}, ${255 * colorShift}, 255, ${opacity * twinkle * 0.6})`);
-      tGradient.addColorStop(0.6, `rgba(${200 * colorShift}, ${220 * colorShift}, 255, ${opacity * twinkle * 0.3})`);
-      tGradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
-      
-      ctx.fillStyle = tGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 3, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle-small':
-      // Small stars - reduce overall size
-      const twinkleSmall = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShiftSmall = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      const smallSize = size * 0.6; // Reduce base size
-      
-      const tsGradient = ctx.createRadialGradient(x, y, 0, x, y, smallSize * 2);
-      tsGradient.addColorStop(0, `rgba(255, ${255 * colorShiftSmall}, ${255 * colorShiftSmall}, ${opacity * twinkleSmall})`);
-      tsGradient.addColorStop(0.3, `rgba(${255 * colorShiftSmall}, ${255 * colorShiftSmall}, 255, ${opacity * twinkleSmall * 0.6})`);
-      tsGradient.addColorStop(0.6, `rgba(${200 * colorShiftSmall}, ${220 * colorShiftSmall}, 255, ${opacity * twinkleSmall * 0.3})`);
-      tsGradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
-      
-      ctx.fillStyle = tsGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, smallSize * 2, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle-compact':
-      // Compact glow - smaller glow radius
-      const twinkleCompact = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShiftCompact = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      
-      const tcGradient = ctx.createRadialGradient(x, y, 0, x, y, size * 1.5);
-      tcGradient.addColorStop(0, `rgba(255, ${255 * colorShiftCompact}, ${255 * colorShiftCompact}, ${opacity * twinkleCompact})`);
-      tcGradient.addColorStop(0.4, `rgba(${255 * colorShiftCompact}, ${255 * colorShiftCompact}, 255, ${opacity * twinkleCompact * 0.7})`);
-      tcGradient.addColorStop(0.8, `rgba(${200 * colorShiftCompact}, ${220 * colorShiftCompact}, 255, ${opacity * twinkleCompact * 0.2})`);
-      tcGradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
-      
-      ctx.fillStyle = tcGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle-minimal':
-      // Minimal stars - very small
-      const twinkleMinimal = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShiftMinimal = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      const minimalSize = size * 0.4;
-      
-      const tmGradient = ctx.createRadialGradient(x, y, 0, x, y, minimalSize * 1.2);
-      tmGradient.addColorStop(0, `rgba(255, ${255 * colorShiftMinimal}, ${255 * colorShiftMinimal}, ${opacity * twinkleMinimal})`);
-      tmGradient.addColorStop(0.5, `rgba(${255 * colorShiftMinimal}, ${255 * colorShiftMinimal}, 255, ${opacity * twinkleMinimal * 0.5})`);
-      tmGradient.addColorStop(1, `rgba(${200 * colorShiftMinimal}, ${220 * colorShiftMinimal}, 255, 0)`);
-      
-      ctx.fillStyle = tmGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, minimalSize * 1.2, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle-pulse':
-      // Size-pulsing stars
-      const twinklePulse = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShiftPulse = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      const pulseSize = size * (0.5 + twinklePulse * 0.3); // Size varies with twinkle
-      
-      const tpGradient = ctx.createRadialGradient(x, y, 0, x, y, pulseSize * 2);
-      tpGradient.addColorStop(0, `rgba(255, ${255 * colorShiftPulse}, ${255 * colorShiftPulse}, ${opacity * twinklePulse})`);
-      tpGradient.addColorStop(0.3, `rgba(${255 * colorShiftPulse}, ${255 * colorShiftPulse}, 255, ${opacity * twinklePulse * 0.6})`);
-      tpGradient.addColorStop(0.6, `rgba(${200 * colorShiftPulse}, ${220 * colorShiftPulse}, 255, ${opacity * twinklePulse * 0.3})`);
-      tpGradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
-      
-      ctx.fillStyle = tpGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, pulseSize * 2, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-  }
-};
-
-// Integration 1: Small Stars
-const Integration1 = () => {
-  const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-small');
-
-  return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ width: '100%', height: '100%' }}
-      />
-      
-      <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-6 left-6 text-white">
-          <div className="text-2xl font-bold">SMALL STARS</div>
-          <div className="text-sm text-gray-400">Reduced star size • Tighter glow</div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
-          <div className="text-center max-w-4xl">
-            <h1 className="text-8xl font-bold mb-8 tracking-wide">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
-                REFINED
-              </span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Smaller twinkling stars with reduced base size and tighter glow radius. 
-              Perfect for subtle background effects without overwhelming content.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Small Stars</div>
-        <div className="text-xs text-gray-300">60% base size • 2x glow radius • Subtle twinkle</div>
-      </div>
-    </div>
-  );
-};
-
-// Integration 2: Compact Glow
-const Integration2 = () => {
-  const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-compact');
-
-  return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ width: '100%', height: '100%' }}
-      />
-      
-      <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-6 left-6 text-white">
-          <div className="text-2xl font-bold">COMPACT GLOW</div>
-          <div className="text-sm text-gray-400">Smaller glow radius • Crisp edges</div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
-          <div className="text-center max-w-4xl">
-            <h1 className="text-8xl font-bold mb-8 tracking-wide">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
-                FOCUSED
-              </span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Twinkling stars with normal size but compact glow radius. 
-              Maintains star visibility while reducing bloom effect.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Compact Glow</div>
-        <div className="text-xs text-gray-300">Normal size • 1.5x glow radius • Crisp definition</div>
-      </div>
-    </div>
-  );
-};
-
-// Integration 3: Minimal Stars
-const Integration3 = () => {
-  const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-minimal');
-
-  return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ width: '100%', height: '100%' }}
-      />
-      
-      <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-6 left-6 text-white">
-          <div className="text-2xl font-bold">MINIMAL STARS</div>
-          <div className="text-sm text-gray-400">Very small • Distant appearance</div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
-          <div className="text-center max-w-4xl">
-            <h1 className="text-8xl font-bold mb-8 tracking-wide">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
-                DISTANT
-              </span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Very small twinkling stars that appear distant and subtle. 
-              Perfect for backgrounds where stars should be barely noticeable.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Minimal Stars</div>
-        <div className="text-xs text-gray-300">40% base size • 1.2x glow radius • Ultra-subtle</div>
-      </div>
-    </div>
-  );
-};
-
-// Integration 4: Size-Pulsing Stars
-const Integration4 = () => {
-  const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-pulse');
-
-  return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
-      <canvas 
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ width: '100%', height: '100%' }}
-      />
-      
-      <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-6 left-6 text-white">
-          <div className="text-2xl font-bold">SIZE-PULSING</div>
-          <div className="text-sm text-gray-400">Dynamic size • Breathing effect</div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
-          <div className="text-center max-w-4xl">
-            <h1 className="text-8xl font-bold mb-8 tracking-wide">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
-                BREATHING
-              </span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Stars that pulse in size with their brightness variation. 
-              Creates a breathing, living starfield with organic movement.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Size-Pulsing Stars</div>
-        <div className="text-xs text-gray-300">Variable size • 2x glow radius • Organic pulsing</div>
-      </div>
-    </div>
-  );
-};
-
-// Main Viewer Component
-const StarFieldIntegrationViewer = () => {
-  const [currentVariant, setCurrentVariant] = useState(0);
-  const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
-
-  const variants = [
-    { name: 'Small Stars', component: Integration1, description: '60% base size • Subtle twinkling background effect' },
-    { name: 'Compact Glow', component: Integration2, description: 'Normal size • Tight glow radius • Crisp definition' },
-    { name: 'Minimal Stars', component: Integration3, description: '40% base size • Ultra-subtle distant appearance' },
-    { name: 'Size-Pulsing', component: Integration4, description: 'Variable size • Breathing organic movement' },
-  ];
-
+const SingleVariantView: React.FC<{
+  selectedVariant: TwinkleVariant;
+  onVariantChange: (variant: TwinkleVariant) => void;
+  selectedInfo: ReturnType<typeof getVariantInfo>;
+}> = ({ selectedVariant, onVariantChange, selectedInfo }) => {
+  const currentIndex = TWINKLE_VARIANTS.indexOf(selectedVariant);
+  
   const nextVariant = () => {
-    setCurrentVariant((prev) => (prev + 1) % variants.length);
+    const nextIndex = (currentIndex + 1) % TWINKLE_VARIANTS.length;
+    onVariantChange(TWINKLE_VARIANTS[nextIndex]);
   };
-
+  
   const prevVariant = () => {
-    setCurrentVariant((prev) => (prev - 1 + variants.length) % variants.length);
+    const prevIndex = (currentIndex - 1 + TWINKLE_VARIANTS.length) % TWINKLE_VARIANTS.length;
+    onVariantChange(TWINKLE_VARIANTS[prevIndex]);
   };
-
+  
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Control Bar */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 relative z-10">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              🌟 Dynamic Star Variations
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-              4 variations of twinkling dynamic stars with different size approaches
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('single')}
-                className={`p-2 rounded ${viewMode === 'single' ? 'bg-white dark:bg-gray-600 shadow-sm' : ''}`}
-              >
-                <Eye size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white dark:bg-gray-600 shadow-sm' : ''}`}
-              >
-                <Grid size={16} />
-              </button>
-            </div>
-
-            {viewMode === 'single' && (
-              <>
-                <button
-                  onClick={prevVariant}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                
-                <div className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg">
-                  <div className="font-medium">
-                    {variants[currentVariant].name} ({currentVariant + 1}/{variants.length})
-                  </div>
-                  <div className="text-xs">
-                    {variants[currentVariant].description}
-                  </div>
-                </div>
-                
-                <button
-                  onClick={nextVariant}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </>
+    <div className="h-[calc(100vh-120px)] relative">
+      <StarField variant={selectedVariant} opacity={1.0} />
+      
+      {/* Navigation Controls */}
+      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10">
+        <button
+          onClick={prevVariant}
+          className="p-3 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-full hover:bg-black/80 transition-colors"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
+      </div>
+      
+      <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-10">
+        <button
+          onClick={nextVariant}
+          className="p-3 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-full hover:bg-black/80 transition-colors"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
+      </div>
+      
+      {/* Variant Info Panel */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="bg-black/80 backdrop-blur-sm border border-gray-700 rounded-lg p-6 max-w-md">
+          <div className="flex items-center gap-3 mb-3">
+            <Star className="h-5 w-5 text-blue-400" />
+            <h2 className="text-xl font-bold">{selectedInfo.title}</h2>
+            {selectedInfo.isWinner && (
+              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                WINNER
+              </span>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Variants Display */}
-      {viewMode === 'single' ? (
-        // Single View - Full screen
-        <div className="h-screen">
-          {React.createElement(variants[currentVariant].component)}
-        </div>
-      ) : (
-        // Grid View - Show all variants in smaller panels
-        <div className="p-4">
-          <div className="grid grid-cols-2 gap-4" style={{ height: 'calc(100vh - 120px)' }}>
-            {variants.map((variant, index) => (
-              <div key={index} className="bg-black rounded-xl overflow-hidden shadow-lg border border-gray-700">
-                <div className="p-3 bg-gray-800 border-b border-gray-700">
-                  <h3 className="font-medium text-white">{variant.name}</h3>
-                  <p className="text-sm text-gray-300">{variant.description}</p>
-                </div>
-                <div className="h-80 relative overflow-hidden">
-                  <div className="transform scale-75 origin-top-left w-[133%] h-[133%]">
-                    {React.createElement(variant.component)}
-                  </div>
-                </div>
-              </div>
-            ))}
+          
+          <p className="text-gray-300 mb-4">{selectedInfo.description}</p>
+          
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <div className="text-gray-400">Size Multiplier</div>
+              <div className="font-medium">{Math.round(selectedInfo.config.sizeMultiplier * 100)}%</div>
+            </div>
+            <div>
+              <div className="text-gray-400">Glow Multiplier</div>
+              <div className="font-medium">{selectedInfo.config.glowMultiplier}x</div>
+            </div>
+            <div>
+              <div className="text-gray-400">Gradient Stops</div>
+              <div className="font-medium">{selectedInfo.config.gradientStops.length}</div>
+            </div>
+            <div>
+              <div className="text-gray-400">Animation</div>
+              <div className="font-medium">{selectedInfo.config.isPulsing ? 'Pulsing' : 'Twinkle'}</div>
+            </div>
+          </div>
+          
+          <div className="mt-4 text-xs text-gray-500">
+            {currentIndex + 1} of {TWINKLE_VARIANTS.length}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default StarFieldIntegrationViewer;
+const GridVariantView: React.FC<{
+  onVariantSelect: (variant: TwinkleVariant) => void;
+}> = ({ onVariantSelect }) => {
+  return (
+    <div className="p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {TWINKLE_VARIANTS.map((variant) => (
+            <div
+              key={variant}
+              className="aspect-video cursor-pointer hover:scale-105 transition-transform duration-200"
+              onClick={() => onVariantSelect(variant)}
+            >
+              <StarFieldDemo variant={variant} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};

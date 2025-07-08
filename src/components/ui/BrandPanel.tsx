@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface BrandPanelProps {
   brandName?: string;
   className?: string;

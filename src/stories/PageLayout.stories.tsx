@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from 'storybook/test';
 import { PageLayout } from '@/components/ui/PageLayout';
 
 const meta: Meta<typeof PageLayout> = {
@@ -37,8 +36,8 @@ const meta: Meta<typeof PageLayout> = {
     },
   },
   args: {
-    onPrimaryClick: fn(),
-    onSecondaryClick: fn(),
+    onPrimaryClick: () => console.log('Primary button clicked'),
+    onSecondaryClick: () => console.log('Secondary button clicked'),
   },
 };
 

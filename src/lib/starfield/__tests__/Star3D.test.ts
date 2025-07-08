@@ -11,12 +11,16 @@ describe('Star3D', () => {
   });
 
   it('initializes with random position within bounds', () => {
-    expect(star.x).toBeGreaterThanOrEqual(-width);
-    expect(star.x).toBeLessThanOrEqual(width);
-    expect(star.y).toBeGreaterThanOrEqual(-height);
-    expect(star.y).toBeLessThanOrEqual(height);
-    expect(star.z).toBeGreaterThanOrEqual(0);
-    expect(star.z).toBeLessThanOrEqual(2000);
+    const maxDimension = Math.max(width, height);
+    const scaleFactor = maxDimension / 800;
+    const bound = 120000 * scaleFactor / 2; // Half of the total range
+    
+    expect(star.x).toBeGreaterThanOrEqual(-bound);
+    expect(star.x).toBeLessThanOrEqual(bound);
+    expect(star.y).toBeGreaterThanOrEqual(-bound);
+    expect(star.y).toBeLessThanOrEqual(bound);
+    expect(star.z).toBeGreaterThanOrEqual(10000);
+    expect(star.z).toBeLessThanOrEqual(50000);
   });
 
   it('moves star towards viewer on update', () => {
@@ -26,9 +30,9 @@ describe('Star3D', () => {
   });
 
   it('resets star when it passes through viewer', () => {
-    star.z = -10; // Behind viewer
+    star.z = 40; // Behind viewer (below wrap threshold of 50)
     star.update(1000, 0, 0.016);
-    expect(star.z).toBeGreaterThan(0); // Should be reset to far distance
+    expect(star.z).toBeGreaterThan(50000); // Should be reset to far distance
   });
 
   it('projects star to screen coordinates correctly', () => {
@@ -38,8 +42,9 @@ describe('Star3D', () => {
     
     const projected = star.project(width, height);
     
-    expect(projected.x).toBeCloseTo(width/2 + (100 * 1000) / 500);
-    expect(projected.y).toBeCloseTo(height/2 + (50 * 1000) / 500);
+    // Using focal length of 200 (default in the implementation)
+    expect(projected.x).toBeCloseTo(width/2 + (100 * 200) / 500);
+    expect(projected.y).toBeCloseTo(height/2 + (50 * 200) / 500);
     expect(projected.visible).toBe(true);
   });
 

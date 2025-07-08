@@ -1,11 +1,11 @@
 # Personal Website
 
-A modern Next.js personal website featuring an animated lenticular star cluster background and LCARS-style UI components.
+A modern Next.js personal website featuring an animated lenticular star cluster background and pre-LCARS-style UI components.
 
 ## 🚀 Features
 
 - **Animated Star Field**: Beautiful 3D star field animation with multiple variants
-- **LCARS UI Design**: Glassmorphism panels with cyan/blue gradients
+- **Pre-LCARS UI Design**: Glassmorphism panels with cyan/blue gradients
 - **Component Architecture**: Reusable UI components with Storybook integration
 - **TypeScript**: Full type safety throughout the codebase
 - **Responsive Design**: Works on desktop and mobile devices

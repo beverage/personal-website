@@ -83,7 +83,7 @@ const useStarField = (
   speed: number, 
   rollSpeed: number, 
   opacity: number = 1,
-  renderStyle: 'gradient' | 'multilayer' | 'spikes' | 'twinkle' | 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse' = 'gradient'
+  renderStyle: 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse' = 'twinkle-compact'
 ) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star3D[]>([]);
@@ -148,90 +148,17 @@ const useStarField = (
   return canvasRef;
 };
 
-// Custom star rendering function with size variations
+// Custom star rendering function
 const renderStar = (
   ctx: CanvasRenderingContext2D, 
   x: number, 
   y: number, 
   size: number, 
   opacity: number, 
-  style: 'gradient' | 'multilayer' | 'spikes' | 'twinkle' | 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse',
+  style: 'twinkle-small' | 'twinkle-compact' | 'twinkle-minimal' | 'twinkle-pulse',
   time: number
 ) => {
   switch (style) {
-    case 'gradient':
-      // Radial gradient glow
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
-      gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity})`);
-      gradient.addColorStop(0.2, `rgba(255, 255, 255, ${opacity * 0.8})`);
-      gradient.addColorStop(0.4, `rgba(220, 240, 255, ${opacity * 0.4})`);
-      gradient.addColorStop(0.7, `rgba(180, 220, 255, ${opacity * 0.2})`);
-      gradient.addColorStop(1, `rgba(150, 200, 255, 0)`);
-      
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 4, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'multilayer':
-      // Multi-layer composite
-      // Outer glow
-      ctx.fillStyle = `rgba(150, 180, 255, ${opacity * 0.1})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Medium halo
-      ctx.fillStyle = `rgba(200, 220, 255, ${opacity * 0.3})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Bright core
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.9})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'spikes':
-      // Cross spikes pattern
-      const spikeLength = size * 8;
-      const spikeWidth = size * 0.5;
-      
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.6})`;
-      
-      // Horizontal spike
-      ctx.fillRect(x - spikeLength/2, y - spikeWidth/2, spikeLength, spikeWidth);
-      
-      // Vertical spike
-      ctx.fillRect(x - spikeWidth/2, y - spikeLength/2, spikeWidth, spikeLength);
-      
-      // Bright center
-      ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
-    case 'twinkle':
-      // Original twinkling
-      const twinkle = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
-      const colorShift = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
-      
-      const tGradient = ctx.createRadialGradient(x, y, 0, x, y, size * 3);
-      tGradient.addColorStop(0, `rgba(255, ${255 * colorShift}, ${255 * colorShift}, ${opacity * twinkle})`);
-      tGradient.addColorStop(0.3, `rgba(${255 * colorShift}, ${255 * colorShift}, 255, ${opacity * twinkle * 0.6})`);
-      tGradient.addColorStop(0.6, `rgba(${200 * colorShift}, ${220 * colorShift}, 255, ${opacity * twinkle * 0.3})`);
-      tGradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
-      
-      ctx.fillStyle = tGradient;
-      ctx.beginPath();
-      ctx.arc(x, y, size * 3, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-      
     case 'twinkle-small':
       // Small stars - reduce overall size
       const twinkleSmall = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
@@ -304,8 +231,8 @@ const renderStar = (
   }
 };
 
-// Integration 1: Small Stars
-const Integration1 = () => {
+// Small Stars (60% base size, 2x glow)
+const SmallStars = () => {
   const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-small');
 
   return (
@@ -319,7 +246,7 @@ const Integration1 = () => {
       <div className="relative z-10 h-full flex flex-col">
         <div className="absolute top-6 left-6 text-white">
           <div className="text-2xl font-bold">SMALL STARS</div>
-          <div className="text-sm text-gray-400">Reduced star size • Tighter glow</div>
+          <div className="text-sm text-gray-400">60% base size • 2x glow radius</div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
@@ -336,17 +263,12 @@ const Integration1 = () => {
           </div>
         </div>
       </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Small Stars</div>
-        <div className="text-xs text-gray-300">60% base size • 2x glow radius • Subtle twinkle</div>
-      </div>
     </div>
   );
 };
 
-// Integration 2: Compact Glow
-const Integration2 = () => {
+// Compact Glow (normal size, 1.5x glow) - THE WINNER
+const CompactGlow = () => {
   const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-compact');
 
   return (
@@ -359,8 +281,8 @@ const Integration2 = () => {
       
       <div className="relative z-10 h-full flex flex-col">
         <div className="absolute top-6 left-6 text-white">
-          <div className="text-2xl font-bold">COMPACT GLOW</div>
-          <div className="text-sm text-gray-400">Smaller glow radius • Crisp edges</div>
+          <div className="text-2xl font-bold">COMPACT GLOW ⭐</div>
+          <div className="text-sm text-gray-400">Normal size • 1.5x glow radius • WINNER</div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
@@ -372,22 +294,17 @@ const Integration2 = () => {
             </h1>
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
               Twinkling stars with normal size but compact glow radius. 
-              Maintains star visibility while reducing bloom effect.
+              Maintains star visibility while reducing bloom effect. <strong>SELECTED FOR MAIN PAGE</strong>
             </p>
           </div>
         </div>
-      </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Compact Glow</div>
-        <div className="text-xs text-gray-300">Normal size • 1.5x glow radius • Crisp definition</div>
       </div>
     </div>
   );
 };
 
-// Integration 3: Minimal Stars
-const Integration3 = () => {
+// Minimal Stars (40% base size, 1.2x glow)
+const MinimalStars = () => {
   const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-minimal');
 
   return (
@@ -401,7 +318,7 @@ const Integration3 = () => {
       <div className="relative z-10 h-full flex flex-col">
         <div className="absolute top-6 left-6 text-white">
           <div className="text-2xl font-bold">MINIMAL STARS</div>
-          <div className="text-sm text-gray-400">Very small • Distant appearance</div>
+          <div className="text-sm text-gray-400">40% base size • 1.2x glow radius</div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
@@ -418,17 +335,12 @@ const Integration3 = () => {
           </div>
         </div>
       </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Minimal Stars</div>
-        <div className="text-xs text-gray-300">40% base size • 1.2x glow radius • Ultra-subtle</div>
-      </div>
     </div>
   );
 };
 
-// Integration 4: Size-Pulsing Stars
-const Integration4 = () => {
+// Size-Pulsing Stars (variable size)
+const SizePulsingStars = () => {
   const canvasRef = useStarField(4000, 1000, -1.5, 0.9, 'twinkle-pulse');
 
   return (
@@ -442,7 +354,7 @@ const Integration4 = () => {
       <div className="relative z-10 h-full flex flex-col">
         <div className="absolute top-6 left-6 text-white">
           <div className="text-2xl font-bold">SIZE-PULSING</div>
-          <div className="text-sm text-gray-400">Dynamic size • Breathing effect</div>
+          <div className="text-sm text-gray-400">Variable size • 2x glow radius</div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center text-white px-8">
@@ -459,25 +371,20 @@ const Integration4 = () => {
           </div>
         </div>
       </div>
-      
-      <div className="absolute bottom-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded">
-        <div className="font-medium">Size-Pulsing Stars</div>
-        <div className="text-xs text-gray-300">Variable size • 2x glow radius • Organic pulsing</div>
-      </div>
     </div>
   );
 };
 
 // Main Viewer Component
-const StarFieldIntegrationViewer = () => {
-  const [currentVariant, setCurrentVariant] = useState(0);
+const DynamicStarsViewer = () => {
+  const [currentVariant, setCurrentVariant] = useState(1); // Start with winner (Compact Glow)
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
 
   const variants = [
-    { name: 'Small Stars', component: Integration1, description: '60% base size • Subtle twinkling background effect' },
-    { name: 'Compact Glow', component: Integration2, description: 'Normal size • Tight glow radius • Crisp definition' },
-    { name: 'Minimal Stars', component: Integration3, description: '40% base size • Ultra-subtle distant appearance' },
-    { name: 'Size-Pulsing', component: Integration4, description: 'Variable size • Breathing organic movement' },
+    { name: 'Small Stars', component: SmallStars, description: '60% base size • Subtle twinkling background' },
+    { name: 'Compact Glow ⭐', component: CompactGlow, description: 'Normal size • Tight glow • WINNER' },
+    { name: 'Minimal Stars', component: MinimalStars, description: '40% base size • Ultra-subtle distant' },
+    { name: 'Size-Pulsing', component: SizePulsingStars, description: 'Variable size • Breathing movement' },
   ];
 
   const nextVariant = () => {
@@ -495,10 +402,10 @@ const StarFieldIntegrationViewer = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              🌟 Dynamic Star Variations
+              🌟 Dynamic Star Variations (Archived)
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-              4 variations of twinkling dynamic stars with different size approaches
+              4 twinkling star variations • Compact Glow selected for main page
             </p>
           </div>
           
@@ -579,4 +486,4 @@ const StarFieldIntegrationViewer = () => {
   );
 };
 
-export default StarFieldIntegrationViewer;
+export default DynamicStarsViewer; 

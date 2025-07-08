@@ -38,12 +38,14 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const theme = context.globals.theme || 'dark';
-      return (
-        <div className={theme}>
-          <div className="min-h-screen bg-black text-white">
-            <Story />
-          </div>
-        </div>
+      return React.createElement(
+        'div',
+        { className: theme },
+        React.createElement(
+          'div', 
+          { className: 'min-h-screen bg-black text-white' },
+          React.createElement(Story)
+        )
       );
     },
   ],

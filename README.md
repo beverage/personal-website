@@ -1,101 +1,111 @@
-# 🌐 Personal Website
+# Personal Website
 
-A modern personal website built with Next.js 15 and TypeScript, featuring component development with Storybook.
+A modern Next.js personal website featuring an animated lenticular star cluster background and LCARS-style UI components.
 
-## 🚀 Quick Start
+## 🚀 Features
 
-### Prerequisites
-- Node.js 18+ 
-- npm, yarn, pnpm, or bun
-
-### Installation
-```bash
-npm install
-```
-
-## 🏃‍♂️ Development
-
-### Running the Development Server
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the website in your browser. The page will automatically reload when you make changes.
-
-### Other Available Commands
-```bash
-# Build for production
-npm run build
-
-# Start production server
-npm run start
-
-# Run linting
-npm run lint
-```
-
-## 📚 Storybook
-
-This project includes Storybook for component development and testing.
-
-### Running Storybook
-```bash
-npm run storybook
-```
-
-Open [http://localhost:6006](http://localhost:6006) to view the Storybook interface. This allows you to:
-- Browse and interact with components in isolation
-- Test different component states and props
-- View component documentation
-- Run accessibility tests
-
-### Building Storybook
-```bash
-npm run build-storybook
-```
-
-This creates a static build of your Storybook in the `storybook-static` directory.
-
-## 🏗️ Project Structure
-
-```
-src/
-├── app/                 # Next.js app directory
-│   ├── layout.tsx      # Root layout component
-│   ├── page.tsx        # Homepage
-│   └── variants/       # Page variants
-├── stories/            # Storybook stories and components
-│   ├── Button.tsx      # Button component
-│   ├── Header.tsx      # Header component
-│   └── Page.tsx        # Page component
-```
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Component Development**: Storybook
-- **Testing**: Vitest with Browser mode
-- **Linting**: ESLint
-- **Icons**: Lucide React
+- **Animated Star Field**: Beautiful 3D star field animation with multiple variants
+- **LCARS UI Design**: Glassmorphism panels with cyan/blue gradients
+- **Component Architecture**: Reusable UI components with Storybook integration
+- **TypeScript**: Full type safety throughout the codebase
+- **Responsive Design**: Works on desktop and mobile devices
+- **Modern Stack**: Next.js 15, React 19, Tailwind CSS
 
 ## 🧪 Testing
 
-The project includes Vitest for testing with browser mode support:
+This project includes comprehensive testing across multiple layers:
+
+- **Unit Tests**: `npm test` - Test individual components and logic
+- **Visual Testing**: `npm run storybook` - Interactive component development
+- **E2E Tests**: `npx playwright test` - Full user experience testing
+- **Performance Tests**: Animation performance and memory usage monitoring
+
+See [TESTING.md](TESTING.md) for detailed testing documentation.
+
+## 🔧 Development
 
 ```bash
-npm run test
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+
+# Start Storybook
+npm run storybook
+
+# Build for production
+npm run build
 ```
 
-## 🚢 Deployment
+## 🚀 CI/CD Pipeline
 
-The project is configured for deployment on Fly.io (see `fly.toml` and `Dockerfile`).
+This project uses GitHub Actions for automated testing and deployment:
 
-For Vercel deployment, check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+### Pipeline Stages:
+1. **🧪 Test**: Unit tests, linting, and Storybook builds
+2. **🎭 E2E Test**: Playwright browser testing (on push to main)
+3. **🏗️ Build**: Next.js application build
+4. **🚀 Deploy**: Automated deployment to Fly.io
 
-## 📖 Learn More
+### Deployment
+- **Triggers**: Push to `main` branch
+- **Platform**: Fly.io
+- **Requirements**: `PERSONAL_WEBSITE_DEPLOY_TOKEN` secret configured
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Storybook Documentation](https://storybook.js.org/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+The pipeline ensures all code is tested before deployment and provides artifacts for debugging.
+
+## 📦 Tech Stack
+
+- **Framework**: Next.js 15 with React 19
+- **Styling**: Tailwind CSS 4
+- **Animation**: Custom Canvas-based star field
+- **Testing**: Vitest, React Testing Library, Playwright
+- **UI Development**: Storybook
+- **Deployment**: Fly.io
+- **CI/CD**: GitHub Actions
+
+## 🌟 Star Field Variants
+
+The animated background includes 5 different star field variants:
+- `twinkle` - Basic twinkling stars
+- `twinkle-compact` - Compact twinkle effect
+- `twinkle-pulse` - Pulsing twinkle animation
+- `twinkle-glow` - Glowing star effects
+- `twinkle-gradient` - Gradient-based effects
+
+## 🛠️ Development Commands
+
+```bash
+# Development
+npm run dev              # Start dev server
+npm run build           # Production build
+npm run start           # Start production server
+
+# Testing
+npm test                # Run unit tests
+npm run test:watch      # Watch mode
+npm run test:ui         # Visual test runner
+npm run test:coverage   # Coverage report
+
+# Storybook
+npm run storybook       # Start Storybook
+npm run build-storybook # Build static Storybook
+
+# E2E Testing
+npx playwright test     # Run E2E tests
+npx playwright test --ui # Run with UI
+```
+
+## 🔗 Links
+
+- **Live Site**: [Your website URL]
+- **Storybook**: [Storybook deployment URL]
+- **GitHub**: [Repository URL]
+
+---
+
+Built with ❤️ and lots of ☕

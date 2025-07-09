@@ -69,13 +69,8 @@ export const getTwinkleVariantInfo = (variant: TwinkleVariant) => {
   
   const info = {
     'twinkle': {
-      title: 'Twinkle Classic',
+      title: 'Twinkle Classic (Light)',
       description: 'Original twinkling with 3x glow radius',
-      isWinner: false,
-    },
-    'twinkle-small': {
-      title: 'Twinkle Small',
-      description: '60% base size with 2x glow radius',
       isWinner: false,
     },
     'twinkle-compact': {
@@ -86,11 +81,6 @@ export const getTwinkleVariantInfo = (variant: TwinkleVariant) => {
     'twinkle-minimal': {
       title: 'Twinkle Minimal',
       description: '40% base size with 1.2x glow radius',
-      isWinner: false,
-    },
-    'twinkle-pulse': {
-      title: 'Twinkle Pulse',
-      description: 'Variable size with breathing effect',
       isWinner: false,
     },
   };
@@ -106,65 +96,10 @@ export const getClusterVariantInfo = (variant: ClusterVariant) => {
   const config = CLUSTER_CONFIGS[variant];
   
   const info = {
-    'cluster-classic': {
-      title: 'Central Cluster Classic',
-      description: 'Star Trek II approach effect with distant cluster',
-      isWinner: false,
-    },
-    'cluster-dense': {
-      title: 'Central Cluster Dense',
-      description: 'Denser cluster core with more cluster stars',
-      isWinner: false,
-    },
-    'cluster-wide': {
-      title: 'Central Cluster Wide',
-      description: 'Wider cluster spread for broader effect',
-      isWinner: false,
-    },
-    'cluster-fast': {
-      title: 'Central Cluster Fast',
-      description: 'Faster approach speed for dramatic effect',
-      isWinner: true,
-    },
-    'cluster-ellipse-control': {
-      title: 'Elliptical Control',
-      description: 'Circle with doubled radius (r = 2 × original)',
-      isWinner: false,
-    },
-    'cluster-ellipse-2x': {
-      title: 'Elliptical 2×',
-      description: 'Horizontal ellipse with 2:1 ratio (a=2r, b=r)',
-      isWinner: false,
-    },
-    'cluster-ellipse-3x': {
-      title: 'Elliptical 3×',
-      description: 'Horizontal ellipse with 3:1 ratio (a=3r, b=r)',
-      isWinner: false,
-    },
     'cluster-ellipse-4x': {
-      title: 'Elliptical 4×',
-      description: 'Horizontal ellipse with 4:1 ratio (a=4r, b=r)',
-      isWinner: false,
-    },
-    'cluster-ellipse-2x-light': {
-      title: 'Elliptical 2× Light',
-      description: 'Horizontal ellipse 2:1 ratio with light boost (1.5x size, 1.2x intensity)',
-      isWinner: false,
-    },
-    'cluster-ellipse-2x-medium': {
-      title: 'Elliptical 2× Medium',
-      description: 'Horizontal ellipse 2:1 ratio with medium boost (2x size, 1.5x intensity)',
-      isWinner: false,
-    },
-    'cluster-ellipse-3x-light': {
-      title: 'Elliptical 3× Light',
-      description: 'Horizontal ellipse 3:1 ratio with light boost (1.5x size, 1.2x intensity)',
-      isWinner: false,
-    },
-    'cluster-ellipse-3x-medium': {
-      title: 'Elliptical 3× Medium',
-      description: 'Horizontal ellipse 3:1 ratio with medium boost (2x size, 1.5x intensity)',
-      isWinner: false,
+      title: 'Elliptical 4× (WINNER)',
+      description: 'Horizontal ellipse with 4:1 ratio (a=4r, b=r) - Lenticular star cluster',
+      isWinner: true,
     },
   };
   

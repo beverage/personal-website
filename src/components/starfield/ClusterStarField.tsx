@@ -10,7 +10,7 @@ interface ClusterStarFieldProps {
 }
 
 export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
-  variant = 'cluster-classic',
+  variant = 'cluster-ellipse-4x',
   opacity = 1.0,
   className = '',
   style,
@@ -31,10 +31,10 @@ export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
   );
 };
 
-// Convenience component for the classic Star Trek II approach effect
+// Convenience component for the lenticular star cluster effect
 export const StarTrekClusterField: React.FC<{ opacity?: number; className?: string }> = ({ 
   opacity = 1.0, 
   className 
 }) => (
-  <ClusterStarField variant="cluster-classic" opacity={opacity} className={className} />
+  <ClusterStarField variant="cluster-ellipse-4x" opacity={opacity} className={className} />
 ); 

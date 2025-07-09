@@ -8,25 +8,12 @@ import { getVariantInfo, type TwinkleVariant, type ClusterVariant, type StarFiel
 
 const TWINKLE_VARIANTS: TwinkleVariant[] = [
   'twinkle',
-  'twinkle-small', 
   'twinkle-compact',
-  'twinkle-minimal',
-  'twinkle-pulse'
+  'twinkle-minimal'
 ];
 
 const CLUSTER_VARIANTS: ClusterVariant[] = [
-  'cluster-classic',
-  'cluster-dense',
-  'cluster-wide',
-  'cluster-fast',
-  'cluster-ellipse-control',
-  'cluster-ellipse-2x',
-  'cluster-ellipse-3x',
-  'cluster-ellipse-4x',
-  'cluster-ellipse-2x-light',
-  'cluster-ellipse-2x-medium',
-  'cluster-ellipse-3x-light',
-  'cluster-ellipse-3x-medium'
+  'cluster-ellipse-4x'
 ];
 
 const ALL_VARIANTS: StarFieldVariant[] = [...TWINKLE_VARIANTS, ...CLUSTER_VARIANTS];

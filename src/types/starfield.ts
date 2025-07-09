@@ -13,7 +13,11 @@ export type ClusterVariant =
   | 'cluster-ellipse-control'  // Circle with doubled radius (r = 2 * original)
   | 'cluster-ellipse-2x'       // Ellipse a=2r, b=r (2:1 ratio)
   | 'cluster-ellipse-3x'       // Ellipse a=3r, b=r (3:1 ratio)
-  | 'cluster-ellipse-4x';      // Ellipse a=4r, b=r (4:1 ratio)
+  | 'cluster-ellipse-4x'       // Ellipse a=4r, b=r (4:1 ratio)
+  | 'cluster-ellipse-2x-light'   // 2:1 ratio + light boost (1.5x size, 1.2x intensity)
+  | 'cluster-ellipse-2x-medium'  // 2:1 ratio + medium boost (2x size, 1.5x intensity)
+  | 'cluster-ellipse-3x-light'   // 3:1 ratio + light boost (1.5x size, 1.2x intensity)
+  | 'cluster-ellipse-3x-medium'; // 3:1 ratio + medium boost (2x size, 1.5x intensity)
 
 export type StarFieldVariant = TwinkleVariant | ClusterVariant;
 
@@ -42,6 +46,8 @@ export interface ClusterConfig {
   approachSpeed: number;
   clusterFocalLength: number;
   foregroundFocalLength: number;
+  clusterSizeMultiplier?: number;      // Multiplier for cluster star size
+  clusterIntensityMultiplier?: number; // Multiplier for cluster star intensity
 }
 
 export interface StarProjection {
@@ -163,13 +169,62 @@ export const CLUSTER_CONFIGS: Record<ClusterVariant, ClusterConfig> = {
     foregroundFocalLength: 800,
   },
   'cluster-ellipse-4x': {
-    foregroundStars: 1000,
-    clusterStars: 1000,
+    foregroundStars: 0,           // No foreground stars - overlay will handle this
+    clusterStars: 2000,           // All stars in the elliptical cluster
     clusterSemiMajorAxis: 280000, // a = 4r = 4 * 70000
     clusterSemiMinorAxis: 70000,  // b = r = 70000
     clusterDistance: { min: 300000, max: 3000000 },
     approachSpeed: 50,
     clusterFocalLength: 300,
     foregroundFocalLength: 800,
+  },
+  // Enhanced ellipse variants with size and intensity multipliers
+  'cluster-ellipse-2x-light': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 140000,      // a = 2r = 2 * 70000 (2:1 ratio)
+    clusterSemiMinorAxis: 70000,       // b = r = 70000
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    clusterSizeMultiplier: 1.5,        // Light boost: 1.5x size
+    clusterIntensityMultiplier: 1.2,   // Light boost: 1.2x intensity
+  },
+  'cluster-ellipse-2x-medium': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 140000,      // a = 2r = 2 * 70000 (2:1 ratio)
+    clusterSemiMinorAxis: 70000,       // b = r = 70000
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    clusterSizeMultiplier: 2.0,        // Medium boost: 2x size
+    clusterIntensityMultiplier: 1.5,   // Medium boost: 1.5x intensity
+  },
+  'cluster-ellipse-3x-light': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 210000,      // a = 3r = 3 * 70000 (3:1 ratio)
+    clusterSemiMinorAxis: 70000,       // b = r = 70000
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    clusterSizeMultiplier: 1.5,        // Light boost: 1.5x size
+    clusterIntensityMultiplier: 1.2,   // Light boost: 1.2x intensity
+  },
+  'cluster-ellipse-3x-medium': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 210000,      // a = 3r = 3 * 70000 (3:1 ratio)
+    clusterSemiMinorAxis: 70000,       // b = r = 70000
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    clusterSizeMultiplier: 2.0,        // Medium boost: 2x size
+    clusterIntensityMultiplier: 1.5,   // Medium boost: 1.5x intensity
   },
 }; 

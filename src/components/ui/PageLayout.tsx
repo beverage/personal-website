@@ -3,7 +3,7 @@ import { BrandPanel } from './BrandPanel';
 import { ControlPanel } from './ControlPanel';
 import { HeroSection } from './HeroSection';
 import { FooterPanel } from './FooterPanel';
-import { HomepageStarField } from '../starfield/StarField';
+import { HomepageLayeredStarField } from '../starfield/LayeredStarField';
 
 interface PageLayoutProps {
   children?: React.ReactNode;
@@ -35,7 +35,7 @@ export const PageLayout = ({
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Star Field Background */}
-      {showStarField && <HomepageStarField />}
+      {showStarField && <HomepageLayeredStarField />}
       
       {/* LCARS-style branding panel */}
       <div className="absolute top-8 left-8 z-50">

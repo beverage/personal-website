@@ -146,6 +146,26 @@ export const getClusterVariantInfo = (variant: ClusterVariant) => {
       description: 'Horizontal ellipse with 4:1 ratio (a=4r, b=r)',
       isWinner: false,
     },
+    'cluster-ellipse-2x-light': {
+      title: 'Elliptical 2× Light',
+      description: 'Horizontal ellipse 2:1 ratio with light boost (1.5x size, 1.2x intensity)',
+      isWinner: false,
+    },
+    'cluster-ellipse-2x-medium': {
+      title: 'Elliptical 2× Medium',
+      description: 'Horizontal ellipse 2:1 ratio with medium boost (2x size, 1.5x intensity)',
+      isWinner: false,
+    },
+    'cluster-ellipse-3x-light': {
+      title: 'Elliptical 3× Light',
+      description: 'Horizontal ellipse 3:1 ratio with light boost (1.5x size, 1.2x intensity)',
+      isWinner: false,
+    },
+    'cluster-ellipse-3x-medium': {
+      title: 'Elliptical 3× Medium',
+      description: 'Horizontal ellipse 3:1 ratio with medium boost (2x size, 1.5x intensity)',
+      isWinner: false,
+    },
   };
   
   return {

@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Star3D } from '@/lib/starfield/Star3D';
 import { ClusterStar3D } from '@/lib/starfield/ClusterStar3D';
 import { ClusterVariant, CLUSTER_CONFIGS } from '@/types/starfield';
+import { useIsMobile } from './useMobileDetection';
 
 interface UseClusterStarFieldProps {
   variant: ClusterVariant;
@@ -15,6 +16,7 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const [isClient, setIsClient] = useState(false);
+  const isMobile = useIsMobile();
 
   // Get configuration for this variant
   const config = CLUSTER_CONFIGS[variant];
@@ -27,6 +29,9 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
   useEffect(() => {
     if (!isClient) return;
 
+    // Skip cluster rendering entirely on mobile devices
+    if (isMobile) return;
+
     // Additional client-side checks
     if (typeof document === 'undefined' || typeof requestAnimationFrame === 'undefined') {
       return;
@@ -35,8 +40,12 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
     const width = window.innerWidth || 1920;
     const height = window.innerHeight || 1080;
     
-    // Initialize both star layers with configuration
-    foregroundStarsRef.current = Array.from({ length: config.foregroundStars }, () => new Star3D(width, height));
+    // Initialize star layers with configuration
+    // Only create foreground stars if config specifies them
+    foregroundStarsRef.current = config.foregroundStars > 0 
+      ? Array.from({ length: config.foregroundStars }, () => new Star3D(width, height))
+      : [];
+    
     clusterStarsRef.current = Array.from({ length: config.clusterStars }, () => 
       new ClusterStar3D(width, height, config.clusterSemiMajorAxis, config.clusterSemiMinorAxis, config.clusterDistance)
     );
@@ -63,28 +72,34 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         
         const projected = star.project(canvas.width, canvas.height, config.clusterFocalLength);
         if (projected.visible) {
+          // Apply size and intensity multipliers
+          const finalSize = projected.size * (config.clusterSizeMultiplier || 1.0);
+          const finalIntensity = projected.opacity * (config.clusterIntensityMultiplier || 1.0);
+          
           // Slight blue tint for cluster stars (hot stellar cores)
-          const clusterOpacity = projected.opacity * opacity;
+          const clusterOpacity = finalIntensity * opacity;
           ctx.fillStyle = `rgba(200, 220, 255, ${clusterOpacity})`;
           ctx.beginPath();
-          ctx.arc(projected.x, projected.y, projected.size, 0, Math.PI * 2);
+          ctx.arc(projected.x, projected.y, finalSize, 0, Math.PI * 2);
           ctx.fill();
         }
       });
 
-      // Render foreground stars (existing star field)
-      foregroundStarsRef.current.forEach(star => {
-        star.update(config.approachSpeed, -1.5, deltaTime);
-        
-        const projected = star.project(canvas.width, canvas.height, config.foregroundFocalLength);
-        if (projected.visible) {
-          const foregroundOpacity = projected.opacity * opacity;
-          ctx.fillStyle = `rgba(255, 255, 255, ${foregroundOpacity})`;
-          ctx.beginPath();
-          ctx.arc(projected.x, projected.y, projected.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
+      // Render foreground stars (existing star field) - only if they exist
+      if (foregroundStarsRef.current.length > 0) {
+        foregroundStarsRef.current.forEach(star => {
+          star.update(config.approachSpeed, -1.5, deltaTime);
+          
+          const projected = star.project(canvas.width, canvas.height, config.foregroundFocalLength);
+          if (projected.visible) {
+            const foregroundOpacity = projected.opacity * opacity;
+            ctx.fillStyle = `rgba(255, 255, 255, ${foregroundOpacity})`;
+            ctx.beginPath();
+            ctx.arc(projected.x, projected.y, projected.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -95,7 +110,8 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         canvasRef.current.height = canvasRef.current.offsetHeight;
         
         // Update canvas size for all stars
-        [...foregroundStarsRef.current, ...clusterStarsRef.current].forEach(star => {
+        const allStars = [...foregroundStarsRef.current, ...clusterStarsRef.current];
+        allStars.forEach(star => {
           star.updateCanvasSize(canvasRef.current!.width, canvasRef.current!.height);
         });
       }
@@ -111,7 +127,7 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isClient, variant, opacity, config]);
+  }, [isClient, variant, opacity, config, isMobile]);
 
   return canvasRef;
 }; 

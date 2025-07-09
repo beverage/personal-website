@@ -22,7 +22,11 @@ const CLUSTER_VARIANTS: ClusterVariant[] = [
   'cluster-ellipse-control',
   'cluster-ellipse-2x',
   'cluster-ellipse-3x',
-  'cluster-ellipse-4x'
+  'cluster-ellipse-4x',
+  'cluster-ellipse-2x-light',
+  'cluster-ellipse-2x-medium',
+  'cluster-ellipse-3x-light',
+  'cluster-ellipse-3x-medium'
 ];
 
 const ALL_VARIANTS: StarFieldVariant[] = [...TWINKLE_VARIANTS, ...CLUSTER_VARIANTS];
@@ -60,6 +64,12 @@ const StarFieldDemo: React.FC<{ variant: StarFieldVariant }> = ({ variant }) => 
               <div>Foreground: {(info.config as any).foregroundStars} stars</div>
               <div>Cluster: {(info.config as any).clusterStars} stars</div>
               <div>Speed: {(info.config as any).approachSpeed}</div>
+              {(info.config as any).clusterSizeMultiplier && (
+                <div className="text-blue-400">Size: {(info.config as any).clusterSizeMultiplier}x</div>
+              )}
+              {(info.config as any).clusterIntensityMultiplier && (
+                <div className="text-blue-400">Intensity: {(info.config as any).clusterIntensityMultiplier}x</div>
+              )}
             </>
           )}
         </div>
@@ -230,6 +240,18 @@ const SingleVariantView: React.FC<{
                   <div className="text-gray-400">Semi-Major Axis</div>
                   <div className="font-medium">{(selectedInfo.config as any).clusterSemiMajorAxis}</div>
                 </div>
+                {(selectedInfo.config as any).clusterSizeMultiplier && (
+                  <div>
+                    <div className="text-gray-400">Size Boost</div>
+                    <div className="font-medium">{(selectedInfo.config as any).clusterSizeMultiplier}x</div>
+                  </div>
+                )}
+                {(selectedInfo.config as any).clusterIntensityMultiplier && (
+                  <div>
+                    <div className="text-gray-400">Intensity Boost</div>
+                    <div className="font-medium">{(selectedInfo.config as any).clusterIntensityMultiplier}x</div>
+                  </div>
+                )}
               </>
             )}
           </div>

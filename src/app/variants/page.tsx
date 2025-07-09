@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Star } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { StarField } from '@/components';
 import { getVariantInfo, type TwinkleVariant, type ClusterVariant, type StarFieldVariant, type TwinkleConfig, type ClusterConfig } from '@/lib/starfield';
 
@@ -66,6 +67,11 @@ const StarFieldDemo: React.FC<{ variant: StarFieldVariant }> = ({ variant }) => 
 };
 
 export default function VariantsPage() {
+  // Block access in production
+  if (process.env.NODE_ENV === 'production') {
+    notFound();
+  }
+  
   const [selectedVariant, setSelectedVariant] = useState<StarFieldVariant>('twinkle-compact');
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useStarField } from '@/hooks';
 import { useOptimalStarCount } from '@/hooks/useMobileDetection';
-import { TwinkleVariant } from '@/lib/starfield';
+import { TwinkleVariant, ClusterVariant, StarFieldVariant } from '@/types/starfield';
+import { ClusterStarField } from './ClusterStarField';
 
 interface StarFieldProps {
-  variant?: TwinkleVariant;
+  variant?: StarFieldVariant;
   opacity?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -23,20 +24,36 @@ export const StarField: React.FC<StarFieldProps> = ({
   speed = 1000,
   rollSpeed = -1.5,
 }) => {
+  // Check if this is a cluster variant
+  const isClusterVariant = variant.startsWith('cluster-');
+  
   // Robust mobile/low-power detection with automatic star count optimization
-  // Only apply if starCount wasn't explicitly provided
+  // Only apply if starCount wasn't explicitly provided (and for twinkle variants only)
   const optimalStarCount = useOptimalStarCount(4000);
   const effectiveStarCount = starCount ?? optimalStarCount;
   
-  // Always use the same hook - provide defaults for preset behavior
+  // Always call the twinkle hook, but only use it if needed
   const canvasRef = useStarField({ 
     starCount: effectiveStarCount, 
     speed, 
     rollSpeed, 
     opacity, 
-    variant 
+    variant: isClusterVariant ? 'twinkle-compact' : variant as TwinkleVariant 
   });
 
+  if (isClusterVariant) {
+    // Render cluster star field for cluster variants
+    return (
+      <ClusterStarField 
+        variant={variant as ClusterVariant}
+        opacity={opacity}
+        className={className}
+        style={style}
+      />
+    );
+  }
+  
+  // Render twinkle star field for twinkle variants
   return (
     <canvas
       ref={canvasRef}

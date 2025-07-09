@@ -1,4 +1,4 @@
-import { TwinkleVariant, TwinkleConfig, TWINKLE_CONFIGS } from '@/types/starfield';
+import { TwinkleVariant, TwinkleConfig, TWINKLE_CONFIGS, ClusterVariant, ClusterConfig, CLUSTER_CONFIGS, StarFieldVariant } from '@/types/starfield';
 
 export const renderTwinkleStar = (
   ctx: CanvasRenderingContext2D,
@@ -50,8 +50,21 @@ export const getTwinkleConfig = (variant: TwinkleVariant): TwinkleConfig => {
   return TWINKLE_CONFIGS[variant];
 };
 
+// Utility function to get cluster configuration
+export const getClusterConfig = (variant: ClusterVariant): ClusterConfig => {
+  return CLUSTER_CONFIGS[variant];
+};
+
 // Helper function to get variant display info
-export const getVariantInfo = (variant: TwinkleVariant) => {
+export const getVariantInfo = (variant: StarFieldVariant) => {
+  if (variant.startsWith('cluster-')) {
+    return getClusterVariantInfo(variant as ClusterVariant);
+  }
+  return getTwinkleVariantInfo(variant as TwinkleVariant);
+};
+
+// Helper function for twinkle variant info
+export const getTwinkleVariantInfo = (variant: TwinkleVariant) => {
   const config = TWINKLE_CONFIGS[variant];
   
   const info = {
@@ -78,6 +91,59 @@ export const getVariantInfo = (variant: TwinkleVariant) => {
     'twinkle-pulse': {
       title: 'Twinkle Pulse',
       description: 'Variable size with breathing effect',
+      isWinner: false,
+    },
+  };
+  
+  return {
+    ...info[variant],
+    config,
+  };
+};
+
+// Helper function for cluster variant info
+export const getClusterVariantInfo = (variant: ClusterVariant) => {
+  const config = CLUSTER_CONFIGS[variant];
+  
+  const info = {
+    'cluster-classic': {
+      title: 'Central Cluster Classic',
+      description: 'Star Trek II approach effect with distant cluster',
+      isWinner: false,
+    },
+    'cluster-dense': {
+      title: 'Central Cluster Dense',
+      description: 'Denser cluster core with more cluster stars',
+      isWinner: false,
+    },
+    'cluster-wide': {
+      title: 'Central Cluster Wide',
+      description: 'Wider cluster spread for broader effect',
+      isWinner: false,
+    },
+    'cluster-fast': {
+      title: 'Central Cluster Fast',
+      description: 'Faster approach speed for dramatic effect',
+      isWinner: true,
+    },
+    'cluster-ellipse-control': {
+      title: 'Elliptical Control',
+      description: 'Circle with doubled radius (r = 2 × original)',
+      isWinner: false,
+    },
+    'cluster-ellipse-2x': {
+      title: 'Elliptical 2×',
+      description: 'Horizontal ellipse with 2:1 ratio (a=2r, b=r)',
+      isWinner: false,
+    },
+    'cluster-ellipse-3x': {
+      title: 'Elliptical 3×',
+      description: 'Horizontal ellipse with 3:1 ratio (a=3r, b=r)',
+      isWinner: false,
+    },
+    'cluster-ellipse-4x': {
+      title: 'Elliptical 4×',
+      description: 'Horizontal ellipse with 4:1 ratio (a=4r, b=r)',
       isWinner: false,
     },
   };

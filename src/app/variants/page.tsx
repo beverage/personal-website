@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Star } from 'lucide-react';
 import Link from 'next/link';
 import { StarField } from '@/components';
-import { getVariantInfo, type TwinkleVariant } from '@/lib/starfield';
+import { getVariantInfo, type TwinkleVariant, type ClusterVariant, type StarFieldVariant } from '@/lib/starfield';
 
 const TWINKLE_VARIANTS: TwinkleVariant[] = [
   'twinkle',
@@ -14,8 +14,22 @@ const TWINKLE_VARIANTS: TwinkleVariant[] = [
   'twinkle-pulse'
 ];
 
-const StarFieldDemo: React.FC<{ variant: TwinkleVariant }> = ({ variant }) => {
+const CLUSTER_VARIANTS: ClusterVariant[] = [
+  'cluster-classic',
+  'cluster-dense',
+  'cluster-wide',
+  'cluster-fast',
+  'cluster-ellipse-control',
+  'cluster-ellipse-2x',
+  'cluster-ellipse-3x',
+  'cluster-ellipse-4x'
+];
+
+const ALL_VARIANTS: StarFieldVariant[] = [...TWINKLE_VARIANTS, ...CLUSTER_VARIANTS];
+
+const StarFieldDemo: React.FC<{ variant: StarFieldVariant }> = ({ variant }) => {
   const info = getVariantInfo(variant);
+  const isTwinkle = variant.startsWith('twinkle');
   
   return (
     <div className="h-full w-full bg-black relative overflow-hidden rounded-lg border border-gray-800">
@@ -35,9 +49,19 @@ const StarFieldDemo: React.FC<{ variant: TwinkleVariant }> = ({ variant }) => {
         <p className="text-sm text-gray-300">{info.description}</p>
         
         <div className="mt-2 text-xs text-gray-400">
-          <div>Size: {Math.round(info.config.sizeMultiplier * 100)}%</div>
-          <div>Glow: {info.config.glowMultiplier}x</div>
-          {info.config.isPulsing && <div className="text-purple-400">• Pulsing</div>}
+          {isTwinkle ? (
+            <>
+              <div>Size: {Math.round((info.config as any).sizeMultiplier * 100)}%</div>
+              <div>Glow: {(info.config as any).glowMultiplier}x</div>
+              {(info.config as any).isPulsing && <div className="text-purple-400">• Pulsing</div>}
+            </>
+          ) : (
+            <>
+              <div>Foreground: {(info.config as any).foregroundStars} stars</div>
+              <div>Cluster: {(info.config as any).clusterStars} stars</div>
+              <div>Speed: {(info.config as any).approachSpeed}</div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -45,7 +69,7 @@ const StarFieldDemo: React.FC<{ variant: TwinkleVariant }> = ({ variant }) => {
 };
 
 export default function VariantsPage() {
-  const [selectedVariant, setSelectedVariant] = useState<TwinkleVariant>('twinkle-compact');
+  const [selectedVariant, setSelectedVariant] = useState<StarFieldVariant>('twinkle-compact');
   const [viewMode, setViewMode] = useState<'single' | 'grid'>('single');
   
   const selectedInfo = getVariantInfo(selectedVariant);
@@ -57,8 +81,8 @@ export default function VariantsPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Twinkle Star Variants</h1>
-              <p className="text-gray-400">Explore the 5 different twinkle effects</p>
+              <h1 className="text-3xl font-bold mb-2">Star Field Variants</h1>
+              <p className="text-gray-400">Explore twinkle effects and cluster approaches</p>
             </div>
             
             <div className="flex items-center gap-4">
@@ -114,20 +138,20 @@ export default function VariantsPage() {
 }
 
 const SingleVariantView: React.FC<{
-  selectedVariant: TwinkleVariant;
-  onVariantChange: (variant: TwinkleVariant) => void;
+  selectedVariant: StarFieldVariant;
+  onVariantChange: (variant: StarFieldVariant) => void;
   selectedInfo: ReturnType<typeof getVariantInfo>;
 }> = ({ selectedVariant, onVariantChange, selectedInfo }) => {
-  const currentIndex = TWINKLE_VARIANTS.indexOf(selectedVariant);
+  const currentIndex = ALL_VARIANTS.indexOf(selectedVariant);
   
   const nextVariant = () => {
-    const nextIndex = (currentIndex + 1) % TWINKLE_VARIANTS.length;
-    onVariantChange(TWINKLE_VARIANTS[nextIndex]);
+    const nextIndex = (currentIndex + 1) % ALL_VARIANTS.length;
+    onVariantChange(ALL_VARIANTS[nextIndex]);
   };
   
   const prevVariant = () => {
-    const prevIndex = (currentIndex - 1 + TWINKLE_VARIANTS.length) % TWINKLE_VARIANTS.length;
-    onVariantChange(TWINKLE_VARIANTS[prevIndex]);
+    const prevIndex = (currentIndex - 1 + ALL_VARIANTS.length) % ALL_VARIANTS.length;
+    onVariantChange(ALL_VARIANTS[prevIndex]);
   };
   
   return (
@@ -169,26 +193,49 @@ const SingleVariantView: React.FC<{
           <p className="text-gray-300 mb-4">{selectedInfo.description}</p>
           
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <div className="text-gray-400">Size Multiplier</div>
-              <div className="font-medium">{Math.round(selectedInfo.config.sizeMultiplier * 100)}%</div>
-            </div>
-            <div>
-              <div className="text-gray-400">Glow Multiplier</div>
-              <div className="font-medium">{selectedInfo.config.glowMultiplier}x</div>
-            </div>
-            <div>
-              <div className="text-gray-400">Gradient Stops</div>
-              <div className="font-medium">{selectedInfo.config.gradientStops.length}</div>
-            </div>
-            <div>
-              <div className="text-gray-400">Animation</div>
-              <div className="font-medium">{selectedInfo.config.isPulsing ? 'Pulsing' : 'Twinkle'}</div>
-            </div>
+            {selectedVariant.startsWith('twinkle') ? (
+              <>
+                <div>
+                  <div className="text-gray-400">Size Multiplier</div>
+                  <div className="font-medium">{Math.round((selectedInfo.config as any).sizeMultiplier * 100)}%</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Glow Multiplier</div>
+                  <div className="font-medium">{(selectedInfo.config as any).glowMultiplier}x</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Gradient Stops</div>
+                  <div className="font-medium">{(selectedInfo.config as any).gradientStops.length}</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Animation</div>
+                  <div className="font-medium">{(selectedInfo.config as any).isPulsing ? 'Pulsing' : 'Twinkle'}</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className="text-gray-400">Foreground Stars</div>
+                  <div className="font-medium">{(selectedInfo.config as any).foregroundStars}</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Cluster Stars</div>
+                  <div className="font-medium">{(selectedInfo.config as any).clusterStars}</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Approach Speed</div>
+                  <div className="font-medium">{(selectedInfo.config as any).approachSpeed}</div>
+                </div>
+                <div>
+                  <div className="text-gray-400">Semi-Major Axis</div>
+                  <div className="font-medium">{(selectedInfo.config as any).clusterSemiMajorAxis}</div>
+                </div>
+              </>
+            )}
           </div>
           
           <div className="mt-4 text-xs text-gray-500">
-            {currentIndex + 1} of {TWINKLE_VARIANTS.length}
+            {currentIndex + 1} of {ALL_VARIANTS.length}
           </div>
         </div>
       </div>
@@ -197,13 +244,13 @@ const SingleVariantView: React.FC<{
 };
 
 const GridVariantView: React.FC<{
-  onVariantSelect: (variant: TwinkleVariant) => void;
+  onVariantSelect: (variant: StarFieldVariant) => void;
 }> = ({ onVariantSelect }) => {
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {TWINKLE_VARIANTS.map((variant) => (
+          {ALL_VARIANTS.map((variant) => (
             <div
               key={variant}
               className="aspect-video cursor-pointer hover:scale-105 transition-transform duration-200"

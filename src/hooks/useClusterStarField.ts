@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { Star3D } from '@/lib/starfield/Star3D';
-import { ClusterStar3D } from '@/lib/starfield/ClusterStar3D';
+import { ClusterStar3D, CenterClusterStar3D } from '@/lib/starfield/ClusterStar3D';
 import { ClusterVariant, CLUSTER_CONFIGS } from '@/types/starfield';
 import { useIsMobile } from './useMobileDetection';
 
@@ -13,6 +13,7 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const foregroundStarsRef = useRef<Star3D[]>([]);
   const clusterStarsRef = useRef<ClusterStar3D[]>([]);
+  const centerStarsRef = useRef<CenterClusterStar3D[]>([]);
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const [isClient, setIsClient] = useState(false);
@@ -50,6 +51,22 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
       new ClusterStar3D(width, height, config.clusterSemiMajorAxis, config.clusterSemiMinorAxis, config.clusterDistance)
     );
 
+    // Initialize center stars if configured
+    centerStarsRef.current = config.centerStars && config.centerStars > 0
+      ? Array.from({ length: config.centerStars }, () => 
+          new CenterClusterStar3D(
+            width, 
+            height, 
+            config.clusterSemiMajorAxis, 
+            config.clusterSemiMinorAxis, 
+            config.centerStarDistance || config.clusterDistance,
+            config.centerStarConcentration || 0.3,
+            config.centerStarIntensityMultiplier || 1.0,
+            config.centerStarSizeMultiplier || 1.0
+          )
+        )
+      : [];
+
     const animate = (currentTime: number) => {
       if (!canvasRef.current) return;
       
@@ -85,6 +102,21 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         }
       });
 
+      // Render center stars (between cluster and foreground)
+      centerStarsRef.current.forEach(star => {
+        star.update(config.approachSpeed, -1.5, deltaTime);
+        
+        const projected = star.project(canvas.width, canvas.height, config.clusterFocalLength);
+        if (projected.visible) {
+          // Center stars get a warmer, more prominent color
+          const centerOpacity = projected.opacity * opacity;
+          ctx.fillStyle = `rgba(255, 240, 220, ${centerOpacity})`;
+          ctx.beginPath();
+          ctx.arc(projected.x, projected.y, projected.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
       // Render foreground stars (existing star field) - only if they exist
       if (foregroundStarsRef.current.length > 0) {
         foregroundStarsRef.current.forEach(star => {
@@ -110,7 +142,7 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         canvasRef.current.height = canvasRef.current.offsetHeight;
         
         // Update canvas size for all stars
-        const allStars = [...foregroundStarsRef.current, ...clusterStarsRef.current];
+        const allStars = [...foregroundStarsRef.current, ...clusterStarsRef.current, ...centerStarsRef.current];
         allStars.forEach(star => {
           star.updateCanvasSize(canvasRef.current!.width, canvasRef.current!.height);
         });

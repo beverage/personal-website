@@ -1,0 +1,27 @@
+✨ Add lenticular star cluster center star variants
+
+- Add 4 new cluster variants with enhanced center cores:
+  * cluster-ellipse-4x-center-bright-1: 60 bright center stars (2.5x intensity)
+  * cluster-ellipse-4x-center-bright-2: 50 bright + larger center stars (2x intensity, 1.4x size)
+  * cluster-ellipse-4x-center-close-1: 70 closer center stars (2-5x closer distance)
+  * cluster-ellipse-4x-center-close-2: 80 closer + concentrated center stars (2.5-6x closer)
+
+- Create CenterClusterStar3D class for specialized center star rendering
+  * Supports configurable distance, intensity, size, and concentration
+  * Warm white-yellow tint (rgba(255, 240, 220)) vs cool blue cluster stars
+  * Maintains 4:1 elliptical distribution with tighter concentration
+
+- Apply cluster-ellipse-4x-center-close-1 to main page for enhanced cluster core
+
+- Add comprehensive Storybook stories and /variants testing page
+
+🐛 Fix center star positioning algorithm
+- Remove double concentration factor causing rectangular distribution
+- Maintain proper elliptical gaussian distribution at all star counts
+
+📝 Add starfield parameters documentation (docs/starfield-parameters.md)
+- Complete parameter reference with locations and meanings
+- Modification guides and examples for creating new variants
+- Technical details on Box-Muller transforms and projection math
+
+The lenticular star cluster now features a prominent galactic core with 70 center stars positioned 2-5x closer than the background cluster, creating depth and visual interest while maintaining the 4:1 elliptical "edge-on galaxy" appearance. 

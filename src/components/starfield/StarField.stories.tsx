@@ -1,77 +1,40 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import React from 'react';
 import { StarField } from './StarField';
+import { ClusterStarField } from './ClusterStarField';
+import { LayeredStarField } from './LayeredStarField';
 
 const meta: Meta<typeof StarField> = {
-  title: 'Starfield/StarField',
+  title: 'StarField',
   component: StarField,
-  decorators: [
-    (Story) => (
-      <div 
-        style={{ 
-          width: '100vw', 
-          height: '100vh', 
-          backgroundColor: '#000000',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <Story />
-      </div>
-    ),
-  ],
   parameters: {
     layout: 'fullscreen',
-    backgrounds: {
-      default: 'dark',
-      values: [
-        { name: 'dark', value: '#000000' },
-        { name: 'light', value: '#f0f0f0' },
-      ],
-    },
+    backgrounds: { default: 'dark' },
   },
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['twinkle', 'twinkle-small', 'twinkle-compact', 'twinkle-minimal', 'twinkle-pulse'],
+      control: { type: 'select' },
+      options: ['twinkle', 'twinkle-compact', 'twinkle-minimal'],
     },
     opacity: {
       control: { type: 'range', min: 0, max: 1, step: 0.1 },
-    },
-    starCount: {
-      control: { type: 'range', min: 100, max: 8000, step: 100 },
-    },
-    speed: {
-      control: { type: 'range', min: 10, max: 2000, step: 10 },
-    },
-    rollSpeed: {
-      control: { type: 'range', min: -5, max: 5, step: 0.1 },
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof StarField>;
 
-export const Default: Story = {
-  args: {
-    variant: 'twinkle-compact',
-    opacity: 1.0,
-  },
-};
-
+// Twinkle variants
 export const TwinkleClassic: Story = {
   args: {
     variant: 'twinkle',
     opacity: 1.0,
   },
-};
-
-export const TwinkleSmall: Story = {
-  args: {
-    variant: 'twinkle-small',
-    opacity: 1.0,
-  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <StarField {...args} />
+    </div>
+  ),
 };
 
 export const TwinkleCompact: Story = {
@@ -79,6 +42,11 @@ export const TwinkleCompact: Story = {
     variant: 'twinkle-compact',
     opacity: 1.0,
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <StarField {...args} />
+    </div>
+  ),
 };
 
 export const TwinkleMinimal: Story = {
@@ -86,40 +54,188 @@ export const TwinkleMinimal: Story = {
     variant: 'twinkle-minimal',
     opacity: 1.0,
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <StarField {...args} />
+    </div>
+  ),
 };
 
-export const TwinklePulse: Story = {
+// Cluster variants
+type ClusterStory = StoryObj<typeof ClusterStarField>;
+
+export const ClusterOriginal: ClusterStory = {
   args: {
-    variant: 'twinkle-pulse',
+    variant: 'cluster-ellipse-4x',
     opacity: 1.0,
-    starCount: 5000,
-    speed: 1000,
-    rollSpeed: -2
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <ClusterStarField {...args} />
+    </div>
+  ),
 };
 
-export const BackgroundStars: Story = {
+export const ClusterCenterBright1: ClusterStory = {
   args: {
-    variant: 'twinkle-minimal',
-    opacity: 0.3,
-    starCount: 2000,
+    variant: 'cluster-ellipse-4x-center-bright-1',
+    opacity: 1.0,
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <ClusterStarField {...args} />
+    </div>
+  ),
 };
 
-export const FastMovement: Story = {
+export const ClusterCenterBright2: ClusterStory = {
   args: {
-    variant: 'twinkle-compact',
-    speed: 100,
-    rollSpeed: 1.0,
-    starCount: 1000,
+    variant: 'cluster-ellipse-4x-center-bright-2',
+    opacity: 1.0,
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <ClusterStarField {...args} />
+    </div>
+  ),
 };
 
-export const SlowDrift: Story = {
+export const ClusterCenterClose1: ClusterStory = {
   args: {
-    variant: 'twinkle',
-    speed: 1500,
-    rollSpeed: -0.5,
-    starCount: 5000,
+    variant: 'cluster-ellipse-4x-center-close-1',
+    opacity: 1.0,
   },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <ClusterStarField {...args} />
+    </div>
+  ),
+};
+
+export const ClusterCenterClose2: ClusterStory = {
+  args: {
+    variant: 'cluster-ellipse-4x-center-close-2',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <ClusterStarField {...args} />
+    </div>
+  ),
+};
+
+// Layered variants
+type LayeredStory = StoryObj<typeof LayeredStarField>;
+
+export const LayeredOriginal: LayeredStory = {
+  args: {
+    clusterVariant: 'cluster-ellipse-4x',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <LayeredStarField {...args} />
+    </div>
+  ),
+};
+
+export const LayeredCenterBright1: LayeredStory = {
+  args: {
+    clusterVariant: 'cluster-ellipse-4x-center-bright-1',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <LayeredStarField {...args} />
+    </div>
+  ),
+};
+
+export const LayeredCenterBright2: LayeredStory = {
+  args: {
+    clusterVariant: 'cluster-ellipse-4x-center-bright-2',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <LayeredStarField {...args} />
+    </div>
+  ),
+};
+
+export const LayeredCenterClose1: LayeredStory = {
+  args: {
+    clusterVariant: 'cluster-ellipse-4x-center-close-1',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <LayeredStarField {...args} />
+    </div>
+  ),
+};
+
+export const LayeredCenterClose2: LayeredStory = {
+  args: {
+    clusterVariant: 'cluster-ellipse-4x-center-close-2',
+    opacity: 1.0,
+  },
+  render: (args) => (
+    <div style={{ height: '100vh', background: '#000' }}>
+      <LayeredStarField {...args} />
+    </div>
+  ),
+};
+
+// Comparison story showing all variants
+export const AllVariantsComparison: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    backgrounds: { default: 'dark' },
+  },
+  render: () => (
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      gap: '20px',
+      padding: '20px',
+      background: '#000',
+      minHeight: '100vh'
+    }}>
+      <div style={{ border: '1px solid #333', position: 'relative', height: '300px' }}>
+        <h3 style={{ color: 'white', position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+          Original
+        </h3>
+        <LayeredStarField clusterVariant="cluster-ellipse-4x" opacity={1.0} />
+      </div>
+      
+      <div style={{ border: '1px solid #333', position: 'relative', height: '300px' }}>
+        <h3 style={{ color: 'white', position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+          Bright Center 1
+        </h3>
+        <LayeredStarField clusterVariant="cluster-ellipse-4x-center-bright-1" opacity={1.0} />
+      </div>
+      
+      <div style={{ border: '1px solid #333', position: 'relative', height: '300px' }}>
+        <h3 style={{ color: 'white', position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+          Bright Center 2
+        </h3>
+        <LayeredStarField clusterVariant="cluster-ellipse-4x-center-bright-2" opacity={1.0} />
+      </div>
+      
+      <div style={{ border: '1px solid #333', position: 'relative', height: '300px' }}>
+        <h3 style={{ color: 'white', position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+          Close Center 1
+        </h3>
+        <LayeredStarField clusterVariant="cluster-ellipse-4x-center-close-1" opacity={1.0} />
+      </div>
+      
+      <div style={{ border: '1px solid #333', position: 'relative', height: '300px' }}>
+        <h3 style={{ color: 'white', position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}>
+          Close Center 2
+        </h3>
+        <LayeredStarField clusterVariant="cluster-ellipse-4x-center-close-2" opacity={1.0} />
+      </div>
+    </div>
+  ),
 }; 

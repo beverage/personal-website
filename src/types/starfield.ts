@@ -4,7 +4,11 @@ export type TwinkleVariant =
   | 'twinkle-minimal'; // 40% size, 1.2x glow
 
 export type ClusterVariant = 
-  | 'cluster-ellipse-4x';       // Ellipse a=4r, b=r (4:1 ratio) - WINNER
+  | 'cluster-ellipse-4x'       // Ellipse a=4r, b=r (4:1 ratio) - WINNER
+  | 'cluster-ellipse-4x-center-bright-1'    // Variant 1: Special bright center stars
+  | 'cluster-ellipse-4x-center-bright-2'    // Variant 2: Special bright + larger center stars
+  | 'cluster-ellipse-4x-center-close-1'     // Variant 3: Normal stars but closer
+  | 'cluster-ellipse-4x-center-close-2';    // Variant 4: Normal stars closer + more concentrated
 
 export type StarFieldVariant = TwinkleVariant | ClusterVariant;
 
@@ -35,6 +39,12 @@ export interface ClusterConfig {
   foregroundFocalLength: number;
   clusterSizeMultiplier?: number;      // Multiplier for cluster star size
   clusterIntensityMultiplier?: number; // Multiplier for cluster star intensity
+  // Center star configuration
+  centerStars?: number;                // Number of special center stars
+  centerStarDistance?: { min: number; max: number }; // Distance range for center stars
+  centerStarIntensityMultiplier?: number; // Brightness multiplier for center stars
+  centerStarSizeMultiplier?: number;   // Size multiplier for center stars
+  centerStarConcentration?: number;    // How concentrated toward center (0-1, lower = more concentrated)
 }
 
 export interface StarProjection {
@@ -79,5 +89,69 @@ export const CLUSTER_CONFIGS: Record<ClusterVariant, ClusterConfig> = {
     approachSpeed: 50,
     clusterFocalLength: 300,
     foregroundFocalLength: 800,
+  },
+  // Variant 1: Special bright center stars
+  'cluster-ellipse-4x-center-bright-1': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 280000,
+    clusterSemiMinorAxis: 70000,
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    centerStars: 60,
+    centerStarDistance: { min: 300000, max: 3000000 }, // Same distance as regular stars
+    centerStarIntensityMultiplier: 2.5, // 2.5x brighter
+    centerStarSizeMultiplier: 1.0, // Same size, just brighter
+    centerStarConcentration: 0.3, // More concentrated toward center
+  },
+  // Variant 2: Special bright + larger center stars
+  'cluster-ellipse-4x-center-bright-2': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 280000,
+    clusterSemiMinorAxis: 70000,
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    centerStars: 50,
+    centerStarDistance: { min: 300000, max: 3000000 }, // Same distance as regular stars
+    centerStarIntensityMultiplier: 2.0, // 2x brighter
+    centerStarSizeMultiplier: 1.4, // 1.4x larger
+    centerStarConcentration: 0.25, // Even more concentrated toward center
+  },
+  // Variant 3: Normal stars but closer
+  'cluster-ellipse-4x-center-close-1': {
+    foregroundStars: 0,
+    clusterStars: 4000,
+    clusterSemiMajorAxis: 400000,
+    clusterSemiMinorAxis: 80000,
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    centerStars: 200,
+    centerStarDistance: { min: 150000, max: 600000 }, // 2-5x closer than regular stars
+    centerStarIntensityMultiplier: 1.0, // Normal intensity
+    centerStarSizeMultiplier: 1.0, // Normal size, just closer
+    centerStarConcentration: 0.4, // Moderately concentrated toward center
+  },
+  // Variant 4: Normal stars closer + more concentrated
+  'cluster-ellipse-4x-center-close-2': {
+    foregroundStars: 0,
+    clusterStars: 2000,
+    clusterSemiMajorAxis: 280000,
+    clusterSemiMinorAxis: 70000,
+    clusterDistance: { min: 300000, max: 3000000 },
+    approachSpeed: 50,
+    clusterFocalLength: 300,
+    foregroundFocalLength: 800,
+    centerStars: 80,
+    centerStarDistance: { min: 120000, max: 500000 }, // 2.5-6x closer than regular stars
+    centerStarIntensityMultiplier: 1.0, // Normal intensity
+    centerStarSizeMultiplier: 1.0, // Normal size, just closer
+    centerStarConcentration: 0.2, // Highly concentrated toward center
   },
 }; 

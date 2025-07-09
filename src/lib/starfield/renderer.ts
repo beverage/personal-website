@@ -101,6 +101,26 @@ export const getClusterVariantInfo = (variant: ClusterVariant) => {
       description: 'Horizontal ellipse with 4:1 ratio (a=4r, b=r) - Lenticular star cluster',
       isWinner: true,
     },
+    'cluster-ellipse-4x-center-bright-1': {
+      title: 'Elliptical 4× + Bright Center 1',
+      description: 'Lenticular cluster with 60 bright center stars (2.5x intensity)',
+      isWinner: false,
+    },
+    'cluster-ellipse-4x-center-bright-2': {
+      title: 'Elliptical 4× + Bright Center 2',
+      description: 'Lenticular cluster with 50 bright + larger center stars (2x intensity, 1.4x size)',
+      isWinner: false,
+    },
+    'cluster-ellipse-4x-center-close-1': {
+      title: 'Elliptical 4× + Close Center 1',
+      description: 'Lenticular cluster with 70 closer center stars (2-5x closer)',
+      isWinner: false,
+    },
+    'cluster-ellipse-4x-center-close-2': {
+      title: 'Elliptical 4× + Close Center 2',
+      description: 'Lenticular cluster with 80 closer + concentrated center stars (2.5-6x closer)',
+      isWinner: false,
+    },
   };
   
   return {

@@ -49,7 +49,7 @@ export const HomepageLayeredStarField: React.FC<{ opacity?: number; className?: 
   className 
 }) => (
   <LayeredStarField 
-    clusterVariant="cluster-ellipse-4x" 
+    clusterVariant="cluster-ellipse-4x-center-close-1" 
     opacity={opacity} 
     className={className} 
   />

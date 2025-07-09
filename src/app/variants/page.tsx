@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Star } from 'lucide-react';
 import Link from 'next/link';
 import { StarField } from '@/components';
-import { getVariantInfo, type TwinkleVariant, type ClusterVariant, type StarFieldVariant } from '@/lib/starfield';
+import { getVariantInfo, type TwinkleVariant, type ClusterVariant, type StarFieldVariant, type TwinkleConfig, type ClusterConfig } from '@/lib/starfield';
 
 const TWINKLE_VARIANTS: TwinkleVariant[] = [
   'twinkle',
@@ -55,20 +55,20 @@ const StarFieldDemo: React.FC<{ variant: StarFieldVariant }> = ({ variant }) => 
         <div className="mt-2 text-xs text-gray-400">
           {isTwinkle ? (
             <>
-              <div>Size: {Math.round((info.config as any).sizeMultiplier * 100)}%</div>
-              <div>Glow: {(info.config as any).glowMultiplier}x</div>
-              {(info.config as any).isPulsing && <div className="text-purple-400">• Pulsing</div>}
+              <div>Size: {Math.round((info.config as TwinkleConfig).sizeMultiplier * 100)}%</div>
+              <div>Glow: {(info.config as TwinkleConfig).glowMultiplier}x</div>
+              {(info.config as TwinkleConfig).isPulsing && <div className="text-purple-400">• Pulsing</div>}
             </>
           ) : (
             <>
-              <div>Foreground: {(info.config as any).foregroundStars} stars</div>
-              <div>Cluster: {(info.config as any).clusterStars} stars</div>
-              <div>Speed: {(info.config as any).approachSpeed}</div>
-              {(info.config as any).clusterSizeMultiplier && (
-                <div className="text-blue-400">Size: {(info.config as any).clusterSizeMultiplier}x</div>
+              <div>Foreground: {(info.config as ClusterConfig).foregroundStars} stars</div>
+              <div>Cluster: {(info.config as ClusterConfig).clusterStars} stars</div>
+              <div>Speed: {(info.config as ClusterConfig).approachSpeed}</div>
+              {(info.config as ClusterConfig).clusterSizeMultiplier && (
+                <div className="text-blue-400">Size: {(info.config as ClusterConfig).clusterSizeMultiplier}x</div>
               )}
-              {(info.config as any).clusterIntensityMultiplier && (
-                <div className="text-blue-400">Intensity: {(info.config as any).clusterIntensityMultiplier}x</div>
+              {(info.config as ClusterConfig).clusterIntensityMultiplier && (
+                <div className="text-blue-400">Intensity: {(info.config as ClusterConfig).clusterIntensityMultiplier}x</div>
               )}
             </>
           )}
@@ -207,49 +207,49 @@ const SingleVariantView: React.FC<{
               <>
                 <div>
                   <div className="text-gray-400">Size Multiplier</div>
-                  <div className="font-medium">{Math.round((selectedInfo.config as any).sizeMultiplier * 100)}%</div>
+                  <div className="font-medium">{Math.round((selectedInfo.config as TwinkleConfig).sizeMultiplier * 100)}%</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Glow Multiplier</div>
-                  <div className="font-medium">{(selectedInfo.config as any).glowMultiplier}x</div>
+                  <div className="font-medium">{(selectedInfo.config as TwinkleConfig).glowMultiplier}x</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Gradient Stops</div>
-                  <div className="font-medium">{(selectedInfo.config as any).gradientStops.length}</div>
+                  <div className="font-medium">{(selectedInfo.config as TwinkleConfig).gradientStops.length}</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Animation</div>
-                  <div className="font-medium">{(selectedInfo.config as any).isPulsing ? 'Pulsing' : 'Twinkle'}</div>
+                  <div className="font-medium">{(selectedInfo.config as TwinkleConfig).isPulsing ? 'Pulsing' : 'Twinkle'}</div>
                 </div>
               </>
             ) : (
               <>
                 <div>
                   <div className="text-gray-400">Foreground Stars</div>
-                  <div className="font-medium">{(selectedInfo.config as any).foregroundStars}</div>
+                  <div className="font-medium">{(selectedInfo.config as ClusterConfig).foregroundStars}</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Cluster Stars</div>
-                  <div className="font-medium">{(selectedInfo.config as any).clusterStars}</div>
+                  <div className="font-medium">{(selectedInfo.config as ClusterConfig).clusterStars}</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Approach Speed</div>
-                  <div className="font-medium">{(selectedInfo.config as any).approachSpeed}</div>
+                  <div className="font-medium">{(selectedInfo.config as ClusterConfig).approachSpeed}</div>
                 </div>
                 <div>
                   <div className="text-gray-400">Semi-Major Axis</div>
-                  <div className="font-medium">{(selectedInfo.config as any).clusterSemiMajorAxis}</div>
+                  <div className="font-medium">{(selectedInfo.config as ClusterConfig).clusterSemiMajorAxis}</div>
                 </div>
-                {(selectedInfo.config as any).clusterSizeMultiplier && (
+                {(selectedInfo.config as ClusterConfig).clusterSizeMultiplier && (
                   <div>
                     <div className="text-gray-400">Size Boost</div>
-                    <div className="font-medium">{(selectedInfo.config as any).clusterSizeMultiplier}x</div>
+                    <div className="font-medium">{(selectedInfo.config as ClusterConfig).clusterSizeMultiplier}x</div>
                   </div>
                 )}
-                {(selectedInfo.config as any).clusterIntensityMultiplier && (
+                {(selectedInfo.config as ClusterConfig).clusterIntensityMultiplier && (
                   <div>
                     <div className="text-gray-400">Intensity Boost</div>
-                    <div className="font-medium">{(selectedInfo.config as any).clusterIntensityMultiplier}x</div>
+                    <div className="font-medium">{(selectedInfo.config as ClusterConfig).clusterIntensityMultiplier}x</div>
                   </div>
                 )}
               </>

@@ -7,12 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "lint:check": "next lint --max-warnings 0",
+    "format:check": "next lint --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "husky"
   },
   "dependencies": {
     "lucide-react": "^0.525.0",
@@ -41,12 +45,19 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "eslint-plugin-storybook": "^9.0.15",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.2",
     "playwright": "^1.53.2",
     "storybook": "^9.0.15",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.4",
     "wait-on": "^8.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "next lint --fix --file"
+    ]
   }
 }

@@ -50,7 +50,7 @@ export const PageLayout = ({
 }: PageLayoutProps) => {
   const [clusterVisible, setClusterVisible] = useState(showStarField);
   // Track star-field forward speed (1200 when cluster ON, 600 when OFF)
-  const [starSpeed, setStarSpeed] = useState(clusterVisible ? 1200 : 600);
+  const [starSpeed, setStarSpeed] = useState(clusterVisible ? 1200 : 400);
   useEffect(() => {
     let frameId: number;
     let lastTime = performance.now();

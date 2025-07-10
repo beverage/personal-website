@@ -13,7 +13,7 @@ interface ClusterStarFieldProps {
 export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
   variant = 'cluster-ellipse-4x',
   stardustVariant = 'halo',
-  opacity = 0.5,
+  opacity = 1.0,
   className = '',
   style,
 }: ClusterStarFieldProps) => {

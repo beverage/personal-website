@@ -163,7 +163,7 @@ export const useStarFieldPreset = (variant: TwinkleVariant, opacity: number = 1.
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
   // Reduce star count by 50% on mobile for better performance
-  const starCount = isMobile ? 2000 : 4000;
+  const starCount = isMobile ? 2000 : 5000;
   
   return useStarField({
     starCount,

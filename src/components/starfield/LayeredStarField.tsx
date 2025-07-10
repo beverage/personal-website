@@ -46,7 +46,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
         style={{
           zIndex: 1,
           transition: `opacity ${showCluster ? fadeInDuration : fadeOutDuration}ms ease-in-out`,
-          opacity: showCluster ? 1 : 0,
+          opacity: showCluster ? 1.0 : 0,
         }}
       />
       

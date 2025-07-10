@@ -122,10 +122,10 @@ export const CLUSTER_CONFIGS: Record<ClusterVariant, ClusterConfig> = {
     centerStarSizeMultiplier: 1.4, // 1.4x larger
     centerStarConcentration: 0.25, // Even more concentrated toward center
   },
-  // Variant 3: Normal stars but closer
+  // Variant 3: Normal stars but closer <---- we are using this one
   'cluster-ellipse-4x-center-close-1': {
     foregroundStars: 0,
-    clusterStars: 4000,
+    clusterStars: 2000,
     clusterSemiMajorAxis: 400000,
     clusterSemiMinorAxis: 80000,
     clusterDistance: { min: 300000, max: 3000000 },

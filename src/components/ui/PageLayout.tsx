@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrandPanel } from './BrandPanel';
 import { ControlPanel } from './ControlPanel';
 import { HeroSection } from './HeroSection';
@@ -39,18 +39,12 @@ export const PageLayout = ({
   onSecondaryClick,
   clientConfig
 }: PageLayoutProps) => {
-  const [darkMode, setDarkMode] = useState(true);
-  
-  useEffect(() => { 
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', darkMode); 
-    }
-  }, [darkMode]);
+  const [clusterVisible, setClusterVisible] = useState(showStarField);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Star Field Background */}
-      {showStarField && <HomepageLayeredStarField />}
+      <HomepageLayeredStarField showCluster={clusterVisible} />
       
       {/* LCARS-style branding panel */}
       <div className="absolute top-8 left-8 z-50">
@@ -60,8 +54,8 @@ export const PageLayout = ({
       {/* LCARS-style control panel */}
       <div className="absolute top-8 right-8 z-50">
         <ControlPanel 
-          darkMode={darkMode}
-          onToggle={() => setDarkMode(!darkMode)}
+          darkMode={clusterVisible}
+          onToggle={() => setClusterVisible(!clusterVisible)}
         />
       </div>
       

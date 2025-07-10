@@ -1,4 +1,4 @@
-import { Sun, Moon } from 'lucide-react';
+import { Rocket, Sailboat } from 'lucide-react';
 
 interface ControlPanelProps {
   darkMode?: boolean;
@@ -16,7 +16,7 @@ export const ControlPanel = ({
       onClick={onToggle}
       className={`p-3 bg-black/20 backdrop-blur-sm border border-white/10 rounded-full hover:bg-black/30 transition-all ${className}`}
     >
-      {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+      {darkMode ? <Rocket size={20} /> : <Sailboat size={20} />}
     </button>
   );
 }; 

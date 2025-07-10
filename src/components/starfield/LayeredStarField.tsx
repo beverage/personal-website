@@ -5,6 +5,7 @@ import { ClusterVariant } from '@/types/starfield';
 
 interface LayeredStarFieldProps {
   clusterVariant: ClusterVariant;
+  stardustVariant?: 'halo' | 'sparkle' | 'bloom' | 'nebula';
   opacity?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -12,6 +13,7 @@ interface LayeredStarFieldProps {
 
 export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
   clusterVariant,
+  stardustVariant,
   opacity = 1.0,
   className = '',
   style,
@@ -29,6 +31,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
       {/* Background layer: Cluster starfield (transparent canvas) */}
       <ClusterStarField 
         variant={clusterVariant}
+        stardustVariant={stardustVariant}
         opacity={opacity}
         className="absolute inset-0"
       />

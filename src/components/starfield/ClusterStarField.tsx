@@ -4,6 +4,7 @@ import { ClusterVariant } from '@/types/starfield';
 
 interface ClusterStarFieldProps {
   variant?: ClusterVariant;
+  stardustVariant?: 'halo' | 'sparkle' | 'bloom' | 'nebula';
   opacity?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -11,11 +12,12 @@ interface ClusterStarFieldProps {
 
 export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
   variant = 'cluster-ellipse-4x',
-  opacity = 1.0,
+  stardustVariant = 'halo',
+  opacity = 0.5,
   className = '',
   style,
-}) => {
-  const canvasRef = useClusterStarField({ variant, opacity });
+}: ClusterStarFieldProps) => {
+  const canvasRef = useClusterStarField({ variant, opacity, stardustVariant });
 
   return (
     <canvas

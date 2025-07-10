@@ -4,12 +4,56 @@ import { ClusterStar3D, CenterClusterStar3D } from '@/lib/starfield/ClusterStar3
 import { ClusterVariant, CLUSTER_CONFIGS } from '@/types/starfield';
 import { useIsMobile } from './useMobileDetection';
 
+// Extend Window to include nebula pattern cache
+declare global {
+  interface Window {
+    __nebulaPattern?: CanvasPattern;
+  }
+}
+
+// Simple Perlin noise generator for nebula texture
+type Perm = number[];
+const perlinPerm: Perm = [];
+(function initPerlin() {
+  const p: number[] = [];
+  for (let i = 0; i < 256; i++) p[i] = i;
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [p[i], p[j]] = [p[j], p[i]];
+  }
+  for (let i = 0; i < 512; i++) perlinPerm[i] = p[i & 255];
+})();
+function fade(t: number) { return t * t * t * (t * (t * 6 - 15) + 10); }
+function lerp(a: number, b: number, t: number) { return a + t * (b - a); }
+function grad(hash: number, x: number, y: number) {
+  const h = hash & 3;
+  const u = h < 2 ? x : y;
+  const v = h < 2 ? y : x;
+  return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+}
+function noise2D(x: number, y: number): number {
+  const X = Math.floor(x) & 255;
+  const Y = Math.floor(y) & 255;
+  const xf = x - Math.floor(x);
+  const yf = y - Math.floor(y);
+  const aa = perlinPerm[perlinPerm[X] + Y];
+  const ab = perlinPerm[perlinPerm[X] + Y + 1];
+  const ba = perlinPerm[perlinPerm[X + 1] + Y];
+  const bb = perlinPerm[perlinPerm[X + 1] + Y + 1];
+  const u = fade(xf);
+  const v = fade(yf);
+  const x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u);
+  const x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u);
+  return (lerp(x1, x2, v) + 1) / 2;
+}
+
 interface UseClusterStarFieldProps {
   variant: ClusterVariant;
   opacity?: number;
+  stardustVariant?: 'halo' | 'sparkle' | 'bloom' | 'nebula';
 }
 
-export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFieldProps) => {
+export const useClusterStarField = ({ variant, opacity = 1.0, stardustVariant }: UseClusterStarFieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const foregroundStarsRef = useRef<Star3D[]>([]);
   const clusterStarsRef = useRef<ClusterStar3D[]>([]);
@@ -133,6 +177,117 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         });
       }
 
+      // After rendering clusterStars:
+      // --- Stardust effect variants ---
+      if (stardustVariant) {
+        switch (stardustVariant) {
+          case 'halo':
+            clusterStarsRef.current.forEach(star => {
+              const projected = star.project(canvas.width, canvas.height, config.clusterFocalLength);
+              if (projected.visible) {
+                const radius = projected.size * 1.5;
+                const gradient = ctx.createRadialGradient(
+                  projected.x, projected.y, projected.size,
+                  projected.x, projected.y, radius
+                );
+                gradient.addColorStop(0, `rgba(255,240,220,0.5)`);
+                gradient.addColorStop(1, 'transparent');
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(projected.x, projected.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+              }
+            });
+            break;
+          case 'sparkle':
+            {
+              // Sparkle dust: random specks flickering around cluster
+              const t = currentTime / 1000;
+              const speckCount = 200;
+              for (let i = 0; i < speckCount; i++) {
+                const star = clusterStarsRef.current[Math.floor(Math.random() * clusterStarsRef.current.length)];
+                const projected = star.project(canvas.width, canvas.height, config.clusterFocalLength);
+                if (!projected.visible) continue;
+                // flicker 0.1 -> 0.4 in 0.5s loops
+                const phase = (t + i * 0.01) * (2 * Math.PI / 0.5);
+                const flicker = 0.1 + 0.3 * (0.5 + 0.5 * Math.sin(phase));
+                ctx.fillStyle = `rgba(220,240,255,${flicker * opacity})`;
+                ctx.beginPath();
+                ctx.arc(projected.x, projected.y, 1, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            }
+            break;
+          case 'bloom':
+            {
+              // Gaussian bloom: draw blurred, tinted copy of cluster region
+              // use canvas filter for blur
+              ctx.save();
+              ctx.filter = 'blur(8px)';
+              ctx.globalCompositeOperation = 'lighter';
+              ctx.fillStyle = `rgba(180,220,255,${0.15 * opacity})`;
+              // fill full canvas, blur will spread
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.restore();
+            }
+            break;
+          case 'nebula': {
+            // Perlin-noise cloud: tile a drifting noise texture masked by a radial fade
+            const size = 32;
+            const t = currentTime / 1000;
+            // generate pattern once
+            if (!window.__nebulaPattern) {
+              const noiseCanvas = document.createElement('canvas');
+              noiseCanvas.width = size;
+              noiseCanvas.height = size;
+              const nCtx = noiseCanvas.getContext('2d');
+              if (nCtx) {
+                const imgData = nCtx.createImageData(size, size);
+                for (let y = 0; y < size; y++) {
+                  for (let x = 0; x < size; x++) {
+                    const v = noise2D((x / size) * 4, (y / size) * 4);
+                    const alpha = Math.floor(v * 0.3 * 255);
+                    const idx = (y * size + x) * 4;
+                    imgData.data[idx] = 255;
+                    imgData.data[idx + 1] = 255;
+                    imgData.data[idx + 2] = 255;
+                    imgData.data[idx + 3] = alpha;
+                  }
+                }
+                nCtx.putImageData(imgData, 0, 0);
+              }
+              const pattern = ctx.createPattern(noiseCanvas, 'repeat');
+              if (pattern) window.__nebulaPattern = pattern;
+            }
+            // draw with drifting offset
+            const driftX = (t * 10) % size;
+            const driftY = (t * 5) % size;
+            ctx.save();
+            ctx.translate(-driftX, -driftY);
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = window.__nebulaPattern!;
+            ctx.fillRect(0, 0, canvas.width + size, canvas.height + size);
+            ctx.restore();
+            // radial fade mask
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-in';
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const innerR = Math.min(canvas.width, canvas.height) / 4;
+            const outerR = Math.max(canvas.width, canvas.height) / 2;
+            const mask = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
+            mask.addColorStop(0, 'rgba(0,0,0,1)');
+            mask.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = mask;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+            ctx.globalCompositeOperation = 'source-over';
+          }
+          break;
+        }
+      }
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -159,7 +314,7 @@ export const useClusterStarField = ({ variant, opacity = 1.0 }: UseClusterStarFi
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isClient, variant, opacity, config, isMobile]);
+  }, [isClient, variant, opacity, config, isMobile, stardustVariant]);
 
   return canvasRef;
 }; 

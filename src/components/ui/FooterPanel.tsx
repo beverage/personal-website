@@ -1,7 +1,7 @@
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Instagram, Mail } from 'lucide-react';
 
 interface SocialLink {
-  icon: 'github' | 'linkedin' | 'mail';
+  icon: 'github' | 'linkedin' | 'instagram' | 'mail';
   href: string;
   label?: string;
 }
@@ -15,16 +15,13 @@ interface FooterPanelProps {
 const iconMap = {
   github: Github,
   linkedin: Linkedin,
+  instagram: Instagram,
   mail: Mail,
 };
 
 export const FooterPanel = ({
   year = new Date().getFullYear(),
-  socialLinks = [
-    { icon: 'github', href: '#', label: 'GitHub' },
-    { icon: 'linkedin', href: '#', label: 'LinkedIn' },
-    { icon: 'mail', href: '#', label: 'Email' },
-  ],
+  socialLinks = [], // Default to empty array, will be populated by server
   className = ""
 }: FooterPanelProps) => {
   return (
@@ -40,6 +37,8 @@ export const FooterPanel = ({
                 href={link.href} 
                 className="text-white/60 hover:text-white transition-colors"
                 aria-label={link.label}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Icon size={18} />
               </a>

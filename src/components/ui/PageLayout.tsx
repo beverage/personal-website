@@ -1,9 +1,22 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { BrandPanel } from './BrandPanel';
 import { ControlPanel } from './ControlPanel';
 import { HeroSection } from './HeroSection';
 import { FooterPanel } from './FooterPanel';
 import { HomepageLayeredStarField } from '../starfield/LayeredStarField';
+
+interface SocialLink {
+  icon: 'github' | 'linkedin' | 'instagram' | 'mail';
+  href: string;
+  label: string;
+}
+
+interface ClientConfig {
+  socialLinks: SocialLink[];
+  copyrightYear: number;
+}
 
 interface PageLayoutProps {
   children?: React.ReactNode;
@@ -13,6 +26,7 @@ interface PageLayoutProps {
   heroDescription?: string;
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
+  clientConfig?: ClientConfig;
 }
 
 export const PageLayout = ({
@@ -22,7 +36,8 @@ export const PageLayout = ({
   heroTitle,
   heroDescription,
   onPrimaryClick,
-  onSecondaryClick
+  onSecondaryClick,
+  clientConfig
 }: PageLayoutProps) => {
   const [darkMode, setDarkMode] = useState(true);
   
@@ -64,7 +79,10 @@ export const PageLayout = ({
 
       {/* LCARS-style footer */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-        <FooterPanel />
+        <FooterPanel 
+          year={clientConfig?.copyrightYear}
+          socialLinks={clientConfig?.socialLinks}
+        />
       </div>
     </div>
   );

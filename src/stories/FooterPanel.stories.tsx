@@ -34,34 +34,54 @@ const meta: Meta<typeof FooterPanel> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Default story uses environment variables
 export const Default: Story = {
-  args: {
-    year: 2025,
-    socialLinks: [
-      { icon: 'github', href: '#', label: 'GitHub' },
-      { icon: 'linkedin', href: '#', label: 'LinkedIn' },
-      { icon: 'mail', href: '#', label: 'Email' },
-    ],
-  },
+  args: {},
 };
 
-export const CustomYear: Story = {
+// Custom configuration example
+export const CustomConfiguration: Story = {
   args: {
     year: 2024,
     socialLinks: [
-      { icon: 'github', href: 'https://github.com/username', label: 'GitHub' },
-      { icon: 'linkedin', href: 'https://linkedin.com/in/username', label: 'LinkedIn' },
+      { icon: 'github', href: 'https://github.com/example', label: 'GitHub' },
+      { icon: 'linkedin', href: 'https://linkedin.com/in/example', label: 'LinkedIn' },
+      { icon: 'instagram', href: 'https://instagram.com/example', label: 'Instagram' },
       { icon: 'mail', href: 'mailto:hello@example.com', label: 'Email' },
     ],
   },
 };
 
+// Minimal social links
 export const MinimalSocial: Story = {
   args: {
     year: 2025,
     socialLinks: [
-      { icon: 'github', href: '#', label: 'GitHub' },
-      { icon: 'mail', href: '#', label: 'Email' },
+      { icon: 'github', href: 'https://github.com/example', label: 'GitHub' },
+      { icon: 'mail', href: 'mailto:hello@example.com', label: 'Email' },
+    ],
+  },
+};
+
+// Professional setup
+export const Professional: Story = {
+  args: {
+    socialLinks: [
+      { icon: 'linkedin', href: 'https://linkedin.com/in/example', label: 'LinkedIn' },
+      { icon: 'github', href: 'https://github.com/example', label: 'GitHub' },
+      { icon: 'mail', href: 'mailto:contact@example.com', label: 'Email' },
+    ],
+  },
+};
+
+// Social media focused
+export const SocialMediaFocused: Story = {
+  args: {
+    socialLinks: [
+      { icon: 'instagram', href: 'https://instagram.com/example', label: 'Instagram' },
+      { icon: 'github', href: 'https://github.com/example', label: 'GitHub' },
+      { icon: 'linkedin', href: 'https://linkedin.com/in/example', label: 'LinkedIn' },
+      { icon: 'mail', href: 'mailto:hello@example.com', label: 'Email' },
     ],
   },
 }; 

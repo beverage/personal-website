@@ -21,6 +21,12 @@ interface ClientConfig {
 interface PageLayoutProps {
   children?: React.ReactNode;
   showStarField?: boolean;
+  /** Optional override for starfield forward speed */
+  speed?: number;
+  /** Fade-in duration for cluster layer, in milliseconds */
+  fadeInDuration?: number;
+  /** Fade-out duration for cluster layer, in milliseconds */
+  fadeOutDuration?: number;
   brandName?: string;
   heroTitle?: string;
   heroDescription?: string;
@@ -32,6 +38,9 @@ interface PageLayoutProps {
 export const PageLayout = ({
   children,
   showStarField = true,
+  speed,
+  fadeInDuration = 3000,
+  fadeOutDuration = 3000,
   brandName,
   heroTitle,
   heroDescription,
@@ -52,7 +61,7 @@ export const PageLayout = ({
       const dt = (now - lastTime) / 1000;
       lastTime = now;
       setStarSpeed(prev => {
-        const target = clusterVisible ? 1200 : 1200;
+        const target = clusterVisible ? 1200 : 400;
         const diff = target - prev;
         if (Math.abs(diff) < 1) return target;
         // pick accel rate based on direction
@@ -69,7 +78,13 @@ export const PageLayout = ({
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Star Field Background */}
-      <HomepageLayeredStarField showCluster={clusterVisible} speed={starSpeed} />
+      <HomepageLayeredStarField
+        showCluster={clusterVisible}
+        // allow story control override; otherwise use animated starSpeed
+        speed={speed ?? starSpeed}
+        fadeInDuration={fadeInDuration}
+        fadeOutDuration={fadeOutDuration}
+      />
       
       {/* LCARS-style branding panel */}
       <div className="absolute top-8 left-8 z-50">

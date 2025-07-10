@@ -18,6 +18,13 @@ export const useStarField = ({
 }: UseStarFieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star3D[]>([]);
+  // Keep latest speed in a ref so changing speed doesn't re-create stars
+  const speedRef = useRef(speed);
+
+  // Update speedRef whenever speed prop changes
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const [isClient, setIsClient] = useState(false);
@@ -85,7 +92,7 @@ export const useStarField = ({
         // Fast visibility pre-check using current position + aspect-ratio margin
         if (star.isLikelyVisible()) {
           // Full update with rotation for potentially visible stars
-          star.update(speed, rollSpeed, deltaTime);
+          star.update(speedRef.current, rollSpeed, deltaTime);
           
           const projected = star.project(canvas.width, canvas.height);
           if (projected.visible) {
@@ -102,7 +109,7 @@ export const useStarField = ({
           }
         } else {
           // Minimal update for off-screen stars (no rotation, just forward movement)
-          star.updateMinimal(speed, deltaTime);
+          star.updateMinimal(speedRef.current, deltaTime);
           culledStars++;
         }
       });
@@ -145,7 +152,7 @@ export const useStarField = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isClient, starCount, speed, rollSpeed, opacity, variant]);
+  }, [isClient, starCount, rollSpeed, opacity, variant]);
 
   return canvasRef;
 };

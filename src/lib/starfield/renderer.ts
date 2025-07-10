@@ -10,8 +10,11 @@ export const renderTwinkleStar = (
   variant: TwinkleVariant
 ) => {
   const config = TWINKLE_CONFIGS[variant];
-  const twinkle = Math.sin(time*0.003)*0.3 + 0.7;
-  const colorShift = Math.sin(time * 0.002) * 0.2 + 0.8;
+  // const twinkle = Math.sin(time*0.003)*0.3 + 0.7;
+  // const colorShift = Math.sin(time * 0.002) * 0.2 + 0.8;
+  
+  const twinkle = Math.sin(time * 0.003 + x * 0.01 + y * 0.01) * 0.3 + 0.7;
+  const colorShift = Math.sin(time * 0.002 + x * 0.005) * 0.2 + 0.8;
   
   // Calculate final size based on variant
   let finalSize = size * config.sizeMultiplier;

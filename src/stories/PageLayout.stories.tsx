@@ -13,6 +13,18 @@ const meta: Meta<typeof PageLayout> = {
       control: 'boolean',
       description: 'Whether to show the animated star field background',
     },
+    fadeInDuration: {
+      control: { type: 'number', min: 0, max: 10000, step: 100 },
+      description: 'Fade-in duration for the cluster layer in ms',
+    },
+    fadeOutDuration: {
+      control: { type: 'number', min: 0, max: 10000, step: 100 },
+      description: 'Fade-out duration for the cluster layer in ms',
+    },
+    speed: {
+      control: { type: 'number', min: 0, max: 2000, step: 50 },
+      description: 'Initial forward speed of the starfield',
+    },
     brandName: {
       control: 'text',
       description: 'Brand name in top-left corner',
@@ -38,6 +50,9 @@ const meta: Meta<typeof PageLayout> = {
   args: {
     onPrimaryClick: () => console.log('Primary button clicked'),
     onSecondaryClick: () => console.log('Secondary button clicked'),
+    fadeInDuration: 3000,
+    fadeOutDuration: 3000,
+    speed: 1000,
   },
 };
 

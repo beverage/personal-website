@@ -8,6 +8,7 @@ interface LayeredStarFieldProps {
   stardustVariant?: 'halo' | 'sparkle' | 'bloom' | 'nebula';
   opacity?: number;
   showCluster?: boolean;
+  speed?: number;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -17,6 +18,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
   stardustVariant,
   opacity = 1.0,
   showCluster = true,
+  speed = 1000,
   className = '',
   style,
 }) => {
@@ -35,15 +37,17 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
         variant={clusterVariant}
         stardustVariant={stardustVariant}
         opacity={opacity}
-        className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
-          showCluster ? 'opacity-100' : 'opacity-0'
+        className={`absolute inset-0 transition-opacity ease-in-out ${
+          showCluster ? 'duration-3000 opacity-100' : 'duration-1250 opacity-0'
         }`}
+        style={{ zIndex: 1 }}
       />
       
       {/* Foreground layer: Twinkle starfield (transparent canvas) */}
       <StarField 
         variant="twinkle-compact"
         opacity={opacity}
+        speed={speed}
         className="absolute inset-0"
       />
     </div>
@@ -55,16 +59,19 @@ export interface HomepageLayeredStarFieldProps {
   opacity?: number;
   className?: string;
   showCluster?: boolean;
+  speed?: number;
 }
 export const HomepageLayeredStarField: React.FC<HomepageLayeredStarFieldProps> = ({ 
   opacity = 1.0, 
   className,
   showCluster = true,
+  speed,
 }) => (
   <LayeredStarField 
     clusterVariant="cluster-ellipse-4x-center-close-1" 
     opacity={opacity} 
     showCluster={showCluster}
+    speed={speed}
     className={className} 
   />
 ); 

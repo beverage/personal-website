@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrandPanel } from './BrandPanel';
 import { ControlPanel } from './ControlPanel';
 import { HeroSection } from './HeroSection';
@@ -40,11 +40,36 @@ export const PageLayout = ({
   clientConfig
 }: PageLayoutProps) => {
   const [clusterVisible, setClusterVisible] = useState(showStarField);
+  // Track star-field forward speed (1200 when cluster ON, 600 when OFF)
+  const [starSpeed, setStarSpeed] = useState(clusterVisible ? 1200 : 600);
+  useEffect(() => {
+    let frameId: number;
+    let lastTime = performance.now();
+    // Different rates: slower accel up, faster decel down
+    const accelUp = 1000;    // acceleration units per second^2
+    const accelDown = 2000; // deceleration units per second^2
+    const step = (now: number) => {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      setStarSpeed(prev => {
+        const target = clusterVisible ? 1200 : 1200;
+        const diff = target - prev;
+        if (Math.abs(diff) < 1) return target;
+        // pick accel rate based on direction
+        const rate = clusterVisible ? accelUp : accelDown;
+        const maxDelta = rate * dt;
+        return prev + Math.sign(diff) * Math.min(Math.abs(diff), maxDelta);
+      });
+      frameId = requestAnimationFrame(step);
+    };
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [clusterVisible]);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Star Field Background */}
-      <HomepageLayeredStarField showCluster={clusterVisible} />
+      <HomepageLayeredStarField showCluster={clusterVisible} speed={starSpeed} />
       
       {/* LCARS-style branding panel */}
       <div className="absolute top-8 left-8 z-50">

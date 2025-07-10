@@ -74,6 +74,7 @@ export const useStarField = ({
         console.log(`StarField animating: ${starsRef.current.length} stars, canvas: ${canvas.width}x${canvas.height}`);
       }
 
+      // Clear canvas with deep space black
       ctx.fillStyle = 'transparent';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 

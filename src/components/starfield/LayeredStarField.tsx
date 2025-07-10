@@ -38,7 +38,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
         stardustVariant={stardustVariant}
         opacity={opacity}
         className={`absolute inset-0 transition-opacity ease-in-out ${
-          showCluster ? 'duration-3000 opacity-100' : 'duration-1250 opacity-0'
+          showCluster ? 'duration-2000 opacity-100' : 'duration-1000 opacity-0'
         }`}
         style={{ zIndex: 1 }}
       />

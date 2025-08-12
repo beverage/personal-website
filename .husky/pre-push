@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Ensure code compiles and passes lint/format/tests before push
 npm run lint:check || exit 1
 npm run format:check || exit 1

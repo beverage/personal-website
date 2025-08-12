@@ -16,6 +16,17 @@ export default defineConfig({
 		globals: true,
 		include: ['src/**/*.{test,spec}.{ts,tsx}'],
 		exclude: ['src/**/*.stories.{ts,tsx}', 'node_modules'],
+		coverage: {
+			provider: 'v8',
+			reportsDirectory: './coverage',
+			reporter: ['text', 'lcov', 'json-summary'],
+			exclude: [
+				'**/*.stories.*',
+				'**/stories/**',
+				'node_modules/**',
+				'storybook-static/**',
+			],
+		},
 	},
 	resolve: {
 		alias: {

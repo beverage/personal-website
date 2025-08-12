@@ -10,3 +10,18 @@ expect.extend(matchers)
 afterEach(() => {
 	cleanup()
 })
+
+// Minimal matchMedia polyfill for hooks using it
+if (typeof window !== 'undefined' && !window.matchMedia) {
+	// @ts-expect-error jsdom polyfill
+	window.matchMedia = () => ({
+		matches: false,
+		media: '',
+		onchange: null,
+		addListener: () => {},
+		removeListener: () => {},
+		addEventListener: () => {},
+		removeEventListener: () => {},
+		dispatchEvent: () => false,
+	})
+}

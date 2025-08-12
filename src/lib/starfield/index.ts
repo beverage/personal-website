@@ -1,4 +1,9 @@
-export { Star3D } from './Star3D';
-export { ClusterStar3D, CenterClusterStar3D } from './ClusterStar3D';
-export { renderTwinkleStar, getTwinkleConfig, getClusterConfig, getVariantInfo } from './renderer';
-export * from '@/types/starfield'; 
+export * from '@/types/starfield'
+export { CenterClusterStar3D, ClusterStar3D } from './ClusterStar3D'
+export {
+	getClusterConfig,
+	getTwinkleConfig,
+	getVariantInfo,
+	renderTwinkleStar,
+} from './renderer'
+export { Star3D } from './Star3D'

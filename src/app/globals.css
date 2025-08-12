@@ -1,26 +1,26 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --default-font-family: Inter, sans-serif;
+	--default-font-family: Inter, sans-serif;
 }
 
 @variant dark (.dark &);
 
 /* Custom font utility classes for Tailwind CSS 4 */
 @layer utilities {
-  .font-exo2 {
-    font-family: var(--font-exo2), sans-serif;
-  }
-  
-  .font-orbitron {
-    font-family: var(--font-orbitron), monospace;
-  }
-  
-  .font-geist-sans {
-    font-family: var(--font-geist-sans), sans-serif;
-  }
-  
-  .font-geist-mono {
-    font-family: var(--font-geist-mono), monospace;
-  }
+	.font-exo2 {
+		font-family: var(--font-exo2), sans-serif;
+	}
+
+	.font-orbitron {
+		font-family: var(--font-orbitron), monospace;
+	}
+
+	.font-geist-sans {
+		font-family: var(--font-geist-sans), sans-serif;
+	}
+
+	.font-geist-mono {
+		font-family: var(--font-geist-mono), monospace;
+	}
 }

@@ -1,3 +1,3 @@
-export { StarField, HomepageStarField, BackgroundStarField } from './StarField';
-export { ClusterStarField, StarTrekClusterField } from './ClusterStarField';
-export { LayeredStarField, HomepageLayeredStarField } from './LayeredStarField'; 
+export { ClusterStarField, StarTrekClusterField } from './ClusterStarField'
+export { HomepageLayeredStarField, LayeredStarField } from './LayeredStarField'
+export { BackgroundStarField, HomepageStarField, StarField } from './StarField'

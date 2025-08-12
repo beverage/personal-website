@@ -9,6 +9,7 @@ Git hooks are automatically installed when you run `npm install` (via the `prepa
 ## Hooks
 
 ### Pre-commit Hook
+
 - **Purpose**: Automatically fix linting issues in staged files
 - **Command**: `npx lint-staged`
 - **What it does**:
@@ -17,8 +18,9 @@ Git hooks are automatically installed when you run `npm install` (via the `prepa
   - Adds fixed files back to the commit
 
 ### Pre-push Hook
+
 - **Purpose**: Ensure code quality before pushing to remote
-- **Commands**: 
+- **Commands**:
   - `npm run lint:check` - Runs ESLint with `--max-warnings 0`
   - `npm run format:check` - Runs format check (currently same as lint:check)
 - **What it does**:
@@ -28,6 +30,7 @@ Git hooks are automatically installed when you run `npm install` (via the `prepa
 ## ESLint Auto-fixing
 
 Yes! ESLint can auto-fix many violations including:
+
 - ✅ Semicolon insertion/removal
 - ✅ Quote style (single vs double)
 - ✅ Indentation and spacing
@@ -64,4 +67,4 @@ git commit --no-verify
 git push --no-verify
 ```
 
-**Note**: Only use `--no-verify` in emergencies. The hooks are there to maintain code quality. 
+**Note**: Only use `--no-verify` in emergencies. The hooks are there to maintain code quality.

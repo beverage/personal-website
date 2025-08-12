@@ -15,6 +15,7 @@ This guide helps you set up the automated CI/CD pipeline for your personal websi
 Go to your GitHub repository → Settings → Secrets and variables → Actions
 
 Add the following secret:
+
 - **Name**: `PERSONAL_WEBSITE_DEPLOY_TOKEN`
 - **Value**: Your existing Fly.io deploy token
 
@@ -30,6 +31,7 @@ primary_region = "your-region"
 ### 3. Pipeline Overview
 
 The pipeline runs on:
+
 - **Push to main**: Full pipeline (test → build → deploy)
 - **Pull requests**: Tests only (no deployment)
 
@@ -57,11 +59,13 @@ The pipeline runs on:
 ## 📊 Monitoring
 
 ### View Pipeline Status
+
 - Go to GitHub → Actions tab
 - See all workflow runs and their status
 - Download artifacts (build files, test reports)
 
 ### Deployment Status
+
 - **Success**: Green checkmark, site is live
 - **Failure**: Red X, check logs for errors
 - **In Progress**: Yellow circle, pipeline running
@@ -69,6 +73,7 @@ The pipeline runs on:
 ## 🛠️ Customization
 
 ### Skip E2E Tests
+
 If you want to disable E2E tests completely:
 
 ```yaml
@@ -78,9 +83,11 @@ e2e-test:
 ```
 
 ### Add Notifications
+
 You can add Slack/Discord/email notifications by modifying the `notify` job.
 
 ### Deploy to Different Environments
+
 You can add staging deployments by creating additional jobs for different branches.
 
 ## 🔍 Troubleshooting
@@ -106,6 +113,7 @@ You can add staging deployments by creating additional jobs for different branch
    - Go to Actions → Click failed run → View logs
 
 2. **Test locally**:
+
    ```bash
    npm run lint
    npm test
@@ -130,6 +138,7 @@ Once set up, your workflow will be:
 ## 📝 Additional Configuration
 
 ### Environment Variables
+
 If you need environment variables in production:
 
 1. Add to GitHub Secrets
@@ -140,10 +149,11 @@ If you need environment variables in production:
    ```
 
 ### Custom Domains
+
 Configure custom domain in Fly.io dashboard after deployment.
 
 ---
 
-Your pipeline is now ready! 🎉 
+Your pipeline is now ready! 🎉
 
-Push to main branch to trigger the first deployment. 
+Push to main branch to trigger the first deployment.

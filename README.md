@@ -46,12 +46,14 @@ npm run build
 This project uses GitHub Actions for automated testing and deployment:
 
 ### Pipeline Stages:
+
 1. **🧪 Test**: Unit tests, linting, and Storybook builds
 2. **🎭 E2E Test**: Playwright browser testing (on push to main)
 3. **🏗️ Build**: Next.js application build
 4. **🚀 Deploy**: Automated deployment to Fly.io
 
 ### Deployment
+
 - **Triggers**: Push to `main` branch
 - **Platform**: Fly.io
 - **Requirements**: `PERSONAL_WEBSITE_DEPLOY_TOKEN` secret configured
@@ -71,6 +73,7 @@ The pipeline ensures all code is tested before deployment and provides artifacts
 ## 🌟 Star Field Variants
 
 The animated background includes 5 different star field variants:
+
 - `twinkle` - Basic twinkling stars
 - `twinkle-compact` - Compact twinkle effect
 - `twinkle-pulse` - Pulsing twinkle animation

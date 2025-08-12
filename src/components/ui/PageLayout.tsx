@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileText } from 'lucide-react';
 import { BrandPanel } from './BrandPanel';
 import { ControlPanel } from './ControlPanel';
 import { HeroSection } from './HeroSection';
@@ -16,6 +17,7 @@ interface SocialLink {
 interface ClientConfig {
   socialLinks: SocialLink[];
   copyrightYear: number;
+  cvUrl?: string;
 }
 
 interface PageLayoutProps {
@@ -92,7 +94,19 @@ export const PageLayout = ({
       </div>
       
       {/* LCARS-style control panel */}
-      <div className="absolute top-8 right-8 z-50">
+      <div className="absolute top-8 right-8 z-50 flex items-center gap-3">
+        {clientConfig?.cvUrl && (
+          <a
+            href={clientConfig.cvUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download CV (PDF)"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-cyan-400/70 bg-black/40 text-cyan-300 hover:text-cyan-200"
+          >
+            <FileText size={16} />
+            <span>CV</span>
+          </a>
+        )}
         <ControlPanel 
           darkMode={clusterVisible}
           onToggle={() => setClusterVisible(!clusterVisible)}

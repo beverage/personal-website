@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <PageLayout 
       brandName="beverage.me"
-      heroTitle="Coming Soon"
-      heroDescription="Finally."
+      heroTitle="Alex Beverage"
+      heroDescription="Under Construction"
       clientConfig={clientConfig}
     />
   );

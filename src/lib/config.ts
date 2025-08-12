@@ -6,6 +6,11 @@ const ConfigSchema = z.object({
   linkedinUrl: z.string().url().optional(), 
   instagramUrl: z.string().url().optional(),
   emailAddress: z.string().email().optional(),
+  // Allow absolute URLs (https://...) OR same-origin paths like /cv/file.pdf
+  cvUrl: z.union([
+    z.string().url(),
+    z.string().regex(/^\//, { message: 'Must be an absolute URL or start with / for same-origin path' })
+  ]).optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;
@@ -18,6 +23,7 @@ function parseConfig(): Config {
     linkedinUrl: process.env.LINKEDIN_PROFILE_URL,
     instagramUrl: process.env.INSTAGRAM_PROFILE_URL,
     emailAddress: process.env.CONTACT_EMAIL_ADDRESS,
+    cvUrl: process.env.CV_URL,
   };
 
   try {
@@ -82,5 +88,6 @@ export function getClientConfig() {
   return {
     socialLinks: getSocialLinks(),
     copyrightYear: new Date().getFullYear(), // Always current year
+    cvUrl: config.cvUrl,
   };
 } 

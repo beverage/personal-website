@@ -1,5 +1,6 @@
 import { useClusterStarField } from '@/hooks/useClusterStarField'
 import { ClusterVariant } from '@/types/starfield'
+import { MotionVector } from '@/types/transitions'
 import React from 'react'
 
 interface ClusterStarFieldProps {
@@ -8,6 +9,7 @@ interface ClusterStarFieldProps {
 	opacity?: number
 	className?: string
 	style?: React.CSSProperties
+	motionVector?: MotionVector
 }
 
 export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
@@ -16,8 +18,17 @@ export const ClusterStarField: React.FC<ClusterStarFieldProps> = ({
 	opacity = 1.0,
 	className = '',
 	style,
+	motionVector,
 }: ClusterStarFieldProps) => {
-	const canvasRef = useClusterStarField({ variant, opacity, stardustVariant })
+	// Debug: motion vector received (disabled for cleaner output)
+	// console.log('🌌 ClusterStarField motion:', motionVector?.lateral)
+
+	const canvasRef = useClusterStarField({
+		variant,
+		opacity,
+		stardustVariant,
+		motionVector,
+	})
 
 	return (
 		<canvas

@@ -63,9 +63,21 @@ export class ClusterStar3D {
 		this.z = this.clusterDistance.min + Math.random() * range
 	}
 
-	update(forwardSpeed: number, rollSpeed: number, deltaTime: number) {
-		// Move at same absolute speed but appears much slower due to distance
+	update(
+		forwardSpeed: number,
+		rollSpeed: number,
+		deltaTime: number,
+		lateralSpeed: number = 0,
+		verticalSpeed: number = 0,
+	) {
+		// Forward motion - move at same absolute speed but appears much slower due to distance
 		this.z -= forwardSpeed * deltaTime
+
+		// Lateral motion (left/right during course changes) - minimal due to distance
+		this.x += lateralSpeed * deltaTime
+
+		// Vertical motion (up/down, minimal during course changes)
+		this.y += verticalSpeed * deltaTime
 
 		// Much more distant wrap point - stars cycle very slowly
 		const wrapThreshold = 100000 // 2000x farther than foreground
@@ -194,9 +206,21 @@ export class CenterClusterStar3D {
 		this.z = this.clusterDistance.min + Math.random() * range
 	}
 
-	update(forwardSpeed: number, rollSpeed: number, deltaTime: number) {
-		// Move at same absolute speed but appears much slower due to distance
+	update(
+		forwardSpeed: number,
+		rollSpeed: number,
+		deltaTime: number,
+		lateralSpeed: number = 0,
+		verticalSpeed: number = 0,
+	) {
+		// Forward motion - move at same absolute speed but appears much slower due to distance
 		this.z -= forwardSpeed * deltaTime
+
+		// Lateral motion (left/right during course changes) - minimal due to distance
+		this.x += lateralSpeed * deltaTime
+
+		// Vertical motion (up/down, minimal during course changes)
+		this.y += verticalSpeed * deltaTime
 
 		// Wrap threshold should match the distance range used
 		const wrapThreshold = Math.min(100000, this.clusterDistance.min * 0.5)

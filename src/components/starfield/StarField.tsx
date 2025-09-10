@@ -5,6 +5,7 @@ import {
 	StarFieldVariant,
 	TwinkleVariant,
 } from '@/types/starfield'
+import { MotionVector } from '@/types/transitions'
 import React from 'react'
 import { ClusterStarField } from './ClusterStarField'
 
@@ -17,6 +18,8 @@ interface StarFieldProps {
 	starCount?: number
 	speed?: number
 	rollSpeed?: number
+	// Course change transition support
+	motionVector?: MotionVector
 }
 
 export const StarField: React.FC<StarFieldProps> = ({
@@ -27,7 +30,11 @@ export const StarField: React.FC<StarFieldProps> = ({
 	starCount,
 	speed = 1000,
 	rollSpeed = -1.5,
+	motionVector,
 }) => {
+	// Debug: motion vector received (disabled for cleaner output)
+	// console.log('⭐ StarField motion:', motionVector?.lateral)
+
 	// Check if this is a cluster variant
 	const isClusterVariant = variant.startsWith('cluster-')
 
@@ -43,6 +50,7 @@ export const StarField: React.FC<StarFieldProps> = ({
 		rollSpeed,
 		opacity,
 		variant: isClusterVariant ? 'twinkle-compact' : (variant as TwinkleVariant),
+		motionVector,
 	})
 
 	if (isClusterVariant) {
@@ -53,6 +61,7 @@ export const StarField: React.FC<StarFieldProps> = ({
 				opacity={opacity}
 				className={className}
 				style={style}
+				motionVector={motionVector}
 			/>
 		)
 	}

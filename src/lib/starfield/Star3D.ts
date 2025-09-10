@@ -76,8 +76,21 @@ export class Star3D {
 		}
 	}
 
-	update(forwardSpeed: number, rollSpeed: number, deltaTime: number) {
+	update(
+		forwardSpeed: number,
+		rollSpeed: number,
+		deltaTime: number,
+		lateralSpeed: number = 0,
+		verticalSpeed: number = 0,
+	) {
+		// Forward motion (toward viewer)
 		this.z -= forwardSpeed * deltaTime
+
+		// Lateral motion (left/right during course changes)
+		this.x += lateralSpeed * deltaTime
+
+		// Vertical motion (up/down, minimal during course changes)
+		this.y += verticalSpeed * deltaTime
 
 		const wrapThreshold = 50
 		if (this.z <= wrapThreshold) {
@@ -87,6 +100,7 @@ export class Star3D {
 			this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
 		}
 
+		// Apply continuous roll rotation
 		const rollAngle = (rollSpeed * deltaTime * Math.PI) / 180
 		const cos = Math.cos(rollAngle)
 		const sin = Math.sin(rollAngle)

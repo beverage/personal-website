@@ -1,4 +1,5 @@
 import { ClusterVariant } from '@/types/starfield'
+import { BankingRoll, MotionVector } from '@/types/transitions'
 import React from 'react'
 import { ClusterStarField } from './ClusterStarField'
 import { StarField } from './StarField'
@@ -14,6 +15,10 @@ interface LayeredStarFieldProps {
 	fadeOutDuration?: number
 	className?: string
 	style?: React.CSSProperties
+	// Course change transition support
+	foregroundMotionVector?: MotionVector
+	backgroundMotionVector?: MotionVector
+	bankingRoll?: BankingRoll
 }
 
 export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
@@ -26,6 +31,9 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
 	fadeOutDuration = 1000,
 	className = '',
 	style,
+	foregroundMotionVector,
+	backgroundMotionVector,
+	bankingRoll,
 }) => {
 	return (
 		<div
@@ -48,6 +56,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
 					transition: `opacity ${showCluster ? fadeInDuration : fadeOutDuration}ms ease-in-out`,
 					opacity: showCluster ? 1.0 : 0,
 				}}
+				motionVector={backgroundMotionVector}
 			/>
 
 			{/* Foreground layer: Twinkle starfield (transparent canvas) */}
@@ -55,7 +64,9 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
 				variant="twinkle-compact"
 				opacity={opacity}
 				speed={speed}
+				rollSpeed={bankingRoll?.foregroundRollSpeed}
 				className="absolute inset-0"
+				motionVector={foregroundMotionVector}
 			/>
 		</div>
 	)
@@ -69,6 +80,10 @@ export interface HomepageLayeredStarFieldProps {
 	speed?: number
 	fadeInDuration?: number
 	fadeOutDuration?: number
+	// Course change transition support
+	foregroundMotionVector?: MotionVector
+	backgroundMotionVector?: MotionVector
+	bankingRoll?: BankingRoll
 }
 export const HomepageLayeredStarField: React.FC<
 	HomepageLayeredStarFieldProps
@@ -79,6 +94,9 @@ export const HomepageLayeredStarField: React.FC<
 	speed,
 	fadeInDuration = 3000,
 	fadeOutDuration = 1000,
+	foregroundMotionVector,
+	backgroundMotionVector,
+	bankingRoll,
 }) => (
 	<LayeredStarField
 		clusterVariant="cluster-ellipse-4x-center-close-1"
@@ -88,5 +106,8 @@ export const HomepageLayeredStarField: React.FC<
 		fadeInDuration={fadeInDuration}
 		fadeOutDuration={fadeOutDuration}
 		className={className}
+		foregroundMotionVector={foregroundMotionVector}
+		backgroundMotionVector={backgroundMotionVector}
+		bankingRoll={bankingRoll}
 	/>
 )

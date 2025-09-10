@@ -4,6 +4,7 @@ import {
 } from '@/lib/starfield/ClusterStar3D'
 import { Star3D } from '@/lib/starfield/Star3D'
 import { CLUSTER_CONFIGS, ClusterVariant } from '@/types/starfield'
+import { type MotionVector } from '@/types/transitions'
 import { useEffect, useRef, useState } from 'react'
 import { useIsMobile } from './useMobileDetection'
 
@@ -58,12 +59,14 @@ interface UseClusterStarFieldProps {
 	variant: ClusterVariant
 	opacity?: number
 	stardustVariant?: 'halo' | 'sparkle' | 'bloom' | 'nebula'
+	motionVector?: MotionVector
 }
 
 export const useClusterStarField = ({
 	variant,
 	opacity = 1.0,
 	stardustVariant,
+	motionVector,
 }: UseClusterStarFieldProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const foregroundStarsRef = useRef<Star3D[]>([])
@@ -73,6 +76,8 @@ export const useClusterStarField = ({
 	const lastTimeRef = useRef<number>(0)
 	const [isClient, setIsClient] = useState(false)
 	const isMobile = useIsMobile()
+	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
+	const motionVectorRef = useRef(motionVector)
 
 	// Get configuration for this variant
 	const config = CLUSTER_CONFIGS[variant]
@@ -81,6 +86,11 @@ export const useClusterStarField = ({
 	useEffect(() => {
 		setIsClient(true)
 	}, [])
+
+	// Update motionVectorRef whenever motionVector prop changes
+	useEffect(() => {
+		motionVectorRef.current = motionVector
+	}, [motionVector])
 
 	useEffect(() => {
 		if (!isClient) return
@@ -160,7 +170,17 @@ export const useClusterStarField = ({
 
 			// Render distant cluster first (background layer)
 			clusterStarsRef.current.forEach(star => {
-				star.update(config.approachSpeed, -1.5, deltaTime)
+				const forwardSpeed =
+					motionVectorRef.current?.forward ?? config.approachSpeed
+				const lateralSpeed = motionVectorRef.current?.lateral ?? 0
+				const verticalSpeed = motionVectorRef.current?.vertical ?? 0
+
+				// Debug logging disabled for cleaner output
+				// if (lateralSpeed !== 0 && Math.floor(currentTime / 16) % 300 === 0) {
+				// 	console.log('🌌 Cluster:', { lateral: lateralSpeed.toFixed(3) })
+				// }
+
+				star.update(forwardSpeed, -1.5, deltaTime, lateralSpeed, verticalSpeed)
 
 				const projected = star.project(
 					canvas.width,
@@ -185,7 +205,13 @@ export const useClusterStarField = ({
 
 			// Render center stars (between cluster and foreground)
 			centerStarsRef.current.forEach(star => {
-				star.update(config.approachSpeed, -1.5, deltaTime)
+				star.update(
+					motionVectorRef.current?.forward ?? config.approachSpeed,
+					-1.5,
+					deltaTime,
+					motionVectorRef.current?.lateral ?? 0,
+					motionVectorRef.current?.vertical ?? 0,
+				)
 
 				const projected = star.project(
 					canvas.width,
@@ -205,7 +231,13 @@ export const useClusterStarField = ({
 			// Render foreground stars (existing star field) - only if they exist
 			if (foregroundStarsRef.current.length > 0) {
 				foregroundStarsRef.current.forEach(star => {
-					star.update(config.approachSpeed, -1.5, deltaTime)
+					star.update(
+						motionVectorRef.current?.forward ?? config.approachSpeed,
+						-1.5,
+						deltaTime,
+						motionVectorRef.current?.lateral ?? 0,
+						motionVectorRef.current?.vertical ?? 0,
+					)
 
 					const projected = star.project(
 						canvas.width,

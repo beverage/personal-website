@@ -1,3 +1,7 @@
+import {
+	AnimationController,
+	type AnimationSubscriber,
+} from '@/lib/animation/AnimationController'
 import { renderTwinkleStar, Star3D, TwinkleVariant } from '@/lib/starfield'
 import { type MotionVector } from '@/types/transitions'
 import { useEffect, useRef, useState } from 'react'
@@ -27,6 +31,11 @@ export const useStarField = ({
 	const rollSpeedRef = useRef(rollSpeed)
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
+	// Unique ID for this starfield instance
+	const instanceIdRef = useRef(
+		`starfield-${Math.random().toString(36).substr(2, 9)}`,
+	)
+	const [isClient, setIsClient] = useState(false)
 
 	// Update speedRef whenever speed prop changes
 	useEffect(() => {
@@ -42,9 +51,6 @@ export const useStarField = ({
 	useEffect(() => {
 		motionVectorRef.current = motionVector
 	}, [motionVector])
-	const animationRef = useRef<number>(0)
-	const lastTimeRef = useRef<number>(0)
-	const [isClient, setIsClient] = useState(false)
 
 	// Ensure we're only running client-side
 	useEffect(() => {
@@ -73,73 +79,6 @@ export const useStarField = ({
 			() => new Star3D(width, height),
 		)
 
-		const animate = (currentTime: number) => {
-			if (!canvasRef.current) {
-				return
-			}
-
-			const canvas = canvasRef.current
-			const ctx = canvas.getContext('2d')
-			if (!ctx) {
-				return
-			}
-
-			let deltaTime = lastTimeRef.current
-				? (currentTime - lastTimeRef.current) / 1000
-				: 0
-			// Clamp deltaTime to prevent visual jumps after tab switching
-			if (deltaTime > 0.1) deltaTime = 0.1
-			lastTimeRef.current = currentTime
-
-			// Removed noisy debug logging
-
-			// Clear canvas with deep space black
-			ctx.fillStyle = 'transparent'
-			ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-			starsRef.current.forEach(star => {
-				// Fast visibility pre-check using current position + aspect-ratio margin
-				if (star.isLikelyVisible()) {
-					// Full update with rotation for potentially visible stars
-					const forwardSpeed =
-						motionVectorRef.current?.forward ?? speedRef.current
-					const lateralSpeed = motionVectorRef.current?.lateral ?? 0
-					const verticalSpeed = motionVectorRef.current?.vertical ?? 0
-
-					star.update(
-						forwardSpeed,
-						rollSpeedRef.current,
-						deltaTime,
-						lateralSpeed,
-						verticalSpeed,
-					)
-
-					const projected = star.project(canvas.width, canvas.height)
-					if (projected.visible) {
-						renderTwinkleStar(
-							ctx,
-							projected.x,
-							projected.y,
-							projected.size,
-							projected.opacity * opacity,
-							currentTime,
-							variant,
-						)
-					}
-				} else {
-					// Minimal update for off-screen stars (no rotation, just forward movement)
-					star.updateMinimal(
-						motionVectorRef.current?.forward ?? speedRef.current,
-						deltaTime,
-					)
-				}
-			})
-
-			// Performance stats removed for cleaner debugging
-
-			animationRef.current = requestAnimationFrame(animate)
-		}
-
 		const resizeCanvas = () => {
 			if (canvasRef.current) {
 				canvasRef.current.width = canvasRef.current.offsetWidth
@@ -157,13 +96,75 @@ export const useStarField = ({
 		resizeCanvas()
 		window.addEventListener('resize', resizeCanvas)
 
-		animationRef.current = requestAnimationFrame(animate)
+		// Create animation subscriber for centralized controller
+		const subscriber: AnimationSubscriber = {
+			id: instanceIdRef.current,
+			priority: 10, // Standard priority for starfield
+			enabled: true,
+			update: (currentTime: number, deltaTime: number) => {
+				if (!canvasRef.current) {
+					return
+				}
+
+				const canvas = canvasRef.current
+				const ctx = canvas.getContext('2d')
+				if (!ctx) {
+					return
+				}
+
+				// Clear canvas with deep space black
+				ctx.fillStyle = 'transparent'
+				ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+				starsRef.current.forEach(star => {
+					// Fast visibility pre-check using current position + aspect-ratio margin
+					if (star.isLikelyVisible()) {
+						// Full update with rotation for potentially visible stars
+						const forwardSpeed =
+							motionVectorRef.current?.forward ?? speedRef.current
+						const lateralSpeed = motionVectorRef.current?.lateral ?? 0
+						const verticalSpeed = motionVectorRef.current?.vertical ?? 0
+
+						star.update(
+							forwardSpeed,
+							rollSpeedRef.current,
+							deltaTime,
+							lateralSpeed,
+							verticalSpeed,
+						)
+
+						const projected = star.project(canvas.width, canvas.height)
+						if (projected.visible) {
+							renderTwinkleStar(
+								ctx,
+								projected.x,
+								projected.y,
+								projected.size,
+								projected.opacity * opacity,
+								currentTime,
+								variant,
+							)
+						}
+					} else {
+						// Minimal update for off-screen stars (no rotation, just forward movement)
+						star.updateMinimal(
+							motionVectorRef.current?.forward ?? speedRef.current,
+							deltaTime,
+						)
+					}
+				})
+			},
+		}
+
+		// Subscribe to the centralized animation controller
+		AnimationController.subscribe(subscriber)
 
 		return () => {
 			window.removeEventListener('resize', resizeCanvas)
-			if (animationRef.current) {
-				cancelAnimationFrame(animationRef.current)
-			}
+			// Unsubscribe from the centralized animation controller
+			// Capture the instance ID to avoid stale closure issues
+			const instanceId = instanceIdRef.current
+			AnimationController.unsubscribe(instanceId)
 		}
 	}, [isClient, starCount, opacity, variant])
 

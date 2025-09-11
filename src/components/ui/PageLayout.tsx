@@ -2,6 +2,10 @@
 
 import { useContentState } from '@/hooks/useContentState'
 import { useStarFieldTransition } from '@/hooks/useStarFieldTransition'
+import {
+	AnimationState,
+	useAnimationStateMachine,
+} from '@/lib/animation/AnimationStateMachine'
 import { COURSE_CHANGE_PRESETS } from '@/types/transitions'
 import { FileText } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -91,9 +95,22 @@ export const PageLayout = ({
 		navigateToProjects,
 		navigateToContact,
 		navigateToHero,
-		isTransitioning: contentTransitioning,
 		setIsTransitioning: setContentTransitioning,
 	} = useContentState()
+
+	// Animation state machine for coordinating transitions
+	const {
+		currentState: animationState,
+		requestTransition,
+		canTransitionTo,
+	} = useAnimationStateMachine()
+
+	// Debug animation state in development
+	useEffect(() => {
+		if (process.env.NODE_ENV === 'development') {
+			console.log('🎯 Animation State:', animationState)
+		}
+	}, [animationState])
 
 	// Transition system
 	const transitionConfig = COURSE_CHANGE_PRESETS[courseChangeVariant]
@@ -113,6 +130,8 @@ export const PageLayout = ({
 			// Reset transition tracking when complete
 			setFromContentState(contentState)
 			setToContentState(contentState)
+			// Return animation state to idle
+			requestTransition(AnimationState.IDLE)
 		},
 		onContentFadeComplete: () => {
 			// Content fade transition is complete
@@ -152,7 +171,14 @@ export const PageLayout = ({
 
 	// Navigation handlers with course change transitions
 	const handleExploreProjectsClick = () => {
-		if (!enableTransitions || isTransitioning || contentTransitioning) return
+		// Check if we can transition using the state machine
+		if (!enableTransitions || !canTransitionTo(AnimationState.COURSE_CHANGE)) {
+			return
+		}
+
+		// Request course change state transition
+		const success = requestTransition(AnimationState.COURSE_CHANGE)
+		if (!success) return
 
 		setContentTransitioning(true)
 		setFromContentState(contentState)
@@ -163,7 +189,14 @@ export const PageLayout = ({
 	}
 
 	const handleGetInTouchClick = () => {
-		if (!enableTransitions || isTransitioning || contentTransitioning) return
+		// Check if we can transition using the state machine
+		if (!enableTransitions || !canTransitionTo(AnimationState.COURSE_CHANGE)) {
+			return
+		}
+
+		// Request course change state transition
+		const success = requestTransition(AnimationState.COURSE_CHANGE)
+		if (!success) return
 
 		setContentTransitioning(true)
 		setFromContentState(contentState)
@@ -173,7 +206,14 @@ export const PageLayout = ({
 	}
 
 	const handleBackClick = () => {
-		if (isTransitioning || contentTransitioning) return
+		// Check if we can transition using the state machine
+		if (!canTransitionTo(AnimationState.COURSE_CHANGE)) {
+			return
+		}
+
+		// Request course change state transition
+		const success = requestTransition(AnimationState.COURSE_CHANGE)
+		if (!success) return
 
 		const direction = contentState === 'projects' ? 'right' : 'left'
 		setContentTransitioning(true)

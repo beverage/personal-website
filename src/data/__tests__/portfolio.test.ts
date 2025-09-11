@@ -5,7 +5,7 @@ import { portfolioData, projects } from '../portfolio'
 describe('Portfolio Data', () => {
 	describe('projects array', () => {
 		it('should contain projects with valid structure', () => {
-			expect(projects).toHaveLength(2)
+			expect(projects).toHaveLength(3)
 
 			projects.forEach(project => {
 				expect(project).toHaveProperty('id')

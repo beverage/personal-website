@@ -73,6 +73,37 @@ export const projects: Project[] = [
 		featured: true,
 		status: 'in-progress',
 	},
+	{
+		id: 'personal-website',
+		title: 'beverage.me',
+		description:
+			'Interactive personal website with cinematic starfield animations',
+		longDescription:
+			'A modern personal portfolio website featuring an immersive dual-layer starfield animation system with course change transitions. Built with Next.js and TypeScript, showcasing advanced Canvas 2D animations, Framer Motion integration, and a centralized animation architecture. Features include transform-based portfolio scrolling, dynamic animation state management, and performance-optimized rendering.',
+		technologies: [
+			'Next.js',
+			'TypeScript',
+			'Framer Motion',
+			'Canvas 2D',
+			'Tailwind CSS',
+		],
+		imageUrl:
+			'https://dummyimage.com/800x600/1a1a1a/00bcd4.png&text=beverage.me',
+		links: [
+			{
+				label: 'View Source',
+				url: 'https://github.com/beverage/personal-website',
+				type: 'github',
+			},
+			{
+				label: 'Visit Site',
+				url: 'https://beverage.me',
+				type: 'website',
+			},
+		],
+		featured: true,
+		status: 'completed',
+	},
 ]
 
 export const portfolioData: PortfolioData = {

@@ -31,6 +31,21 @@ interface ClientConfig {
 	cvUrl?: string
 }
 
+interface StartupSequenceConfig {
+	/** Enable the startup animation sequence */
+	enabled?: boolean
+	/** Delay before auto-toggle from sailboat to rocket mode (ms) */
+	autoToggleDelay?: number
+	/** Delay before hero text starts fading in (ms) */
+	heroFadeDelay?: number
+	/** Duration of hero text fade-in animation (ms) */
+	heroFadeDuration?: number
+	/** Delay before UI controls start fading in (ms) */
+	controlsFadeDelay?: number
+	/** Duration of UI controls fade-in animation (ms) */
+	controlsFadeDuration?: number
+}
+
 interface PageLayoutProps {
 	children?: React.ReactNode
 	showStarField?: boolean
@@ -49,6 +64,8 @@ interface PageLayoutProps {
 	// Course change transition props
 	enableTransitions?: boolean
 	courseChangeVariant?: keyof typeof COURSE_CHANGE_PRESETS
+	// Startup sequence configuration
+	startupSequence?: StartupSequenceConfig
 }
 
 export const PageLayout = ({
@@ -65,23 +82,48 @@ export const PageLayout = ({
 	clientConfig,
 	enableTransitions = true,
 	courseChangeVariant = 'banking-turn',
+	startupSequence = {
+		enabled: true,
+		autoToggleDelay: 3000,
+		heroFadeDelay: 1000,
+		heroFadeDuration: 3000,
+		controlsFadeDelay: 3000,
+		controlsFadeDuration: 2000,
+	},
 }: PageLayoutProps) => {
-	const [clusterVisible, setClusterVisible] = useState(showStarField)
-	// Track star-field forward speed (1200 when cluster ON, 600 when OFF)
-	const [starSpeed, setStarSpeed] = useState(clusterVisible ? 1200 : 400)
+	// Startup sequence: Start in sailboat mode, then auto-toggle to rocket mode
+	const [clusterVisible, setClusterVisible] = useState(
+		startupSequence?.enabled ? false : showStarField,
+	)
+	// Track star-field forward speed (1200 when cluster ON, 400 when OFF)
+	const [starSpeed, setStarSpeed] = useState(
+		startupSequence?.enabled ? 400 : clusterVisible ? 1200 : 400,
+	)
+
+	// Startup sequence states
+	const [heroVisible, setHeroVisible] = useState(!startupSequence?.enabled)
+	const [uiControlsVisible, setUiControlsVisible] = useState(
+		!startupSequence?.enabled,
+	)
+	const [startupComplete, setStartupComplete] = useState(
+		!startupSequence?.enabled,
+	)
 
 	// Track timeouts for cleanup
 	const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set())
 
 	// Helper to create tracked timeouts that get cleaned up on unmount
-	const createTrackedTimeout = (callback: () => void, delay: number) => {
-		const timeoutId = setTimeout(() => {
-			timeoutsRef.current.delete(timeoutId)
-			callback()
-		}, delay)
-		timeoutsRef.current.add(timeoutId)
-		return timeoutId
-	}
+	const createTrackedTimeout = useCallback(
+		(callback: () => void, delay: number) => {
+			const timeoutId = setTimeout(() => {
+				timeoutsRef.current.delete(timeoutId)
+				callback()
+			}, delay)
+			timeoutsRef.current.add(timeoutId)
+			return timeoutId
+		},
+		[],
+	)
 
 	// Cleanup all timeouts on unmount
 	useEffect(() => {
@@ -91,6 +133,44 @@ export const PageLayout = ({
 			timeouts.clear()
 		}
 	}, [])
+
+	// Startup sequence orchestration
+	useEffect(() => {
+		if (!startupSequence?.enabled || startupComplete) return
+
+		const {
+			autoToggleDelay = 500,
+			heroFadeDelay = 800,
+			controlsFadeDelay = 2000,
+		} = startupSequence
+
+		// Phase 1: Auto-toggle from sailboat to rocket mode
+		createTrackedTimeout(() => {
+			setClusterVisible(true) // This triggers existing starfield animation
+		}, autoToggleDelay)
+
+		// Phase 2: Hero text fade-in
+		createTrackedTimeout(() => {
+			setHeroVisible(true)
+		}, heroFadeDelay)
+
+		// Phase 3: UI controls fade-in
+		createTrackedTimeout(() => {
+			setUiControlsVisible(true)
+		}, controlsFadeDelay)
+
+		// Phase 4: Mark startup complete
+		createTrackedTimeout(
+			() => {
+				setStartupComplete(true)
+			},
+			controlsFadeDelay + (startupSequence.controlsFadeDuration || 400),
+		)
+
+		return () => {
+			// Cleanup handled by createTrackedTimeout
+		}
+	}, [startupSequence, startupComplete, createTrackedTimeout])
 
 	// Content state management
 	const {
@@ -148,6 +228,23 @@ export const PageLayout = ({
 	const [toContentState, setToContentState] = useState<
 		'hero' | 'projects' | 'contact'
 	>('hero')
+
+	// Shared styles for UI controls fade-in - only apply during startup sequence
+	const controlFadeStyle =
+		startupSequence?.enabled && !startupComplete
+			? {
+					opacity: uiControlsVisible ? 1 : 0,
+					transition: `opacity ${startupSequence?.controlsFadeDuration || 400}ms ease-in-out`,
+				}
+			: {}
+
+	// Hero fade style - only apply during startup sequence
+	const heroFadeStyle =
+		startupSequence?.enabled && !startupComplete
+			? {
+					transition: `opacity ${startupSequence?.heroFadeDuration || 1200}ms ease-in-out`,
+				}
+			: {}
 
 	// Calculate the appropriate opacity for each content type during transitions
 	const getContentOpacity = useCallback(
@@ -282,7 +379,10 @@ export const PageLayout = ({
 			/>
 
 			{/* LCARS-style branding panel */}
-			<div className="absolute top-8 left-8 z-50 flex items-center gap-3">
+			<div
+				className="absolute top-8 left-8 z-50 flex items-center gap-3"
+				style={controlFadeStyle}
+			>
 				<BrandPanel brandName={brandName} />
 			</div>
 
@@ -291,13 +391,31 @@ export const PageLayout = ({
 				<motion.div
 					className="absolute top-1/2 left-8 z-50 -translate-y-1/2"
 					initial={{ opacity: 0, x: -20 }}
-					animate={{ opacity: 1, x: 0 }}
+					animate={{
+						opacity:
+							startupSequence?.enabled && !startupComplete
+								? uiControlsVisible
+									? 1
+									: 0
+								: 1,
+						x:
+							startupSequence?.enabled && !startupComplete
+								? uiControlsVisible
+									? 0
+									: -20
+								: 0,
+					}}
 					transition={{
-						duration: 0.6,
+						duration:
+							startupSequence?.enabled && !startupComplete
+								? (startupSequence.controlsFadeDuration || 400) / 1000
+								: 0.6,
 						delay:
-							(transitionConfig.duration +
-								(transitionConfig.settlingDuration || 0)) /
-							1000,
+							startupSequence?.enabled && !startupComplete
+								? 0
+								: (transitionConfig.duration +
+										(transitionConfig.settlingDuration || 0)) /
+									1000,
 					}}
 				>
 					<BackButton
@@ -313,13 +431,31 @@ export const PageLayout = ({
 				<motion.div
 					className="absolute top-1/2 right-8 z-50 -translate-y-1/2"
 					initial={{ opacity: 0, x: 20 }}
-					animate={{ opacity: 1, x: 0 }}
+					animate={{
+						opacity:
+							startupSequence?.enabled && !startupComplete
+								? uiControlsVisible
+									? 1
+									: 0
+								: 1,
+						x:
+							startupSequence?.enabled && !startupComplete
+								? uiControlsVisible
+									? 0
+									: 20
+								: 0,
+					}}
 					transition={{
-						duration: 0.6,
+						duration:
+							startupSequence?.enabled && !startupComplete
+								? (startupSequence.controlsFadeDuration || 400) / 1000
+								: 0.6,
 						delay:
-							(transitionConfig.duration +
-								(transitionConfig.settlingDuration || 0)) /
-							1000,
+							startupSequence?.enabled && !startupComplete
+								? 0
+								: (transitionConfig.duration +
+										(transitionConfig.settlingDuration || 0)) /
+									1000,
 					}}
 				>
 					<BackButton
@@ -331,7 +467,10 @@ export const PageLayout = ({
 			)}
 
 			{/* LCARS-style control panel */}
-			<div className="absolute top-8 right-8 z-50 flex items-center gap-3">
+			<div
+				className="absolute top-8 right-8 z-50 flex items-center gap-3"
+				style={controlFadeStyle}
+			>
 				{clientConfig?.cvUrl && (
 					<a
 						href={clientConfig.cvUrl}
@@ -346,7 +485,11 @@ export const PageLayout = ({
 				)}
 				<ControlPanel
 					darkMode={clusterVisible}
-					onToggle={() => setClusterVisible(!clusterVisible)}
+					onToggle={
+						startupComplete
+							? () => setClusterVisible(!clusterVisible)
+							: undefined
+					}
 				/>
 			</div>
 
@@ -375,9 +518,20 @@ export const PageLayout = ({
 												: 'flex min-h-screen items-center justify-center px-6'
 										}`}
 										style={{
-											opacity: getContentOpacity('hero'),
-											pointerEvents:
-												getContentOpacity('hero') === 0 ? 'none' : 'auto',
+											...heroFadeStyle,
+											opacity:
+												startupSequence?.enabled && !startupComplete
+													? heroVisible
+														? getContentOpacity('hero')
+														: 0
+													: getContentOpacity('hero'),
+											pointerEvents: (
+												startupSequence?.enabled && !startupComplete
+													? heroVisible && getContentOpacity('hero') !== 0
+													: getContentOpacity('hero') !== 0
+											)
+												? 'auto'
+												: 'none',
 										}}
 									>
 										<HeroSection
@@ -442,7 +596,10 @@ export const PageLayout = ({
 			</div>
 
 			{/* LCARS-style footer */}
-			<div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
+			<div
+				className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform"
+				style={controlFadeStyle}
+			>
 				<FooterPanel
 					year={clientConfig?.copyrightYear}
 					socialLinks={clientConfig?.socialLinks}

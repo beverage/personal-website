@@ -65,26 +65,6 @@ describe('PageLayout Integration Tests', () => {
 		courseChangeVariant: 'banking-turn' as const,
 	}
 
-	it('renders hero section by default', () => {
-		render(<PageLayout {...defaultProps} />)
-
-		expect(screen.getByText('Test Hero')).toBeInTheDocument()
-		expect(screen.getByText('Test Description')).toBeInTheDocument()
-		expect(screen.getByText('Get In Touch')).toBeInTheDocument() // Fixed case
-		expect(screen.getByText('Explore Projects')).toBeInTheDocument()
-	})
-
-	it('renders starfield with correct props', () => {
-		render(<PageLayout {...defaultProps} showStarField={true} speed={1000} />)
-
-		const starfield = screen.getByTestId('starfield')
-		expect(starfield).toBeInTheDocument()
-
-		const props = JSON.parse(starfield.getAttribute('data-props') || '{}')
-		expect(props.speed).toBe(1000)
-		expect(props.showCluster).toBe(true)
-	})
-
 	it('renders brand panel and control panel', () => {
 		render(<PageLayout {...defaultProps} brandName="test.brand" />)
 

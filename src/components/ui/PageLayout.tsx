@@ -1,5 +1,6 @@
 'use client'
 
+import { portfolioData } from '@/data/portfolio'
 import { useContentState } from '@/hooks/useContentState'
 import { useStarFieldTransition } from '@/hooks/useStarFieldTransition'
 import {
@@ -7,8 +8,10 @@ import {
 	useAnimationStateMachine,
 } from '@/lib/animation/AnimationStateMachine'
 import { COURSE_CHANGE_PRESETS } from '@/types/transitions'
+import { motion } from 'framer-motion'
 import { FileText } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { PortfolioScroll } from '../portfolio/PortfolioScroll'
 import { HomepageLayeredStarField } from '../starfield/LayeredStarField'
 import { BackButton } from './BackButton'
 import { BrandPanel } from './BrandPanel'
@@ -185,7 +188,13 @@ export const PageLayout = ({
 		setToContentState('projects')
 		startTransition('left')
 		// Brief delay to prevent race condition between transition start and content change
-		createTrackedTimeout(() => navigateToProjects(), 50)
+		createTrackedTimeout(() => {
+			navigateToProjects()
+			// Transition to portfolio scroll state after navigation completes
+			createTrackedTimeout(() => {
+				requestTransition(AnimationState.PORTFOLIO_SCROLL)
+			}, 100)
+		}, 50)
 	}
 
 	const handleGetInTouchClick = () => {
@@ -275,26 +284,54 @@ export const PageLayout = ({
 			{/* LCARS-style branding panel */}
 			<div className="absolute top-8 left-8 z-50 flex items-center gap-3">
 				<BrandPanel brandName={brandName} />
-				{/* Back button for Contact page (right of brand panel) */}
-				{contentState === 'contact' && (
+			</div>
+
+			{/* Back button for Contact page - Vertically centered, aligned with brand */}
+			{contentState === 'contact' && (
+				<motion.div
+					className="absolute top-1/2 left-8 z-50 -translate-y-1/2"
+					initial={{ opacity: 0, x: -20 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{
+						duration: 0.6,
+						delay:
+							(transitionConfig.duration +
+								(transitionConfig.settlingDuration || 0)) /
+							1000,
+					}}
+				>
 					<BackButton
 						direction="left"
 						onClick={handleBackClick}
 						aria-label="Back to home"
 					/>
-				)}
-			</div>
+				</motion.div>
+			)}
 
-			{/* LCARS-style control panel */}
-			<div className="absolute top-8 right-8 z-50 flex items-center gap-3">
-				{/* Back button for Projects page (left of CV button) */}
-				{contentState === 'projects' && (
+			{/* Back button for Projects page - Vertically centered, aligned with rocket */}
+			{contentState === 'projects' && (
+				<motion.div
+					className="absolute top-1/2 right-8 z-50 -translate-y-1/2"
+					initial={{ opacity: 0, x: 20 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{
+						duration: 0.6,
+						delay:
+							(transitionConfig.duration +
+								(transitionConfig.settlingDuration || 0)) /
+							1000,
+					}}
+				>
 					<BackButton
 						direction="right"
 						onClick={handleBackClick}
 						aria-label="Back to home"
 					/>
-				)}
+				</motion.div>
+			)}
+
+			{/* LCARS-style control panel */}
+			<div className="absolute top-8 right-8 z-50 flex items-center gap-3">
 				{clientConfig?.cvUrl && (
 					<a
 						href={clientConfig.cvUrl}
@@ -358,9 +395,7 @@ export const PageLayout = ({
 								{shouldRenderContent('projects') && (
 									<div
 										className={`${
-											isTransitioning
-												? 'absolute inset-0 flex items-center justify-center px-6'
-												: 'flex min-h-screen items-center justify-center px-6'
+											isTransitioning ? 'absolute inset-0' : 'fixed inset-0'
 										}`}
 										style={{
 											opacity: getContentOpacity('projects'),
@@ -368,16 +403,10 @@ export const PageLayout = ({
 												getContentOpacity('projects') === 0 ? 'none' : 'auto',
 										}}
 									>
-										<div className="max-w-5xl text-center">
-											<h1 className="font-exo2 mb-8 text-6xl tracking-wider sm:text-8xl">
-												<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
-													Projects
-												</span>
-											</h1>
-											<p className="font-exo2 mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90 sm:text-2xl">
-												Explore my work and projects.
-											</p>
-										</div>
+										<PortfolioScroll
+											projects={portfolioData.projects}
+											className="h-full w-full"
+										/>
 									</div>
 								)}
 

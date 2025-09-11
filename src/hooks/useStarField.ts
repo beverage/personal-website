@@ -58,6 +58,9 @@ export const useStarField = ({
 	}, [])
 
 	useEffect(() => {
+		// Capture the instance ID at the start of the effect to avoid stale closures
+		const instanceId = instanceIdRef.current
+
 		// Double check we're on the client
 		if (!isClient) {
 			return
@@ -162,8 +165,6 @@ export const useStarField = ({
 		return () => {
 			window.removeEventListener('resize', resizeCanvas)
 			// Unsubscribe from the centralized animation controller
-			// Capture the instance ID to avoid stale closure issues
-			const instanceId = instanceIdRef.current
 			AnimationController.unsubscribe(instanceId)
 		}
 	}, [isClient, starCount, opacity, variant])

@@ -11,7 +11,7 @@ export default function Home() {
 		<PageLayout
 			brandName="beverage.me"
 			heroTitle="Alex Beverage"
-			heroDescription="Under Construction"
+			heroDescription="Site Under Construction"
 			clientConfig={clientConfig}
 		/>
 	)

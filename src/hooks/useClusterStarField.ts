@@ -99,6 +99,9 @@ export const useClusterStarField = ({
 	}, [motionVector])
 
 	useEffect(() => {
+		// Capture the instance ID at the start of the effect to avoid stale closures
+		const instanceId = instanceIdRef.current
+
 		if (!isClient) return
 
 		// Skip cluster rendering entirely on mobile devices
@@ -437,8 +440,6 @@ export const useClusterStarField = ({
 		return () => {
 			window.removeEventListener('resize', resizeCanvas)
 			// Unsubscribe from the centralized animation controller
-			// Capture the instance ID to avoid stale closure issues
-			const instanceId = instanceIdRef.current
 			AnimationController.unsubscribe(instanceId)
 		}
 	}, [isClient, variant, opacity, config, isMobile, stardustVariant])

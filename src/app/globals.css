@@ -23,4 +23,41 @@
 	.font-geist-mono {
 		font-family: var(--font-geist-mono), monospace;
 	}
+
+	/* Hide scrollbars while keeping scroll functionality */
+	.scrollbar-hide {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, Opera */
+	}
+
+	/* Custom slow scroll behavior to match animation timing */
+	.portfolio-scroll {
+		scroll-behavior: auto; /* Disable browser smooth scroll for custom control */
+		scroll-snap-type: y mandatory;
+		scroll-snap-stop: always;
+	}
+
+	.portfolio-scroll::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Slow down natural scrolling via CSS scroll-timeline */
+	.portfolio-scroll {
+		scroll-timeline: --portfolio-scroll block;
+		animation: slow-scroll linear both;
+		animation-timeline: --portfolio-scroll;
+	}
+
+	@keyframes slow-scroll {
+		from {
+			scroll-behavior: auto;
+		}
+		to {
+			scroll-behavior: auto;
+		}
+	}
 }

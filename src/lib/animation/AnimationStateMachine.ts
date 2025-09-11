@@ -8,6 +8,7 @@
 export enum AnimationState {
 	IDLE = 'idle',
 	COURSE_CHANGE = 'course-change',
+	PORTFOLIO_SCROLL = 'portfolio-scroll',
 }
 
 export interface StateTransition {
@@ -38,7 +39,10 @@ class AnimationStateMachineClass {
 	// Define valid state transitions and their behaviors
 	private readonly stateMachine: Record<AnimationState, StateConfig> = {
 		[AnimationState.IDLE]: {
-			canTransitionTo: [AnimationState.COURSE_CHANGE],
+			canTransitionTo: [
+				AnimationState.COURSE_CHANGE,
+				AnimationState.PORTFOLIO_SCROLL,
+			],
 			onEnter: () => {
 				if (this.config.debugMode) {
 					console.log('🎯 Animation State: IDLE - Normal operation')
@@ -72,6 +76,30 @@ class AnimationStateMachineClass {
 				if (subscriberId.includes('starfield')) return 100
 				if (subscriberId.includes('cluster')) return 90
 				return 1 // Minimize other animations
+			},
+		},
+		[AnimationState.PORTFOLIO_SCROLL]: {
+			canTransitionTo: [AnimationState.IDLE, AnimationState.COURSE_CHANGE],
+			onEnter: () => {
+				if (this.config.debugMode) {
+					console.log(
+						'🎯 Animation State: PORTFOLIO_SCROLL - Optimizing for scroll performance',
+					)
+				}
+			},
+			onExit: () => {
+				if (this.config.debugMode) {
+					console.log(
+						'🎯 Animation State: Exiting PORTFOLIO_SCROLL - Restoring normal priorities',
+					)
+				}
+			},
+			getPriority: (subscriberId: string) => {
+				// Optimize priorities for portfolio scrolling
+				if (subscriberId.includes('portfolio')) return 100 // Max priority for portfolio animations
+				if (subscriberId.includes('starfield')) return 50 // Reduced priority for performance
+				if (subscriberId.includes('cluster')) return 40 // Reduced priority for performance
+				return 1 // Minimal priority for other animations
 			},
 		},
 	}

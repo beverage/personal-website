@@ -21,9 +21,57 @@ const exo2 = localFont({
 })
 
 export const metadata: Metadata = {
-	title: 'beverage.me - Personal Website',
-	description:
-		"Alex Beverage's personal website featuring interactive star field animations",
+	title: 'beverage.me - Alex Beverage',
+	description: "Alex Beverage's Personal Website",
+
+	// SEO Keywords and Author Info
+	keywords: [
+		'Alex Beverage',
+		'agentic developer',
+		'portfolio',
+		'personal website',
+		'ai',
+		'sotware engineer',
+	],
+	authors: [{ name: 'Alex Beverage' }],
+	creator: 'Alex Beverage',
+
+	// Mobile browser theme color (matches cyan theme)
+	themeColor: '#00bcd4',
+
+	// Canonical URL
+	metadataBase: new URL('https://www.beverage.me'),
+	alternates: {
+		canonical: 'https://www.beverage.me',
+	},
+
+	// OpenGraph tags for Facebook, LinkedIn, etc.
+	openGraph: {
+		type: 'website',
+		locale: 'en_US',
+		url: 'https://www.beverage.me',
+		title: 'beverage.me - Alex Beverage',
+		description: "Alex Beverage's Personal Portfolio Website",
+		siteName: 'beverage.me',
+		images: [
+			{
+				url: '/favicon.ico', // Temporary - replace with social preview image later
+				width: 32,
+				height: 32,
+				alt: 'beverage.me logo',
+			},
+		],
+	},
+
+	// Twitter Card tags
+	twitter: {
+		card: 'summary_large_image',
+		title: 'beverage.me - Alex Beverage',
+		description: "Alex Beverage's Personal Portfolio Website",
+		images: ['/favicon.ico'], // Temporary - replace with social preview image later
+		// creator: '@yourtwitterhandle', // Add your Twitter handle here
+	},
+
 	robots: {
 		index: true,
 		follow: true,

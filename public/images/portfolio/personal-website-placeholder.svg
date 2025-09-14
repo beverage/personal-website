@@ -1,0 +1,7 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#1a1a1a"/>
+  <rect x="40" y="40" width="720" height="520" fill="none" stroke="#00bcd4" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="400" y="320" text-anchor="middle" fill="#00bcd4" font-family="system-ui, sans-serif" font-size="48" font-weight="bold">beverage.me</text>
+  <text x="400" y="380" text-anchor="middle" fill="#00bcd4" font-family="system-ui, sans-serif" font-size="16" opacity="0.7">Personal Portfolio Website</text>
+  <text x="400" y="480" text-anchor="middle" fill="#00bcd4" font-family="system-ui, sans-serif" font-size="16" opacity="0.7">(Placeholder Image)</text>
+</svg>

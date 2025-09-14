@@ -2,7 +2,7 @@ import type { PortfolioData, Project } from '@/types/portfolio'
 
 /**
  * Portfolio project data
- * Using placeholder images from picsum.photos for consistent, high-quality images
+ * Using self-hosted placeholder images for China accessibility
  */
 
 export const projects: Project[] = [
@@ -21,8 +21,7 @@ export const projects: Project[] = [
 			'PostgreSQL',
 			'OpenAI',
 		],
-		imageUrl:
-			'https://dummyimage.com/800x600/1a1a1a/00bcd4.png&text=placeholder',
+		imageUrl: '/images/portfolio/levelang-placeholder.svg',
 		links: [
 			{
 				label: 'App Repository',
@@ -51,8 +50,7 @@ export const projects: Project[] = [
 		longDescription:
 			'A French language grammar quiz generator application that uses AI to dynamically generate content tailored to specific language features a user wants to study. The system adapts questions and exercises based on user preferences, creating personalized grammar practice sessions for targeted learning.',
 		technologies: ['Python', 'FastAPI', 'PostgreSQL', 'OpenAI'],
-		imageUrl:
-			'https://dummyimage.com/800x600/1a1a1a/00bcd4.png&text=placeholder',
+		imageUrl: '/images/portfolio/quiz-service-placeholder.svg',
 		links: [
 			{
 				label: 'View on GitHub',
@@ -87,8 +85,7 @@ export const projects: Project[] = [
 			'Canvas 2D',
 			'Tailwind CSS',
 		],
-		imageUrl:
-			'https://dummyimage.com/800x600/1a1a1a/00bcd4.png&text=beverage.me',
+		imageUrl: '/images/portfolio/personal-website-placeholder.svg',
 		links: [
 			{
 				label: 'View Source',

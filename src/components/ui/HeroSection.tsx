@@ -15,6 +15,9 @@ interface HeroSectionProps {
 		delay: number
 		transform?: boolean
 	}
+	// Button fade props
+	buttonsEnabled?: boolean
+	buttonFadeDuration?: number
 }
 
 export const HeroSection = ({
@@ -33,6 +36,8 @@ export const HeroSection = ({
 		delay: 0,
 		transform: true,
 	},
+	buttonsEnabled = true,
+	buttonFadeDuration = 500,
 }: HeroSectionProps) => {
 	// Calculate dynamic styles based on transition state
 	const containerStyle: React.CSSProperties = {
@@ -40,6 +45,13 @@ export const HeroSection = ({
 		// No transform - just clean opacity fade for course changes
 		transition: `opacity ${fadeConfig.duration}ms ease-in-out${fadeConfig.delay > 0 ? ` ${fadeConfig.delay}ms` : ''}`,
 		pointerEvents: transitionState === 'hidden' ? 'none' : 'auto',
+	}
+
+	// Button styles for smooth fade-in transitions
+	const buttonStyle: React.CSSProperties = {
+		opacity: buttonsEnabled ? 1 : 0,
+		transition: `opacity ${buttonFadeDuration}ms ease-in-out`,
+		pointerEvents: buttonsEnabled ? 'auto' : 'none',
 	}
 
 	return (
@@ -60,15 +72,17 @@ export const HeroSection = ({
 				<div className="flex flex-col justify-center gap-4 sm:flex-row">
 					<button
 						onClick={onSecondaryClick}
-						className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-50"
-						disabled={transitionState !== 'visible'}
+						className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10"
+						style={buttonStyle}
+						disabled={transitionState !== 'visible' || !buttonsEnabled}
 					>
 						{secondaryButtonText}
 					</button>
 					<button
 						onClick={onPrimaryClick}
-						className="font-exo2 rounded-lg bg-cyan-500 px-8 py-4 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50 disabled:cursor-not-allowed disabled:opacity-50"
-						disabled={transitionState !== 'visible'}
+						className="font-exo2 rounded-lg bg-cyan-500 px-8 py-4 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50"
+						style={buttonStyle}
+						disabled={transitionState !== 'visible' || !buttonsEnabled}
 					>
 						{primaryButtonText}
 					</button>

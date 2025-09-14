@@ -1,28 +1,23 @@
 import type { Metadata } from 'next'
-import { Exo_2, Geist, Geist_Mono, Orbitron } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 
-const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin'],
-})
-
-// Add Exo 2 font
-const exo2 = Exo_2({
+// Self-hosted Exo 2 font - optimized WOFF2 variable fonts
+const exo2 = localFont({
+	src: [
+		{
+			path: '../../public/fonts/Exo_2/exo2-regular.woff2',
+			weight: '100 900',
+			style: 'normal',
+		},
+		{
+			path: '../../public/fonts/Exo_2/exo2-italic.woff2',
+			weight: '100 900',
+			style: 'italic',
+		},
+	],
 	variable: '--font-exo2',
-	subsets: ['latin'],
-	weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-})
-
-const orbitron = Orbitron({
-	variable: '--font-orbitron',
-	subsets: ['latin'],
-	weight: ['400', '700', '900'],
+	display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -44,11 +39,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${exo2.variable} ${orbitron.variable} antialiased`}
-			>
-				{children}
-			</body>
+			<body className={`${exo2.variable} antialiased`}>{children}</body>
 		</html>
 	)
 }

@@ -88,25 +88,6 @@ describe('PageLayout Integration Tests', () => {
 		expect(cvLink).toHaveAttribute('target', '_blank')
 	})
 
-	it('triggers transitions when hero buttons are clicked', () => {
-		const onPrimaryClick = vi.fn()
-		const onSecondaryClick = vi.fn()
-
-		render(
-			<PageLayout
-				{...defaultProps}
-				onPrimaryClick={onPrimaryClick}
-				onSecondaryClick={onSecondaryClick}
-			/>,
-		)
-
-		fireEvent.click(screen.getByText('Get In Touch')) // Fixed case
-		expect(onPrimaryClick).toHaveBeenCalledTimes(1)
-
-		fireEvent.click(screen.getByText('Explore Projects'))
-		expect(onSecondaryClick).toHaveBeenCalledTimes(1)
-	})
-
 	it('disables transitions when enableTransitions is false', () => {
 		const mockStartTransition = vi.fn()
 

@@ -15,9 +15,9 @@ const nextConfig: NextConfig = {
 						value: [
 							"default-src 'self'",
 							"script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Canvas animations need eval
-							"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-							"font-src 'self' https://fonts.gstatic.com",
-							"img-src 'self' data: https:",
+							"style-src 'self' 'unsafe-inline'",
+							"font-src 'self'",
+							"img-src 'self' data:",
 							"connect-src 'self'",
 							"frame-ancestors 'none'", // Prevents clickjacking
 						].join('; '),

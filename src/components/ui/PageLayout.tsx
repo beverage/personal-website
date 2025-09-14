@@ -44,6 +44,10 @@ interface StartupSequenceConfig {
 	controlsFadeDelay?: number
 	/** Duration of UI controls fade-in animation (ms) */
 	controlsFadeDuration?: number
+	/** Delay before hero buttons start fading in (ms) */
+	buttonFadeDelay?: number
+	/** Duration of hero buttons fade-in animation (ms) */
+	buttonFadeDuration?: number
 }
 
 interface PageLayoutProps {
@@ -89,6 +93,8 @@ export const PageLayout = ({
 		heroFadeDuration: 3000,
 		controlsFadeDelay: 3000,
 		controlsFadeDuration: 2000,
+		buttonFadeDelay: 2000, // Start slightly before hero text completes (3800ms)
+		buttonFadeDuration: 2500,
 	},
 }: PageLayoutProps) => {
 	// Startup sequence: Start in sailboat mode, then auto-toggle to rocket mode
@@ -103,6 +109,9 @@ export const PageLayout = ({
 	// Startup sequence states
 	const [heroVisible, setHeroVisible] = useState(!startupSequence?.enabled)
 	const [uiControlsVisible, setUiControlsVisible] = useState(
+		!startupSequence?.enabled,
+	)
+	const [heroButtonsVisible, setHeroButtonsVisible] = useState(
 		!startupSequence?.enabled,
 	)
 	const [startupComplete, setStartupComplete] = useState(
@@ -142,6 +151,7 @@ export const PageLayout = ({
 			autoToggleDelay = 500,
 			heroFadeDelay = 800,
 			controlsFadeDelay = 2000,
+			buttonFadeDelay = 3500,
 		} = startupSequence
 
 		// Phase 1: Auto-toggle from sailboat to rocket mode
@@ -158,6 +168,11 @@ export const PageLayout = ({
 		createTrackedTimeout(() => {
 			setUiControlsVisible(true)
 		}, controlsFadeDelay)
+
+		// Phase 3.5: Hero buttons fade-in (smooth transition)
+		createTrackedTimeout(() => {
+			setHeroButtonsVisible(true)
+		}, buttonFadeDelay)
 
 		// Phase 4: Mark startup complete
 		createTrackedTimeout(
@@ -540,6 +555,21 @@ export const PageLayout = ({
 											onPrimaryClick={onPrimaryClick || handleGetInTouchClick}
 											onSecondaryClick={
 												onSecondaryClick || handleExploreProjectsClick
+											}
+											transitionState={
+												startupSequence?.enabled && !startupComplete
+													? 'fading'
+													: isTransitioning
+														? 'fading'
+														: 'visible'
+											}
+											buttonsEnabled={
+												startupSequence?.enabled && !startupComplete
+													? heroButtonsVisible
+													: !isTransitioning
+											}
+											buttonFadeDuration={
+												startupSequence?.buttonFadeDuration || 500
 											}
 										/>
 									</div>

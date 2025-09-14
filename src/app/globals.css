@@ -12,18 +12,6 @@
 		font-family: var(--font-exo2), sans-serif;
 	}
 
-	.font-orbitron {
-		font-family: var(--font-orbitron), monospace;
-	}
-
-	.font-geist-sans {
-		font-family: var(--font-geist-sans), sans-serif;
-	}
-
-	.font-geist-mono {
-		font-family: var(--font-geist-mono), monospace;
-	}
-
 	/* Hide scrollbars while keeping scroll functionality */
 	.scrollbar-hide {
 		-ms-overflow-style: none; /* IE and Edge */

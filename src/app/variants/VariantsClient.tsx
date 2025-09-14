@@ -14,7 +14,7 @@ import {
 	Linkedin,
 	Mail,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type UiVariant = 'hero-middle' | 'footer-icon' | 'float-pill'
 
@@ -93,6 +93,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 	const [opacity, setOpacity] = useState(1.0)
 	const [uiVisible, setUiVisible] = useState(true)
 	const [selectedUi, setSelectedUi] = useState<UiVariant>('float-pill')
+	const [buttonsEnabled, setButtonsEnabled] = useState(false)
 	const [qcPos, setQcPos] = useState<{ x: number; y: number } | null>(null)
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragOffset, setDragOffset] = useState<{ dx: number; dy: number }>({
@@ -106,6 +107,15 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 				?.description,
 		[selectedBackground],
 	)
+
+	// Enable buttons after startup sequence (similar to main PageLayout)
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setButtonsEnabled(true)
+		}, 3000) // Match the typical startup sequence timing
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	const openCv = () => {
 		if (!cvUrl) return
@@ -424,16 +434,23 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 										Under Construction
 									</p>
 									<div className="flex flex-col justify-center gap-4 sm:flex-row">
-										<button className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10">
+										<button
+											className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-50"
+											disabled={!buttonsEnabled}
+										>
 											Explore Projects
 										</button>
 										<button
 											onClick={openCv}
-											className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10"
+											className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-50"
+											disabled={!buttonsEnabled}
 										>
 											CV
 										</button>
-										<button className="font-exo2 rounded-lg bg-cyan-500 px-8 py-4 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50">
+										<button
+											className="font-exo2 rounded-lg bg-cyan-500 px-8 py-4 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50 disabled:cursor-not-allowed disabled:opacity-50"
+											disabled={!buttonsEnabled}
+										>
 											Get In Touch
 										</button>
 									</div>

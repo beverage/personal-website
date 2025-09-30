@@ -1,3 +1,4 @@
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { PageLayout } from '../PageLayout'
@@ -62,24 +63,28 @@ vi.mock('@/lib/animation/AnimationStateMachine', () => ({
 describe('PageLayout', () => {
 	it('renders CV pill when cvUrl is provided', () => {
 		render(
-			<PageLayout
-				showStarField={false}
-				clientConfig={{
-					socialLinks: [],
-					copyrightYear: 2025,
-					cvUrl: '/cv/test.pdf',
-				}}
-			/>,
+			<LanguageProvider>
+				<PageLayout
+					showStarField={false}
+					clientConfig={{
+						socialLinks: [],
+						copyrightYear: 2025,
+						cvUrl: '/cv/test.pdf',
+					}}
+				/>
+			</LanguageProvider>,
 		)
 		expect(screen.getByLabelText('Download CV (PDF)')).toBeInTheDocument()
 	})
 
 	it('hides CV pill when cvUrl is missing', () => {
 		render(
-			<PageLayout
-				showStarField={false}
-				clientConfig={{ socialLinks: [], copyrightYear: 2025 }}
-			/>,
+			<LanguageProvider>
+				<PageLayout
+					showStarField={false}
+					clientConfig={{ socialLinks: [], copyrightYear: 2025 }}
+				/>
+			</LanguageProvider>,
 		)
 		expect(screen.queryByLabelText('Download CV (PDF)')).toBeNull()
 	})
@@ -87,7 +92,12 @@ describe('PageLayout', () => {
 	describe('Startup Sequence', () => {
 		it('starts in sailboat mode when startup sequence is enabled', () => {
 			render(
-				<PageLayout showStarField={true} startupSequence={{ enabled: true }} />,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={{ enabled: true }}
+					/>
+				</LanguageProvider>,
 			)
 
 			const starfield = screen.getByTestId('starfield')
@@ -96,10 +106,12 @@ describe('PageLayout', () => {
 
 		it('starts in rocket mode when startup sequence is disabled', () => {
 			render(
-				<PageLayout
-					showStarField={true}
-					startupSequence={{ enabled: false }}
-				/>,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={{ enabled: false }}
+					/>
+				</LanguageProvider>,
 			)
 
 			const starfield = screen.getByTestId('starfield')
@@ -107,7 +119,11 @@ describe('PageLayout', () => {
 		})
 
 		it('uses default configuration when startupSequence is not provided', () => {
-			render(<PageLayout showStarField={true} />)
+			render(
+				<LanguageProvider>
+					<PageLayout showStarField={true} />
+				</LanguageProvider>,
+			)
 
 			const starfield = screen.getByTestId('starfield')
 			// Should start in sailboat mode with default enabled: true
@@ -125,11 +141,13 @@ describe('PageLayout', () => {
 			}
 
 			render(
-				<PageLayout
-					showStarField={true}
-					startupSequence={customConfig}
-					heroTitle="Test Hero"
-				/>,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={customConfig}
+						heroTitle="Test Hero"
+					/>
+				</LanguageProvider>,
 			)
 
 			// Should render without errors and start in sailboat mode
@@ -142,7 +160,12 @@ describe('PageLayout', () => {
 
 		it('starts with correct initial speed when startup sequence is enabled', () => {
 			render(
-				<PageLayout showStarField={true} startupSequence={{ enabled: true }} />,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={{ enabled: true }}
+					/>
+				</LanguageProvider>,
 			)
 
 			const starfield = screen.getByTestId('starfield')
@@ -152,10 +175,12 @@ describe('PageLayout', () => {
 
 		it('starts with correct initial speed when startup sequence is disabled', () => {
 			render(
-				<PageLayout
-					showStarField={true}
-					startupSequence={{ enabled: false }}
-				/>,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={{ enabled: false }}
+					/>
+				</LanguageProvider>,
 			)
 
 			const starfield = screen.getByTestId('starfield')
@@ -165,17 +190,19 @@ describe('PageLayout', () => {
 
 		it('renders all UI elements when startup sequence is disabled', () => {
 			render(
-				<PageLayout
-					showStarField={true}
-					startupSequence={{ enabled: false }}
-					heroTitle="Test Hero"
-					brandName="test.brand"
-					clientConfig={{
-						socialLinks: [],
-						copyrightYear: 2025,
-						cvUrl: '/cv/test.pdf',
-					}}
-				/>,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={true}
+						startupSequence={{ enabled: false }}
+						heroTitle="Test Hero"
+						brandName="test.brand"
+						clientConfig={{
+							socialLinks: [],
+							copyrightYear: 2025,
+							cvUrl: '/cv/test.pdf',
+						}}
+					/>
+				</LanguageProvider>,
 			)
 
 			// All elements should be visible immediately
@@ -186,10 +213,12 @@ describe('PageLayout', () => {
 
 		it('respects showStarField prop regardless of startup sequence', () => {
 			render(
-				<PageLayout
-					showStarField={false}
-					startupSequence={{ enabled: true }}
-				/>,
+				<LanguageProvider>
+					<PageLayout
+						showStarField={false}
+						startupSequence={{ enabled: true }}
+					/>
+				</LanguageProvider>,
 			)
 
 			const starfield = screen.getByTestId('starfield')

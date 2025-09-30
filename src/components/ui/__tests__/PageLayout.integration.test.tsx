@@ -1,3 +1,4 @@
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -66,11 +67,15 @@ describe('PageLayout Integration Tests', () => {
 	}
 
 	it('renders brand panel and control panel', () => {
-		render(<PageLayout {...defaultProps} brandName="test.brand" />)
+		render(
+			<LanguageProvider>
+				<PageLayout {...defaultProps} brandName="test.brand" />
+			</LanguageProvider>,
+		)
 
 		expect(screen.getByText('test.brand')).toBeInTheDocument()
-		// Control panel (rocket button) should be present - there are multiple buttons so we count them
-		expect(screen.getAllByRole('button')).toHaveLength(3) // rocket + 2 hero buttons
+		// Control panel (rocket button + language toggle buttons) should be present - there are multiple buttons so we count them
+		expect(screen.getAllByRole('button')).toHaveLength(4) // rocket + language toggle (2 buttons) + hero button
 	})
 
 	it('renders CV link when provided', () => {
@@ -80,7 +85,11 @@ describe('PageLayout Integration Tests', () => {
 			cvUrl: 'https://example.com/cv.pdf',
 		}
 
-		render(<PageLayout {...defaultProps} clientConfig={clientConfig} />)
+		render(
+			<LanguageProvider>
+				<PageLayout {...defaultProps} clientConfig={clientConfig} />
+			</LanguageProvider>,
+		)
 
 		const cvLink = screen.getByRole('link', { name: /cv/i })
 		expect(cvLink).toBeInTheDocument()
@@ -107,7 +116,11 @@ describe('PageLayout Integration Tests', () => {
 			isTransitioning: false,
 		}))
 
-		render(<PageLayout {...defaultProps} enableTransitions={false} />)
+		render(
+			<LanguageProvider>
+				<PageLayout {...defaultProps} enableTransitions={false} />
+			</LanguageProvider>,
+		)
 
 		fireEvent.click(screen.getByText('Get In Touch')) // Fixed case
 		expect(mockStartTransition).not.toHaveBeenCalled()
@@ -115,7 +128,9 @@ describe('PageLayout Integration Tests', () => {
 
 	it('handles different course change variants', () => {
 		const { rerender } = render(
-			<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />,
+			<LanguageProvider>
+				<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />
+			</LanguageProvider>,
 		)
 
 		// Should render without errors
@@ -123,24 +138,30 @@ describe('PageLayout Integration Tests', () => {
 
 		// Test other variants
 		rerender(
-			<PageLayout {...defaultProps} courseChangeVariant="sharp-maneuver" />,
+			<LanguageProvider>
+				<PageLayout {...defaultProps} courseChangeVariant="sharp-maneuver" />
+			</LanguageProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
 
 		rerender(
-			<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />,
+			<LanguageProvider>
+				<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />
+			</LanguageProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
 	})
 
 	it('passes custom props to starfield', () => {
 		render(
-			<PageLayout
-				{...defaultProps}
-				speed={2000}
-				fadeInDuration={5000}
-				fadeOutDuration={3000}
-			/>,
+			<LanguageProvider>
+				<PageLayout
+					{...defaultProps}
+					speed={2000}
+					fadeInDuration={5000}
+					fadeOutDuration={3000}
+				/>
+			</LanguageProvider>,
 		)
 
 		const starfield = screen.getByTestId('starfield')
@@ -163,7 +184,11 @@ describe('PageLayout Integration Tests', () => {
 			copyrightYear: 2024,
 		}
 
-		render(<PageLayout {...defaultProps} clientConfig={clientConfig} />)
+		render(
+			<LanguageProvider>
+				<PageLayout {...defaultProps} clientConfig={clientConfig} />
+			</LanguageProvider>,
+		)
 
 		// Footer should contain social links and copyright
 		expect(screen.getByLabelText('GitHub')).toBeInTheDocument()
@@ -173,9 +198,11 @@ describe('PageLayout Integration Tests', () => {
 
 	it('renders custom children when provided', () => {
 		render(
-			<PageLayout {...defaultProps}>
-				<div data-testid="custom-content">Custom Content</div>
-			</PageLayout>,
+			<LanguageProvider>
+				<PageLayout {...defaultProps}>
+					<div data-testid="custom-content">Custom Content</div>
+				</PageLayout>
+			</LanguageProvider>,
 		)
 
 		expect(screen.getByTestId('custom-content')).toBeInTheDocument()

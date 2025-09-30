@@ -1,22 +1,23 @@
 import { Rocket, Sailboat } from 'lucide-react'
+import { ControlButton } from './ControlButton'
 
-interface ControlPanelProps {
+interface SpeedSelectorProps {
 	darkMode?: boolean
 	onToggle?: () => void
 	className?: string
 }
 
-export const ControlPanel = ({
+export const SpeedSelector = ({
 	darkMode = true,
 	onToggle,
 	className = '',
-}: ControlPanelProps) => {
+}: SpeedSelectorProps) => {
 	return (
-		<button
+		<ControlButton
 			onClick={onToggle}
-			className={`rounded-full border border-white/10 bg-black/20 p-3 backdrop-blur-sm transition-all hover:bg-black/30 ${className}`}
+			className={`border-white/10 p-3 hover:bg-black/30 ${className}`}
 		>
 			{darkMode ? <Rocket size={20} /> : <Sailboat size={20} />}
-		</button>
+		</ControlButton>
 	)
 }

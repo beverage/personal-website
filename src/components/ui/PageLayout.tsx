@@ -1,23 +1,29 @@
 'use client'
 
-import { portfolioData } from '@/data/portfolio'
+import { getTranslatedPortfolioData } from '@/data/portfolioTranslations'
 import { useContentState } from '@/hooks/useContentState'
 import { useStarFieldTransition } from '@/hooks/useStarFieldTransition'
+import { useTranslation } from '@/hooks/useTranslation'
 import {
 	AnimationState,
 	useAnimationStateMachine,
 } from '@/lib/animation/AnimationStateMachine'
-import { COURSE_CHANGE_PRESETS } from '@/types/transitions'
-import { motion } from 'framer-motion'
+import {
+	COURSE_CHANGE_PRESETS,
+	LANGUAGE_TRANSITION_CONFIG,
+} from '@/types/transitions'
+import { AnimatePresence, motion } from 'framer-motion'
 import { FileText } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { PortfolioScroll } from '../portfolio/PortfolioScroll'
 import { HomepageLayeredStarField } from '../starfield/LayeredStarField'
 import { BackButton } from './BackButton'
 import { BrandPanel } from './BrandPanel'
-import { ControlPanel } from './ControlPanel'
+import { ControlButton } from './ControlButton'
 import { FooterPanel } from './FooterPanel'
 import { HeroSection } from './HeroSection'
+import { LanguageSelector } from './LanguageSelector'
+import { SpeedSelector } from './SpeedSelector'
 
 interface SocialLink {
 	icon: 'github' | 'linkedin' | 'instagram' | 'mail'
@@ -97,6 +103,10 @@ export const PageLayout = ({
 		buttonFadeDuration: 2500,
 	},
 }: PageLayoutProps) => {
+	// Get translations
+	const { t, language } = useTranslation()
+	const portfolioData = getTranslatedPortfolioData(language)
+
 	// Startup sequence: Start in sailboat mode, then auto-toggle to rocket mode
 	const [clusterVisible, setClusterVisible] = useState(
 		startupSequence?.enabled ? false : showStarField,
@@ -243,6 +253,23 @@ export const PageLayout = ({
 	const [toContentState, setToContentState] = useState<
 		'hero' | 'projects' | 'contact'
 	>('hero')
+
+	// Language transition state
+	const [isLanguageTransitioning, setIsLanguageTransitioning] = useState(false)
+	const prevLanguageRef = useRef<string>(language)
+
+	// Track language changes and set transitioning state
+	useEffect(() => {
+		if (prevLanguageRef.current !== language) {
+			setIsLanguageTransitioning(true)
+			// All elements use textDuration for crossfade (buttons animate same as text)
+			const timeout = setTimeout(() => {
+				setIsLanguageTransitioning(false)
+			}, LANGUAGE_TRANSITION_CONFIG.textDuration * 2) // *2 for exit + enter
+			prevLanguageRef.current = language
+			return () => clearTimeout(timeout)
+		}
+	}, [language])
 
 	// Shared styles for UI controls fade-in - only apply during startup sequence
 	const controlFadeStyle =
@@ -486,19 +513,23 @@ export const PageLayout = ({
 				className="absolute top-8 right-8 z-50 flex items-center gap-3"
 				style={controlFadeStyle}
 			>
+				<LanguageSelector
+					disabled={isTransitioning || isLanguageTransitioning}
+				/>
 				{clientConfig?.cvUrl && (
-					<a
+					<ControlButton
 						href={clientConfig.cvUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="Download CV (PDF)"
-						className="inline-flex items-center gap-2 rounded-full border border-cyan-400/70 bg-black/40 px-3 py-2 text-cyan-300 hover:text-cyan-200"
+						ariaLabel="Download CV (PDF)"
+						className="font-exo2 gap-2 px-3 py-3 text-sm font-medium text-cyan-300"
+						// className="p-3 text-cyan-300 hover:text-cyan-200 text-sm font-medium leading-none"
 					>
 						<FileText size={16} />
 						<span>CV</span>
-					</a>
+					</ControlButton>
 				)}
-				<ControlPanel
+				<SpeedSelector
 					darkMode={clusterVisible}
 					onToggle={
 						startupComplete
@@ -608,15 +639,29 @@ export const PageLayout = ({
 												getContentOpacity('contact') === 0 ? 'none' : 'auto',
 										}}
 									>
-										<div className="max-w-5xl text-center">
-											<h1 className="font-exo2 mb-8 text-6xl tracking-wider sm:text-8xl">
-												<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
-													Get In Touch
-												</span>
-											</h1>
-											<p className="font-exo2 mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90 sm:text-2xl">
-												Let&apos;s connect and build something amazing together.
-											</p>
+										<div className="max-w-7xl text-center">
+											<AnimatePresence mode="wait">
+												<motion.div
+													key={`contact-text-${language}`}
+													initial={{ opacity: 0 }}
+													animate={{ opacity: 1 }}
+													exit={{ opacity: 0 }}
+													transition={{
+														duration:
+															LANGUAGE_TRANSITION_CONFIG.textDuration / 1000,
+														ease: 'easeInOut',
+													}}
+												>
+													<h1 className="font-exo2 mb-8 text-6xl tracking-wider sm:text-8xl">
+														<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+															{t.contact.title}
+														</span>
+													</h1>
+													<p className="font-exo2 mx-auto mb-8 max-w-5xl text-xl leading-relaxed text-white/90 sm:text-2xl">
+														{t.contact.description}
+													</p>
+												</motion.div>
+											</AnimatePresence>
 										</div>
 									</div>
 								)}

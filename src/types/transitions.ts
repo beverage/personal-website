@@ -119,6 +119,12 @@ export const DEFAULT_PARALLAX_FACTORS: ParallaxFactors = {
 // Content states for the application
 export type ContentState = 'hero' | 'projects' | 'contact'
 
+// Language transition configuration
+// All UI elements (text, buttons, cards) use simple crossfade animation
+export const LANGUAGE_TRANSITION_CONFIG = {
+	textDuration: 1000, // ms - Duration for crossfade animation (fade out + fade in)
+} as const
+
 // Easing functions for smooth transitions
 export const EASING_FUNCTIONS = {
 	linear: (t: number): number => t,

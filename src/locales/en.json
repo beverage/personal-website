@@ -1,0 +1,49 @@
+{
+	"ui": {
+		"cv": "CV",
+		"backToHome": "Back to home"
+	},
+	"hero": {
+		"getInTouch": "Get In Touch",
+		"exploreProjects": "Explore Projects"
+	},
+	"projectsPage": {
+		"title": "Projects",
+		"description": "Explore my work and projects."
+	},
+	"contact": {
+		"title": "Get In Touch",
+		"description": "Let's connect and build something amazing together."
+	},
+	"projects": {
+		"levelang": {
+			"title": "LeveLang.app",
+			"description": "Skill-level-aware translation assistant for language learners",
+			"longDescription": "A translation application for iOS and Android that adapts translation complexity to match your language proficiency level and desired mood. Like Google Translate, but tailored for learners - providing beginner-friendly, intermediate, or advanced translations. Features voice input/output, transliterations, and comprehensive language support for French, Italian, German, Mandarin Chinese, and Cantonese.",
+			"links": {
+				"appRepository": "App Repository",
+				"backendRepository": "Backend Repository",
+				"visitWebsite": "Visit LeveLang.app"
+			}
+		},
+		"quiz": {
+			"title": "AI Language Quiz Generator",
+			"description": "AI-powered French grammar quiz app with dynamic content generation",
+			"longDescription": "A French language grammar quiz generator application that uses AI to dynamically generate content tailored to specific language features a user wants to study. The system adapts questions and exercises based on user preferences, creating personalized grammar practice sessions for targeted learning.",
+			"links": {
+				"viewGithub": "View on GitHub",
+				"tryQuiz": "Try the Quiz",
+				"apiDocs": "API Documentation"
+			}
+		},
+		"website": {
+			"title": "beverage.me",
+			"description": "Interactive personal website with cinematic starfield animations",
+			"longDescription": "A modern personal portfolio website featuring an immersive dual-layer starfield animation system with course change transitions. Built with Next.js and TypeScript, showcasing advanced Canvas 2D animations, Framer Motion integration, and a centralized animation architecture. Features include transform-based portfolio scrolling, dynamic animation state management, and performance-optimized rendering.",
+			"links": {
+				"viewSource": "View Source",
+				"visitSite": "Visit Site"
+			}
+		}
+	}
+}

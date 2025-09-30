@@ -1,10 +1,15 @@
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { HeroSection } from '../HeroSection'
 
 describe('HeroSection', () => {
 	it('renders title and description', () => {
-		render(<HeroSection title="Title" description="Desc" />)
+		render(
+			<LanguageProvider>
+				<HeroSection title="Title" description="Desc" />
+			</LanguageProvider>,
+		)
 		expect(screen.getByText('Title')).toBeInTheDocument()
 		expect(screen.getByText('Desc')).toBeInTheDocument()
 	})
@@ -13,12 +18,14 @@ describe('HeroSection', () => {
 		const onPrimary = vi.fn()
 		const onSecondary = vi.fn()
 		render(
-			<HeroSection
-				onPrimaryClick={onPrimary}
-				onSecondaryClick={onSecondary}
-				primaryButtonText="Primary"
-				secondaryButtonText="Secondary"
-			/>,
+			<LanguageProvider>
+				<HeroSection
+					onPrimaryClick={onPrimary}
+					onSecondaryClick={onSecondary}
+					primaryButtonText="Primary"
+					secondaryButtonText="Secondary"
+				/>
+			</LanguageProvider>,
 		)
 		fireEvent.click(screen.getByText('Secondary'))
 		fireEvent.click(screen.getByText('Primary'))

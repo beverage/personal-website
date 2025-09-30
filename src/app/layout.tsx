@@ -1,3 +1,4 @@
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
@@ -87,7 +88,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${exo2.variable} antialiased`}>{children}</body>
+			<body className={`${exo2.variable} antialiased`}>
+				<LanguageProvider>{children}</LanguageProvider>
+			</body>
 		</html>
 	)
 }

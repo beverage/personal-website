@@ -2,9 +2,9 @@
 
 import { LayeredStarField } from '@/components/starfield/LayeredStarField'
 import { BrandPanel } from '@/components/ui/BrandPanel'
-import { ControlPanel } from '@/components/ui/ControlPanel'
 import { FooterPanel } from '@/components/ui/FooterPanel'
 import { HeroSection } from '@/components/ui/HeroSection'
+import { SpeedSelector } from '@/components/ui/SpeedSelector'
 import { ClusterVariant } from '@/types/starfield'
 import {
 	FileDown,
@@ -392,7 +392,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 								<span>CV</span>
 							</button>
 						)}
-						<ControlPanel darkMode={true} onToggle={() => {}} />
+						<SpeedSelector darkMode={true} onToggle={() => {}} />
 					</div>
 
 					{/* Hero section (default) */}
@@ -509,7 +509,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 						</div>
 					)}
 
-					{/* Variant C: Top-right floating pill handled in ControlPanel row above */}
+					{/* Variant C: Top-right floating pill handled in SpeedSelector row above */}
 				</>
 			)}
 		</div>

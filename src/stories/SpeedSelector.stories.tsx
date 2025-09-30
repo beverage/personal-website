@@ -1,10 +1,10 @@
-import { ControlPanel } from '@/components/ui/ControlPanel'
+import { SpeedSelector } from '@/components/ui/SpeedSelector'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { fn } from 'storybook/test'
 
-const meta: Meta<typeof ControlPanel> = {
-	title: 'UI/ControlPanel',
-	component: ControlPanel,
+const meta: Meta<typeof SpeedSelector> = {
+	title: 'UI/SpeedSelector',
+	component: SpeedSelector,
 	parameters: {
 		layout: 'centered',
 		backgrounds: {

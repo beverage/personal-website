@@ -1,3 +1,4 @@
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import type { Project } from '@/types/portfolio'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
@@ -86,7 +87,11 @@ describe('PortfolioScroll', () => {
 
 	describe('rendering', () => {
 		it('should render projects hero section', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('Projects')).toBeInTheDocument()
 			expect(
@@ -95,14 +100,22 @@ describe('PortfolioScroll', () => {
 		})
 
 		it('should render all project cards', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('Test Project 1')).toBeInTheDocument()
 			expect(screen.getByText('Test Project 2')).toBeInTheDocument()
 		})
 
 		it('should render project technologies', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('React')).toBeInTheDocument()
 			expect(screen.getByText('TypeScript')).toBeInTheDocument()
@@ -111,14 +124,22 @@ describe('PortfolioScroll', () => {
 		})
 
 		it('should render project links', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('GitHub')).toBeInTheDocument()
 			expect(screen.getByText('Demo')).toBeInTheDocument()
 		})
 
 		it('should render status badges', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('Featured')).toBeInTheDocument()
 			expect(screen.getByText('In Progress')).toBeInTheDocument()
@@ -127,7 +148,11 @@ describe('PortfolioScroll', () => {
 
 	describe('navigation', () => {
 		it('should handle wheel events', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 			const container = document.querySelector('.portfolio-scroll')
 
 			expect(container).toBeInTheDocument()
@@ -141,7 +166,11 @@ describe('PortfolioScroll', () => {
 		})
 
 		it('should render navigation arrows when appropriate', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			// Down arrow should be present initially (from hero)
 			const downArrows = screen.getAllByTestId('nav-arrow-down')
@@ -151,7 +180,11 @@ describe('PortfolioScroll', () => {
 
 	describe('project links', () => {
 		it('should render links with correct attributes', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			const githubLink = screen.getByText('GitHub').closest('a')
 			expect(githubLink).toHaveAttribute('href', 'https://github.com/test/1')
@@ -165,7 +198,11 @@ describe('PortfolioScroll', () => {
 
 	describe('error handling', () => {
 		it('should handle empty projects array', () => {
-			render(<PortfolioScroll projects={[]} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={[]} />
+				</LanguageProvider>,
+			)
 
 			expect(screen.getByText('Projects')).toBeInTheDocument()
 			expect(
@@ -174,7 +211,11 @@ describe('PortfolioScroll', () => {
 		})
 
 		it('should handle image load errors gracefully', () => {
-			render(<PortfolioScroll projects={mockProjects} />)
+			render(
+				<LanguageProvider>
+					<PortfolioScroll projects={mockProjects} />
+				</LanguageProvider>,
+			)
 
 			const images = screen.getAllByRole('img')
 			images.forEach(img => {

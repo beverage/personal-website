@@ -11,11 +11,19 @@ interface UseContentStateReturn {
 	navigateToHero: () => void
 	isTransitioning: boolean
 	setIsTransitioning: (transitioning: boolean) => void
+	fromContentState: ContentState
+	toContentState: ContentState
+	setFromContentState: (state: ContentState) => void
+	setToContentState: (state: ContentState) => void
 }
 
 export const useContentState = (): UseContentStateReturn => {
 	const [contentState, setContentState] = useState<ContentState>('hero')
 	const [isTransitioning, setIsTransitioning] = useState(false)
+
+	// Track what content we're transitioning FROM and TO
+	const [fromContentState, setFromContentState] = useState<ContentState>('hero')
+	const [toContentState, setToContentState] = useState<ContentState>('hero')
 
 	const navigateToProjects = useCallback(() => {
 		if (isTransitioning) return
@@ -40,5 +48,9 @@ export const useContentState = (): UseContentStateReturn => {
 		navigateToHero,
 		isTransitioning,
 		setIsTransitioning,
+		fromContentState,
+		toContentState,
+		setFromContentState,
+		setToContentState,
 	}
 }

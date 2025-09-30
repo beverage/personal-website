@@ -1,0 +1,26 @@
+♻️ Refactor PageLayout: Extract hooks and components for better organization
+
+Reduced PageLayout.tsx from 686 to 429 lines (37.5% smaller) by extracting
+logic into dedicated hooks, utilities, and sub-components.
+
+New Utilities (lib/utils/):
+- startupConfig.ts: Centralized startup sequence configuration
+- contentOpacityUtils.ts: Pure functions for content opacity calculations
+
+New Hooks (hooks/):
+- useStartupSequence: Manages startup animation orchestration
+- useStarSpeedAnimation: Handles smooth star speed transitions
+- useLanguageTransition: Tracks language change transitions
+- Enhanced useContentState: Added fromContentState/toContentState tracking
+
+New Components (components/ui/):
+- ControlsCorner: Composes Language Selector + CV Button + Speed Selector
+- ContentSection: Handles conditional rendering of hero/projects/contact
+
+Benefits:
+- Better separation of concerns (layout vs logic vs animation)
+- Improved testability (hooks and utilities can be tested in isolation)
+- Enhanced maintainability (single responsibility per file)
+- PageLayout is now truly about layout composition
+
+All 164 tests passing ✓

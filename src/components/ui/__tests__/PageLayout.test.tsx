@@ -30,7 +30,38 @@ vi.mock('@/hooks/useContentState', () => ({
 		navigateToContact: vi.fn(),
 		navigateToHero: vi.fn(),
 		setIsTransitioning: vi.fn(),
+		isTransitioning: false,
+		setContentState: vi.fn(),
+		fromContentState: 'hero',
+		toContentState: 'hero',
+		setFromContentState: vi.fn(),
+		setToContentState: vi.fn(),
 	}),
+}))
+
+vi.mock('@/hooks/useLanguageTransition', () => ({
+	useLanguageTransition: () => false,
+}))
+
+vi.mock('@/hooks/useStartupSequence', () => ({
+	useStartupSequence: (
+		config: { enabled?: boolean } | undefined,
+		showStarField: boolean,
+	) => ({
+		clusterVisible: config?.enabled === false ? showStarField : false,
+		setClusterVisible: vi.fn(),
+		heroVisible: config?.enabled === false,
+		uiControlsVisible: config?.enabled === false,
+		heroButtonsVisible: config?.enabled === false,
+		startupComplete: config?.enabled === false,
+		controlFadeStyle: {},
+		heroFadeStyle: {},
+	}),
+}))
+
+vi.mock('@/hooks/useStarSpeedAnimation', () => ({
+	useStarSpeedAnimation: (clusterVisible: boolean) =>
+		clusterVisible ? 1200 : 400,
 }))
 
 vi.mock('@/hooks/useStarFieldTransition', () => ({
@@ -47,18 +78,20 @@ vi.mock('@/hooks/useStarFieldTransition', () => ({
 	}),
 }))
 
-vi.mock('@/lib/animation/AnimationStateMachine', () => ({
-	useAnimationStateMachine: () => ({
-		currentState: 'idle',
-		requestTransition: vi.fn(() => true),
-		canTransitionTo: vi.fn(() => true),
-	}),
-	AnimationState: {
-		IDLE: 'idle',
-		COURSE_CHANGE: 'course_change',
-		PORTFOLIO_SCROLL: 'portfolio_scroll',
-	},
-}))
+vi.mock('@/lib/animation/AnimationStateMachine', async importOriginal => {
+	const actual =
+		await importOriginal<
+			typeof import('@/lib/animation/AnimationStateMachine')
+		>()
+	return {
+		...actual,
+		useAnimationStateMachine: () => ({
+			currentState: 'idle',
+			requestTransition: vi.fn(() => true),
+			canTransitionTo: vi.fn(() => true),
+		}),
+	}
+})
 
 describe('PageLayout', () => {
 	it('renders CV pill when cvUrl is provided', () => {

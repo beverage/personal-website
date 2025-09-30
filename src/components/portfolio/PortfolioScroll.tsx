@@ -51,13 +51,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 	const getLinkColor = (type: string) => {
 		switch (type) {
 			case 'github':
-				return 'border-purple-400 text-purple-300 hover:bg-purple-400/10'
+				return 'border-purple-400 text-purple-300 transition-all duration-700 hover:bg-purple-500 hover:text-white hover:shadow-lg hover:shadow-purple-500/40'
 			case 'demo':
-				return 'border-green-400 text-green-300 hover:bg-green-400/10'
+				return 'border-green-400 text-green-300 transition-all duration-700 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/40'
 			case 'api':
-				return 'border-blue-400 text-blue-300 hover:bg-blue-400/10'
+				return 'border-blue-400 text-blue-300 transition-all duration-700 hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/40'
 			default:
-				return 'border-cyan-400 text-cyan-300 hover:bg-cyan-400/10'
+				return 'border-cyan-400 text-cyan-300 transition-all duration-700 hover:bg-cyan-500 hover:text-white hover:shadow-lg hover:shadow-cyan-500/40'
 		}
 	}
 
@@ -184,7 +184,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 									href={link.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-all ${getLinkColor(link.type)}`}
+									className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
 									initial={{ opacity: 0, scale: 0.8 }}
 									whileInView={{ opacity: 1, scale: 1 }}
 									viewport={{ once: false }}

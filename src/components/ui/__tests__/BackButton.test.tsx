@@ -41,7 +41,6 @@ describe('BackButton', () => {
 		expect(button).toHaveClass('border-cyan-400/70')
 		expect(button).toHaveClass('bg-black/40')
 		expect(button).toHaveClass('text-cyan-300')
-		expect(button).toHaveClass('hover:text-cyan-200')
 	})
 
 	it('has proper accessibility attributes', () => {

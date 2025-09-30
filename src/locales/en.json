@@ -5,7 +5,8 @@
 	},
 	"hero": {
 		"getInTouch": "Get In Touch",
-		"exploreProjects": "Explore Projects"
+		"exploreProjects": "Explore Projects",
+		"description": "Website Under Construction"
 	},
 	"projectsPage": {
 		"title": "Projects",

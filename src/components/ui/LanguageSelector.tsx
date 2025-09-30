@@ -20,17 +20,15 @@ export const LanguageSelector = ({
 	}
 
 	return (
-		<ControlButton
-			className={`gap-0 ${className} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
-		>
+		<ControlButton className={`gap-0 ${className}`}>
 			<button
 				onClick={() => handleLanguageChange('en')}
 				disabled={disabled}
-				className={`font-exo2 px-3 py-3 text-sm font-medium transition-all ${
+				className={`font-exo2 rounded-l-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
 					language === 'en'
-						? 'text-cyan-400'
-						: 'text-white/40 hover:text-white/60'
-				} ${disabled ? 'cursor-not-allowed' : ''}`}
+						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
+						: 'text-white/40 hover:text-cyan-300'
+				}`}
 				aria-label="Switch to English"
 			>
 				EN
@@ -39,11 +37,11 @@ export const LanguageSelector = ({
 			<button
 				onClick={() => handleLanguageChange('fr')}
 				disabled={disabled}
-				className={`font-exo2 px-3 py-3 text-sm font-medium transition-all ${
+				className={`font-exo2 rounded-r-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
 					language === 'fr'
-						? 'text-cyan-400'
-						: 'text-white/40 hover:text-white/60'
-				} ${disabled ? 'cursor-not-allowed' : ''}`}
+						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
+						: 'text-white/40 hover:text-cyan-300'
+				}`}
 				aria-label="Switch to French"
 			>
 				FR

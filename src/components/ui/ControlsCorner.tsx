@@ -37,7 +37,7 @@ export function ControlsCorner({
 					target="_blank"
 					rel="noopener noreferrer"
 					ariaLabel="Download CV (PDF)"
-					className="font-exo2 gap-2 px-3 py-3 text-sm font-medium text-cyan-300"
+					className="font-exo2 gap-2 px-3 py-3 text-sm font-medium text-cyan-300 transition-all duration-700 hover:bg-cyan-500 hover:text-white hover:shadow-lg hover:shadow-cyan-500/40"
 				>
 					<FileText size={16} />
 					<span>CV</span>

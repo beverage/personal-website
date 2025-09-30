@@ -26,7 +26,7 @@ interface HeroSectionProps {
 
 export const HeroSection = ({
 	title = 'Coming Soon',
-	description = 'Finally.',
+	description,
 	primaryButtonText,
 	secondaryButtonText,
 	onPrimaryClick,
@@ -48,6 +48,7 @@ export const HeroSection = ({
 	// Use translations as defaults if props not provided
 	const primaryText = primaryButtonText ?? t.hero.getInTouch
 	const secondaryText = secondaryButtonText ?? t.hero.exploreProjects
+	const heroDescription = description ?? t.hero.description
 
 	// Calculate dynamic styles based on transition state
 	const containerStyle: React.CSSProperties = {
@@ -88,7 +89,7 @@ export const HeroSection = ({
 							</span>
 						</h1>
 						<p className="font-exo2 mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90 sm:text-2xl">
-							{description}
+							{heroDescription}
 						</p>
 					</motion.div>
 				</AnimatePresence>

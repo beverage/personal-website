@@ -14,6 +14,20 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Accept build arguments for environment variables needed at build time
+ARG GITHUB_PROFILE_URL
+ARG LINKEDIN_PROFILE_URL
+ARG INSTAGRAM_PROFILE_URL
+ARG CONTACT_EMAIL_ADDRESS
+ARG CV_URL
+
+# Set as environment variables for the build process
+ENV GITHUB_PROFILE_URL=$GITHUB_PROFILE_URL
+ENV LINKEDIN_PROFILE_URL=$LINKEDIN_PROFILE_URL
+ENV INSTAGRAM_PROFILE_URL=$INSTAGRAM_PROFILE_URL
+ENV CONTACT_EMAIL_ADDRESS=$CONTACT_EMAIL_ADDRESS
+ENV CV_URL=$CV_URL
+
 RUN npm run build
 
 # Production image, copy all the files and run next

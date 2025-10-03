@@ -87,8 +87,8 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en">
-			<body className={`${exo2.variable} antialiased`}>
+		<html lang="en" className="bg-black">
+			<body className={`${exo2.variable} bg-black text-white antialiased`}>
 				<LanguageProvider>{children}</LanguageProvider>
 			</body>
 		</html>

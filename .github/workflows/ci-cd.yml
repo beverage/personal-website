@@ -106,6 +106,14 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.PERSONAL_WEBSITE_DEPLOY_TOKEN }}
 
+      - name: 🧹 Purge Cloudflare Cache
+        if: success()
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_PURGE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
+
   # 🔔 Notify Job - Send deployment notification
   notify:
     name: 🔔 Deployment Notification

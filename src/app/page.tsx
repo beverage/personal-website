@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic'
-
 import { PageLayout } from '@/components/ui/PageLayout'
 import { getClientConfig } from '@/lib/config'
 

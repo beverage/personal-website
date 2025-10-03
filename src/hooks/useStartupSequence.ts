@@ -24,6 +24,7 @@ interface UseStartupSequenceReturn {
 export function useStartupSequence(
 	config: StartupSequenceConfig = DEFAULT_STARTUP_CONFIG,
 	showStarField = true,
+	starFieldLoaded = true, // Wait for starfield to load before starting animations
 ): UseStartupSequenceReturn {
 	// Merge config with defaults
 	const fullConfig = useMemo(
@@ -71,9 +72,9 @@ export function useStartupSequence(
 		}
 	}, [])
 
-	// Startup sequence orchestration
+	// Startup sequence orchestration - only start when starfield has loaded
 	useEffect(() => {
-		if (!fullConfig.enabled || startupComplete) return
+		if (!fullConfig.enabled || startupComplete || !starFieldLoaded) return
 
 		const {
 			autoToggleDelay,
@@ -111,7 +112,7 @@ export function useStartupSequence(
 		return () => {
 			// Cleanup handled by createTrackedTimeout
 		}
-	}, [fullConfig, startupComplete, createTrackedTimeout])
+	}, [fullConfig, startupComplete, createTrackedTimeout, starFieldLoaded])
 
 	// Shared styles for UI controls fade-in - only apply during startup sequence
 	const controlFadeStyle =

@@ -84,6 +84,8 @@ export interface HomepageLayeredStarFieldProps {
 	foregroundMotionVector?: MotionVector
 	backgroundMotionVector?: MotionVector
 	bankingRoll?: BankingRoll
+	// Callback when starfield has rendered
+	onRender?: () => void
 }
 export const HomepageLayeredStarField: React.FC<
 	HomepageLayeredStarFieldProps
@@ -97,17 +99,27 @@ export const HomepageLayeredStarField: React.FC<
 	foregroundMotionVector,
 	backgroundMotionVector,
 	bankingRoll,
-}) => (
-	<LayeredStarField
-		clusterVariant="cluster-ellipse-4x-center-close-1"
-		opacity={opacity}
-		showCluster={showCluster}
-		speed={speed}
-		fadeInDuration={fadeInDuration}
-		fadeOutDuration={fadeOutDuration}
-		className={className}
-		foregroundMotionVector={foregroundMotionVector}
-		backgroundMotionVector={backgroundMotionVector}
-		bankingRoll={bankingRoll}
-	/>
-)
+	onRender,
+}) => {
+	// Call onRender when component mounts
+	React.useEffect(() => {
+		if (onRender) {
+			onRender()
+		}
+	}, [onRender])
+
+	return (
+		<LayeredStarField
+			clusterVariant="cluster-ellipse-4x-center-close-1"
+			opacity={opacity}
+			showCluster={showCluster}
+			speed={speed}
+			fadeInDuration={fadeInDuration}
+			fadeOutDuration={fadeOutDuration}
+			className={className}
+			foregroundMotionVector={foregroundMotionVector}
+			backgroundMotionVector={backgroundMotionVector}
+			bankingRoll={bankingRoll}
+		/>
+	)
+}

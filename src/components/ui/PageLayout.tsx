@@ -24,7 +24,7 @@ import {
 } from '@/types/transitions'
 import { motion } from 'framer-motion'
 import React, { useCallback, useEffect, useRef } from 'react'
-import { HomepageLayeredStarField } from '../starfield/LayeredStarField'
+import { LazyStarField } from '../starfield/LazyStarField'
 import { BackButton } from './BackButton'
 import { BrandPanel } from './BrandPanel'
 import { ContentSection } from './ContentSection'
@@ -85,8 +85,15 @@ export const PageLayout = ({
 	const { t, language } = useTranslation()
 	const portfolioData = getTranslatedPortfolioData(language)
 
-	// Startup sequence hook
-	const startup = useStartupSequence(startupSequence, showStarField)
+	// Track when starfield has loaded
+	const [starFieldLoaded, setStarFieldLoaded] = React.useState(false)
+
+	// Startup sequence hook - wait for starfield to load before starting animations
+	const startup = useStartupSequence(
+		startupSequence,
+		showStarField,
+		starFieldLoaded,
+	)
 
 	// Star speed animation hook
 	const starSpeed = useStarSpeedAnimation(startup.clusterVisible, 400)
@@ -267,7 +274,7 @@ export const PageLayout = ({
 	return (
 		<div className="relative min-h-screen overflow-hidden bg-black text-white">
 			{/* Star Field Background */}
-			<HomepageLayeredStarField
+			<LazyStarField
 				showCluster={startup.clusterVisible}
 				speed={speed ?? starSpeed}
 				fadeInDuration={fadeInDuration}
@@ -275,6 +282,8 @@ export const PageLayout = ({
 				foregroundMotionVector={motionVectors.foreground}
 				backgroundMotionVector={motionVectors.background}
 				bankingRoll={bankingRoll}
+				onLoaded={() => setStarFieldLoaded(true)}
+				fadeInDurationMs={400} // Smooth fade-in from black when starfield loads
 			/>
 
 			{/* Brand Panel - Top Left */}

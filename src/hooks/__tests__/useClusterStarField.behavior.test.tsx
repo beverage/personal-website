@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 // Hoisted mocks for vitest
 const hoisted = vi.hoisted(() => {
 	const useIsMobile = vi.fn(() => false)
+	const useIsSafari = vi.fn(() => false)
 	const FG = vi.fn().mockImplementation(() => ({
 		update: vi.fn(),
 		project: vi.fn(() => ({
@@ -37,11 +38,12 @@ const hoisted = vi.hoisted(() => {
 		})),
 		updateCanvasSize: vi.fn(),
 	}))
-	return { useIsMobile, FG, Cluster, Center }
+	return { useIsMobile, useIsSafari, FG, Cluster, Center }
 })
 
 vi.mock('../useMobileDetection', () => ({
 	useIsMobile: hoisted.useIsMobile,
+	useIsSafari: hoisted.useIsSafari,
 }))
 
 vi.mock('@/lib/starfield/ClusterStar3D', () => ({
@@ -119,6 +121,31 @@ describe('useClusterStarField behavior', () => {
 		)
 		result.current.current = canvas
 		// No resize/RAF should be scheduled when mobile (effect returns early)
+		expect(
+			(
+				global.requestAnimationFrame as unknown as {
+					mock: { calls: unknown[] }
+				}
+			).mock.calls.length,
+		).toBe(0)
+		unmount()
+		// Since RAF never scheduled, cancelAnimationFrame should not be called
+		expect(
+			(global.cancelAnimationFrame as unknown as { mock: { calls: unknown[] } })
+				.mock.calls.length,
+		).toBe(0)
+	})
+
+	it('skips rendering entirely on Safari desktop', async () => {
+		const mod = await import('../useMobileDetection')
+		;(
+			mod.useIsSafari as unknown as { mockReturnValue: (v: boolean) => void }
+		).mockReturnValue(true)
+		const { result, unmount } = renderHook(() =>
+			useClusterStarField({ variant: 'cluster-ellipse-4x', opacity: 1 }),
+		)
+		result.current.current = canvas
+		// No resize/RAF should be scheduled when Safari (effect returns early)
 		expect(
 			(
 				global.requestAnimationFrame as unknown as {

@@ -10,7 +10,7 @@ import { Star3D } from '@/lib/starfield/Star3D'
 import { CLUSTER_CONFIGS, ClusterVariant } from '@/types/starfield'
 import { type MotionVector } from '@/types/transitions'
 import { useEffect, useRef, useState } from 'react'
-import { useIsMobile } from './useMobileDetection'
+import { useIsMobile, useIsSafari } from './useMobileDetection'
 
 // Extend Window to include nebula pattern cache
 declare global {
@@ -82,6 +82,7 @@ export const useClusterStarField = ({
 	)
 	const [isClient, setIsClient] = useState(false)
 	const isMobile = useIsMobile()
+	const isSafari = useIsSafari()
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
 
@@ -104,8 +105,9 @@ export const useClusterStarField = ({
 
 		if (!isClient) return
 
-		// Skip cluster rendering entirely on mobile devices
-		if (isMobile) return
+		// Skip cluster rendering entirely on mobile devices and Safari desktop
+		// Both have poor Canvas 2D performance and need reduced complexity
+		if (isMobile || isSafari) return
 
 		// Additional client-side checks
 		if (
@@ -442,7 +444,7 @@ export const useClusterStarField = ({
 			// Unsubscribe from the centralized animation controller
 			AnimationController.unsubscribe(instanceId)
 		}
-	}, [isClient, variant, opacity, config, isMobile, stardustVariant])
+	}, [isClient, variant, opacity, config, isMobile, isSafari, stardustVariant])
 
 	return canvasRef
 }

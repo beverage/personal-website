@@ -75,14 +75,15 @@ describe('Star3D', () => {
 		star.z = 1000
 		expect(star.isLikelyVisible()).toBe(true)
 
-		// Star just off screen edge (should still be visible with margin)
-		star.x = (star.z * (width / 2 + 60)) / 200 // Just outside screen with margin
+		// Star just off screen edge (should still be visible with generous margin)
+		// Margin is now Math.max(width, height) * 1.5 = 2880px for course change transitions
+		star.x = (star.z * (width / 2 + 1000)) / 200 // Within generous margin
 		star.y = 0
 		star.z = 1000
 		expect(star.isLikelyVisible()).toBe(true)
 
-		// Star far off screen (beyond margin)
-		star.x = (star.z * (width / 2 + 200)) / 200 // Well beyond margin
+		// Star far off screen (well beyond generous 1.5x margin)
+		star.x = (star.z * (width / 2 + 3000)) / 200 // Beyond 1.5x screen dimension
 		star.y = 0
 		star.z = 1000
 		expect(star.isLikelyVisible()).toBe(false)

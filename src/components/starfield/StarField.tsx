@@ -1,5 +1,8 @@
-import { useStarField } from '@/hooks'
+import { useForegroundToggle } from '@/contexts/ForegroundToggleContext'
+import { useRenderMode } from '@/contexts/RenderModeContext'
+import { useStarField, useWebGLStarField, useWebGLSupport } from '@/hooks'
 import { useOptimalStarCount } from '@/hooks/useMobileDetection'
+import { WEBGL_STARFIELD_CONFIG } from '@/lib/starfield'
 import {
 	ClusterVariant,
 	StarFieldVariant,
@@ -38,25 +41,23 @@ export const StarField: React.FC<StarFieldProps> = ({
 	// Check if this is a cluster variant
 	const isClusterVariant = variant.startsWith('cluster-')
 
-	// Robust mobile/low-power detection with automatic star count optimization
-	// Only apply if starCount wasn't explicitly provided (and for twinkle variants only)
-	const optimalStarCount = useOptimalStarCount(4000)
-	const effectiveStarCount = starCount ?? optimalStarCount
+	// Check for WebGL support and render mode override (dev only)
+	const supportsWebGL = useWebGLSupport()
+	const { renderMode } = useRenderMode()
 
-	// Always call the twinkle hook, but only use it if needed
-	const canvasRef = useStarField({
-		starCount: effectiveStarCount,
-		speed,
-		rollSpeed,
-		opacity,
-		variant: isClusterVariant ? 'twinkle-compact' : (variant as TwinkleVariant),
-		motionVector,
-	})
+	// Determine actual render mode
+	const useWebGL =
+		renderMode === 'webgl'
+			? true
+			: renderMode === 'canvas2d'
+				? false
+				: supportsWebGL // 'auto' mode
 
 	if (isClusterVariant) {
 		// Render cluster star field for cluster variants
 		return (
 			<ClusterStarField
+				key={`cluster-${renderMode}`}
 				variant={variant as ClusterVariant}
 				opacity={opacity}
 				className={className}
@@ -66,7 +67,113 @@ export const StarField: React.FC<StarFieldProps> = ({
 		)
 	}
 
-	// Render twinkle star field for twinkle variants
+	// Use WebGL or Canvas2D based on support/override
+	// Key forces remount when switching modes
+	if (useWebGL) {
+		return (
+			<WebGLStarFieldRenderer
+				key="webgl"
+				starCount={starCount}
+				speed={speed}
+				rollSpeed={rollSpeed}
+				className={className}
+				style={style}
+				motionVector={motionVector}
+			/>
+		)
+	}
+
+	// Fall back to Canvas2D renderer
+	return (
+		<Canvas2DStarFieldRenderer
+			key="canvas2d"
+			starCount={starCount}
+			speed={speed}
+			rollSpeed={rollSpeed}
+			opacity={opacity}
+			variant={variant as TwinkleVariant}
+			className={className}
+			style={style}
+			motionVector={motionVector}
+		/>
+	)
+}
+
+// WebGL renderer component
+const WebGLStarFieldRenderer: React.FC<{
+	starCount?: number
+	speed: number
+	rollSpeed: number
+	className: string
+	style?: React.CSSProperties
+	motionVector?: MotionVector
+}> = ({ starCount, speed, rollSpeed, className, style, motionVector }) => {
+	const { foregroundEnabled } = useForegroundToggle()
+
+	// WebGL can handle full star count - no need for Safari/mobile reduction
+	// Use foreground toggle to control visibility in dev mode
+	const baseStarCount =
+		starCount ?? WEBGL_STARFIELD_CONFIG.starCounts.foreground
+	const effectiveStarCount = foregroundEnabled ? baseStarCount : 0
+
+	const canvasRef = useWebGLStarField({
+		starCount: effectiveStarCount,
+		speed,
+		rollSpeed,
+		motionVector,
+	})
+
+	return (
+		<canvas
+			ref={canvasRef}
+			className={`absolute inset-0 h-full w-full ${className}`}
+			style={{
+				width: '100%',
+				height: '100%',
+				zIndex: 0,
+				...style,
+			}}
+		/>
+	)
+}
+
+// Canvas2D renderer component
+const Canvas2DStarFieldRenderer: React.FC<{
+	starCount?: number
+	speed: number
+	rollSpeed: number
+	opacity: number
+	variant: TwinkleVariant
+	className: string
+	style?: React.CSSProperties
+	motionVector?: MotionVector
+}> = ({
+	starCount,
+	speed,
+	rollSpeed,
+	opacity,
+	variant,
+	className,
+	style,
+	motionVector,
+}) => {
+	const { foregroundEnabled } = useForegroundToggle()
+
+	const optimalStarCount = useOptimalStarCount(
+		WEBGL_STARFIELD_CONFIG.starCounts.foreground,
+	)
+	const baseStarCount = starCount ?? optimalStarCount
+	const effectiveStarCount = foregroundEnabled ? baseStarCount : 0
+
+	const canvasRef = useStarField({
+		starCount: effectiveStarCount,
+		speed,
+		rollSpeed,
+		opacity,
+		variant,
+		motionVector,
+	})
+
 	return (
 		<canvas
 			ref={canvasRef}

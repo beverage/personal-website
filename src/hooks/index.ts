@@ -1,11 +1,10 @@
 export { useContentState } from './useContentState'
 export { useLanguageTransition } from './useLanguageTransition'
-export {
-	useIsMobile,
-	useIsSafari,
-	useOptimalStarCount,
-} from './useMobileDetection'
+export { useIsMobile, useOptimalStarCount } from './useMobileDetection'
 export { useStarField, useStarFieldPreset } from './useStarField'
 export { useStarSpeedAnimation } from './useStarSpeedAnimation'
 export { useStartupSequence } from './useStartupSequence'
 export { useTranslation } from './useTranslation'
+export { useWebGLClusterStarField } from './useWebGLClusterStarField'
+export { useWebGLStarField } from './useWebGLStarField'
+export { useWebGLSupport } from './useWebGLSupport'

@@ -19,6 +19,7 @@ export interface AnimationSubscriber {
 
 export interface AnimationControllerConfig {
 	maxDeltaTime: number // Clamp deltaTime to prevent jumps after tab switching
+	targetFPS: number // Target frames per second (0 = uncapped)
 	debugMode: boolean
 }
 
@@ -26,12 +27,15 @@ class AnimationControllerClass {
 	private subscribers = new Map<string, AnimationSubscriber>()
 	private animationId: number | null = null
 	private lastTimestamp: number | null = null
+	private lastRenderTime: number = 0
 	private isRunning = false
+	private pausedByVisibility = false
 	private config: AnimationControllerConfig
 
 	constructor(config: Partial<AnimationControllerConfig> = {}) {
 		this.config = {
 			maxDeltaTime: 0.1, // 100ms max to prevent visual jumps
+			targetFPS: 60, // 60 FPS by default
 			debugMode: false,
 			...config,
 		}
@@ -40,6 +44,12 @@ class AnimationControllerClass {
 		AnimationStateMachine.subscribe(() => {
 			this.updatePrioritiesFromState()
 		})
+
+		// Set up page visibility listener for performance optimization
+		// Don't render when tab is hidden to save CPU/GPU and battery
+		if (typeof document !== 'undefined') {
+			document.addEventListener('visibilitychange', this.handleVisibilityChange)
+		}
 	}
 
 	/**
@@ -110,6 +120,48 @@ class AnimationControllerClass {
 	}
 
 	/**
+	 * Update target FPS at runtime
+	 * @param fps - Target frames per second (0 = uncapped)
+	 */
+	setTargetFPS(fps: number): void {
+		this.config.targetFPS = fps
+		if (this.config.debugMode) {
+			console.log(
+				`🎯 AnimationController: Target FPS set to ${fps === 0 ? 'uncapped' : fps}`,
+			)
+		}
+	}
+
+	/**
+	 * Get current target FPS
+	 */
+	getTargetFPS(): number {
+		return this.config.targetFPS
+	}
+
+	/**
+	 * Handle page visibility changes
+	 * Pause rendering when tab is hidden to save resources
+	 */
+	private handleVisibilityChange = (): void => {
+		if (typeof document === 'undefined') return
+
+		if (document.hidden) {
+			this.pausedByVisibility = true
+			if (this.config.debugMode) {
+				console.log('🔇 AnimationController: Paused (tab hidden)')
+			}
+		} else {
+			this.pausedByVisibility = false
+			// Reset timestamp to avoid huge deltaTime jump when resuming
+			this.lastTimestamp = null
+			if (this.config.debugMode) {
+				console.log('🔊 AnimationController: Resumed (tab visible)')
+			}
+		}
+	}
+
+	/**
 	 * Get current subscriber count
 	 */
 	getSubscriberCount(): number {
@@ -155,6 +207,28 @@ class AnimationControllerClass {
 	private tick(timestamp: number): void {
 		if (!this.isRunning) return
 
+		// Pause rendering when tab is hidden to save CPU/GPU/battery
+		if (this.pausedByVisibility) {
+			// Still schedule rAF to keep checking for visibility changes
+			this.animationId = requestAnimationFrame(this.tick)
+			return
+		}
+
+		// FPS limiting: Check if enough time has passed since last render
+		if (this.config.targetFPS > 0) {
+			const frameDelay = 1000 / this.config.targetFPS
+			const timeSinceLastRender = timestamp - this.lastRenderTime
+
+			if (timeSinceLastRender < frameDelay) {
+				// Not enough time passed, skip this frame but schedule next
+				this.animationId = requestAnimationFrame(this.tick)
+				return
+			}
+
+			// Update last render time
+			this.lastRenderTime = timestamp
+		}
+
 		// Calculate deltaTime
 		let deltaTime = 0
 		if (this.lastTimestamp !== null) {
@@ -189,6 +263,13 @@ class AnimationControllerClass {
 	destroy(): void {
 		this.subscribers.clear()
 		this.stop()
+		// Remove visibility listener
+		if (typeof document !== 'undefined') {
+			document.removeEventListener(
+				'visibilitychange',
+				this.handleVisibilityChange,
+			)
+		}
 	}
 }
 
@@ -209,5 +290,7 @@ export const useAnimationController = () => {
 		getSubscriberCount:
 			AnimationController.getSubscriberCount.bind(AnimationController),
 		getIsRunning: AnimationController.getIsRunning.bind(AnimationController),
+		setTargetFPS: AnimationController.setTargetFPS.bind(AnimationController),
+		getTargetFPS: AnimationController.getTargetFPS.bind(AnimationController),
 	}
 }

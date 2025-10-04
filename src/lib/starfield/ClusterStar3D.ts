@@ -1,5 +1,13 @@
-// Constants for performance
+// Constants for performance and projection calculations
 const BASE_SCALE_DENOMINATOR = 800
+
+// Projection constants used by both WebGL and Canvas2D renderers
+const SIZE_MIN = 0.3
+const SIZE_MAX = 1.5
+const SIZE_SCALE_FACTOR = 200000
+const SIZE_SCALE_MULTIPLIER = 2
+const OPACITY_BASE_MAX = 0.8
+const OPACITY_SCALE_FACTOR = 1000000
 
 export class ClusterStar3D {
 	canvasWidth: number
@@ -11,6 +19,7 @@ export class ClusterStar3D {
 	private clusterSemiMajorAxis: number
 	private clusterSemiMinorAxis: number
 	private clusterDistance: { min: number; max: number }
+	public smoothedSize: number = 0.3 // For temporal smoothing in WebGL
 
 	constructor(
 		canvasWidth: number = 1920,
@@ -115,8 +124,12 @@ export class ClusterStar3D {
 		const screenY = screenHeight / 2 + (this.y / this.z) * focalLength
 
 		// Distant stars remain very small but visible
-		const size = Math.max(0.3, Math.min(1.5, (200000 / this.z) * 2))
-		const opacity = this.intensity * Math.min(0.8, 1000000 / this.z)
+		const size = Math.max(
+			SIZE_MIN,
+			Math.min(SIZE_MAX, (SIZE_SCALE_FACTOR / this.z) * SIZE_SCALE_MULTIPLIER),
+		)
+		const opacity =
+			this.intensity * Math.min(OPACITY_BASE_MAX, OPACITY_SCALE_FACTOR / this.z)
 
 		return {
 			x: screenX,
@@ -146,6 +159,7 @@ export class CenterClusterStar3D {
 	private concentration: number
 	private intensityMultiplier: number
 	private sizeMultiplier: number
+	public smoothedSize: number = 0.3 // For temporal smoothing in WebGL
 
 	constructor(
 		canvasWidth: number = 1920,
@@ -260,18 +274,22 @@ export class CenterClusterStar3D {
 		const screenY = screenHeight / 2 + (this.y / this.z) * focalLength
 
 		// Calculate size with multiplier
-		const baseSize = Math.max(0.3, Math.min(1.5, (200000 / this.z) * 2))
+		const baseSize = Math.max(
+			SIZE_MIN,
+			Math.min(SIZE_MAX, (SIZE_SCALE_FACTOR / this.z) * SIZE_SCALE_MULTIPLIER),
+		)
 		const size = baseSize * this.sizeMultiplier
 
 		// Calculate opacity with intensity multiplier
-		const baseOpacity = this.intensity * Math.min(0.8, 1000000 / this.z)
+		const baseOpacity =
+			this.intensity * Math.min(OPACITY_BASE_MAX, OPACITY_SCALE_FACTOR / this.z)
 		const opacity = baseOpacity * this.intensityMultiplier
 
 		return {
 			x: screenX,
 			y: screenY,
 			size,
-			opacity: Math.max(0.05, Math.min(0.8, opacity)), // Allow higher opacity for center stars
+			opacity: Math.max(0.05, Math.min(0.8, opacity)), // Allow higher opacity for outer stars
 			visible:
 				screenX >= -5 &&
 				screenX <= screenWidth + 5 &&

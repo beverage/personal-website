@@ -7,10 +7,11 @@ import {
 	ClusterStar3D,
 } from '@/lib/starfield/ClusterStar3D'
 import { Star3D } from '@/lib/starfield/Star3D'
+import { WEBGL_STARFIELD_CONFIG } from '@/lib/starfield/webglConfig'
 import { CLUSTER_CONFIGS, ClusterVariant } from '@/types/starfield'
 import { type MotionVector } from '@/types/transitions'
 import { useEffect, useRef, useState } from 'react'
-import { useIsMobile, useIsSafari } from './useMobileDetection'
+import { useIsMobile } from './useMobileDetection'
 
 // Extend Window to include nebula pattern cache
 declare global {
@@ -82,7 +83,6 @@ export const useClusterStarField = ({
 	)
 	const [isClient, setIsClient] = useState(false)
 	const isMobile = useIsMobile()
-	const isSafari = useIsSafari()
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
 
@@ -105,9 +105,9 @@ export const useClusterStarField = ({
 
 		if (!isClient) return
 
-		// Skip cluster rendering entirely on mobile devices and Safari desktop
-		// Both have poor Canvas 2D performance and need reduced complexity
-		if (isMobile || isSafari) return
+		// Skip cluster rendering on mobile devices for battery conservation
+		// Desktop browsers use WebGL which handles the cluster efficiently
+		if (isMobile) return
 
 		// Additional client-side checks
 		if (
@@ -122,6 +122,10 @@ export const useClusterStarField = ({
 
 		// Initialize star layers with configuration
 		// Only create foreground stars if config specifies them
+		// Use counts from WEBGL_STARFIELD_CONFIG for consistency with WebGL
+		const clusterStarCount = WEBGL_STARFIELD_CONFIG.starCounts.core
+		const centerStarCount = WEBGL_STARFIELD_CONFIG.starCounts.outer
+
 		foregroundStarsRef.current =
 			config.foregroundStars > 0
 				? Array.from(
@@ -131,7 +135,7 @@ export const useClusterStarField = ({
 				: []
 
 		clusterStarsRef.current = Array.from(
-			{ length: config.clusterStars },
+			{ length: clusterStarCount },
 			() =>
 				new ClusterStar3D(
 					width,
@@ -144,9 +148,9 @@ export const useClusterStarField = ({
 
 		// Initialize center stars if configured
 		centerStarsRef.current =
-			config.centerStars && config.centerStars > 0
+			centerStarCount > 0
 				? Array.from(
-						{ length: config.centerStars },
+						{ length: centerStarCount },
 						() =>
 							new CenterClusterStar3D(
 								width,
@@ -444,7 +448,7 @@ export const useClusterStarField = ({
 			// Unsubscribe from the centralized animation controller
 			AnimationController.unsubscribe(instanceId)
 		}
-	}, [isClient, variant, opacity, config, isMobile, isSafari, stardustVariant])
+	}, [isClient, variant, opacity, config, isMobile, stardustVariant])
 
 	return canvasRef
 }

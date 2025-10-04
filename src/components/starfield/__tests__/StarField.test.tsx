@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react'
+import React from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock hooks used by StarField
 const mockUseStarField = vi.fn(() => ({ current: null }))
 const mockUseOptimalStarCount = vi.fn(() => 1337)
+const mockUseWebGLSupport = vi.fn(() => false) // Default to Canvas2D for testing
 
 vi.mock('@/hooks', () => ({
 	useStarField: (...args: unknown[]) => mockUseStarField(...args),
+	useWebGLSupport: () => mockUseWebGLSupport(),
 }))
 
 vi.mock('@/hooks/useMobileDetection', () => ({
@@ -28,7 +31,18 @@ vi.mock('../ClusterStarField', () => ({
 	ClusterStarField: (props: Record<string, unknown>) => mockCluster(props),
 }))
 
+import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
+import { RenderModeProvider } from '@/contexts/RenderModeContext'
 import { BackgroundStarField, HomepageStarField, StarField } from '../StarField'
+
+// Test helper to wrap components with required providers
+const renderWithProviders = (ui: React.ReactElement) => {
+	return render(
+		<RenderModeProvider>
+			<ForegroundToggleProvider>{ui}</ForegroundToggleProvider>
+		</RenderModeProvider>,
+	)
+}
 
 describe('StarField', () => {
 	beforeEach(() => {
@@ -38,7 +52,7 @@ describe('StarField', () => {
 	})
 
 	it('renders a canvas for twinkle variants and calls useStarField with defaults', () => {
-		render(<StarField />)
+		renderWithProviders(<StarField />)
 
 		const canvasEl = document.querySelector('canvas')
 		expect(canvasEl).toBeInTheDocument()
@@ -56,7 +70,7 @@ describe('StarField', () => {
 	})
 
 	it('renders ClusterStarField for cluster variants and forwards props', () => {
-		render(
+		renderWithProviders(
 			<StarField
 				variant="cluster-ellipse-4x"
 				opacity={0.5}
@@ -72,15 +86,12 @@ describe('StarField', () => {
 		expect(cluster).toHaveAttribute('data-opacity', '0.5')
 		expect(cluster).toHaveClass('custom-class')
 
-		// useStarField is still invoked with a twinkle variant internally
-		expect(mockUseStarField).toHaveBeenCalledTimes(1)
-		expect(mockUseStarField.mock.calls[0][0]).toMatchObject({
-			variant: 'twinkle-compact',
-		})
+		// StarField doesn't call useStarField for cluster variants (cluster only)
+		expect(mockUseStarField).not.toHaveBeenCalled()
 	})
 
 	it('HomepageStarField and BackgroundStarField render canvases', () => {
-		render(
+		renderWithProviders(
 			<>
 				<HomepageStarField />
 				<BackgroundStarField />

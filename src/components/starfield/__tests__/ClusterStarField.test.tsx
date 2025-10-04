@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import React from 'react'
 import { vi } from 'vitest'
 
 // Mock the hook to avoid RAF/canvas logic
@@ -7,7 +8,24 @@ vi.mock('@/hooks/useClusterStarField', () => ({
 	useClusterStarField: (...args: unknown[]) => mockUseCluster(...args),
 }))
 
+// Mock WebGL support detection
+const mockUseWebGLSupport = vi.fn(() => false) // Default to Canvas2D for simpler testing
+vi.mock('@/hooks/useWebGLSupport', () => ({
+	useWebGLSupport: () => mockUseWebGLSupport(),
+}))
+
+import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
+import { RenderModeProvider } from '@/contexts/RenderModeContext'
 import { ClusterStarField, StarTrekClusterField } from '../ClusterStarField'
+
+// Test helper to wrap components with required providers
+const renderWithProviders = (ui: React.ReactElement) => {
+	return render(
+		<RenderModeProvider>
+			<ForegroundToggleProvider>{ui}</ForegroundToggleProvider>
+		</RenderModeProvider>,
+	)
+}
 
 describe('ClusterStarField', () => {
 	beforeEach(() => {
@@ -15,7 +33,7 @@ describe('ClusterStarField', () => {
 	})
 
 	it('renders a canvas and calls useClusterStarField with defaults', () => {
-		render(<ClusterStarField />)
+		renderWithProviders(<ClusterStarField />)
 		const canvas = document.querySelector('canvas')
 		expect(canvas).toBeInTheDocument()
 
@@ -28,7 +46,7 @@ describe('ClusterStarField', () => {
 	})
 
 	it('forwards props correctly', () => {
-		render(
+		renderWithProviders(
 			<ClusterStarField
 				variant="cluster-ellipse-4x-center-close-1"
 				opacity={0.42}
@@ -43,7 +61,7 @@ describe('ClusterStarField', () => {
 	})
 
 	it('StarTrekClusterField convenience component renders', () => {
-		render(<StarTrekClusterField opacity={0.8} className="x" />)
+		renderWithProviders(<StarTrekClusterField opacity={0.8} className="x" />)
 		const canvas = document.querySelector('canvas')
 		expect(canvas).toBeInTheDocument()
 		expect(mockUseCluster).toHaveBeenCalled()

@@ -1,4 +1,6 @@
+import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { RenderModeProvider } from '@/contexts/RenderModeContext'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
@@ -89,7 +91,11 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="bg-black">
 			<body className={`${exo2.variable} bg-black text-white antialiased`}>
-				<LanguageProvider>{children}</LanguageProvider>
+				<LanguageProvider>
+					<RenderModeProvider>
+						<ForegroundToggleProvider>{children}</ForegroundToggleProvider>
+					</RenderModeProvider>
+				</LanguageProvider>
 			</body>
 		</html>
 	)

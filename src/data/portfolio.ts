@@ -75,12 +75,13 @@ export const projects: Project[] = [
 		id: 'personal-website',
 		title: 'beverage.me',
 		description:
-			'Interactive personal website with cinematic starfield animations',
+			'Interactive personal website with GPU-accelerated WebGL starfield animations',
 		longDescription:
-			'A modern personal portfolio website featuring an immersive dual-layer starfield animation system with course change transitions. Built with Next.js and TypeScript, showcasing advanced Canvas 2D animations, Framer Motion integration, and a centralized animation architecture. Features include transform-based portfolio scrolling, dynamic animation state management, and performance-optimized rendering.',
+			'A modern personal portfolio website featuring an immersive dual-layer starfield animation system with course change transitions. Built with Next.js and TypeScript, showcasing GPU-accelerated WebGL rendering with Canvas 2D fallback, Framer Motion integration, and a centralized animation architecture. Features include transform-based portfolio scrolling, dynamic animation state management, performance-optimized rendering with FPS limiting, and tab visibility pause.',
 		technologies: [
 			'Next.js',
 			'TypeScript',
+			'WebGL',
 			'Framer Motion',
 			'Canvas 2D',
 			'Tailwind CSS',

@@ -29,6 +29,7 @@ import { BackButton } from './BackButton'
 import { BrandPanel } from './BrandPanel'
 import { ContentSection } from './ContentSection'
 import { ControlsCorner } from './ControlsCorner'
+import { DebugControlsCorner } from './DebugControlsCorner'
 import { FooterPanel } from './FooterPanel'
 
 interface SocialLink {
@@ -105,18 +106,10 @@ export const PageLayout = ({
 	const contentState = useContentState()
 
 	// Animation state machine for coordinating transitions
-	const {
-		currentState: animationState,
-		requestTransition,
-		canTransitionTo,
-	} = useAnimationStateMachine()
+	const { requestTransition, canTransitionTo } = useAnimationStateMachine()
 
-	// Debug animation state in development
-	useEffect(() => {
-		if (process.env.NODE_ENV === 'development') {
-			console.log('🎯 Animation State:', animationState)
-		}
-	}, [animationState])
+	// Animation state tracking
+	// (debug logging removed)
 
 	// Transition system configuration
 	const transitionConfig: CourseChangeConfig =
@@ -303,6 +296,12 @@ export const PageLayout = ({
 						? () => startup.setClusterVisible(!startup.clusterVisible)
 						: undefined
 				}
+				disabled={isTransitioning || isLanguageTransitioning}
+				fadeStyle={startup.controlFadeStyle}
+			/>
+
+			{/* Debug Controls - Bottom Right (dev mode only) */}
+			<DebugControlsCorner
 				disabled={isTransitioning || isLanguageTransitioning}
 				fadeStyle={startup.controlFadeStyle}
 			/>

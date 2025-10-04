@@ -6,7 +6,7 @@ import type { HomepageLayeredStarFieldProps } from './LayeredStarField'
 
 // Simulate slow loading (development only)
 // Set to 0 to disable, or e.g. 5000 for 5 second delay
-const DEV_DELAY_MS = process.env.NODE_ENV === 'development' ? 2000 : 0
+const DEV_DELAY_MS = process.env.NODE_ENV === 'development' ? 0 : 0
 
 // Fade-in duration when starfield loads (milliseconds)
 // Adjust this to control how quickly the starfield fades in from black

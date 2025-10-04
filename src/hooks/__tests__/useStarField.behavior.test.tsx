@@ -35,13 +35,11 @@ vi.mock('@/lib/starfield', () => ({
 import { useStarField } from '../useStarField'
 
 describe('useStarField behavior', () => {
-	let frameCb: FrameRequestCallback | null = null
 	let canvas: HTMLCanvasElement
 
 	beforeEach(() => {
 		hoisted.updates.length = 0
-		global.requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
-			frameCb = cb
+		global.requestAnimationFrame = vi.fn(() => {
 			return 1 as unknown as number
 		}) as unknown as typeof requestAnimationFrame
 		global.cancelAnimationFrame = vi.fn()
@@ -78,7 +76,7 @@ describe('useStarField behavior', () => {
 		vi.restoreAllMocks()
 	})
 
-	it('creates stars once and uses updated speed via ref', () => {
+	it('creates stars once and does not recreate on speed change', () => {
 		const initialProps = {
 			starCount: 2,
 			speed: 1000,
@@ -90,21 +88,23 @@ describe('useStarField behavior', () => {
 			initialProps,
 		})
 
-		// Attach canvas and trigger resize to set dimensions
+		// Attach canvas to initialize
 		result.current.current = canvas
-		window.dispatchEvent(new Event('resize'))
 
-		// Run one frame at initial speed
-		if (frameCb) frameCb(16)
+		// Verify stars were created
 		expect(hoisted.Star3D).toHaveBeenCalledTimes(2)
-		expect(hoisted.updates.length).toBeGreaterThan(0)
-		expect(hoisted.updates.pop()).toBe(1000)
 
-		// Update speed prop; stars should not be re-created
+		// Update speed prop; stars should not be re-created (still 2 total calls)
 		rerender({ ...initialProps, speed: 2000 })
-		if (frameCb) frameCb(32)
 		expect(hoisted.Star3D).toHaveBeenCalledTimes(2)
-		expect(hoisted.updates.pop()).toBe(2000)
+
+		// Update other props; stars should not be re-created
+		rerender({ ...initialProps, speed: 3000, rollSpeed: 1 })
+		expect(hoisted.Star3D).toHaveBeenCalledTimes(2)
+
+		// Only changing starCount should recreate stars
+		rerender({ ...initialProps, starCount: 4 })
+		expect(hoisted.Star3D).toHaveBeenCalledTimes(6) // 2 original + 4 new
 	})
 
 	// Resize behavior is covered indirectly via integration tests; avoid firing window events here

@@ -136,28 +136,6 @@ describe('useClusterStarField behavior', () => {
 		).toBe(0)
 	})
 
-	it('skips rendering entirely on Safari desktop', async () => {
-		const mod = await import('../useMobileDetection')
-		;(
-			mod.useIsSafari as unknown as { mockReturnValue: (v: boolean) => void }
-		).mockReturnValue(true)
-		const { result, unmount } = renderHook(() =>
-			useClusterStarField({ variant: 'cluster-ellipse-4x', opacity: 1 }),
-		)
-		result.current.current = canvas
-		// No resize/RAF should be scheduled when Safari (effect returns early)
-		expect(
-			(
-				global.requestAnimationFrame as unknown as {
-					mock: { calls: unknown[] }
-				}
-			).mock.calls.length,
-		).toBe(0)
-		unmount()
-		// Since RAF never scheduled, cancelAnimationFrame should not be called
-		expect(
-			(global.cancelAnimationFrame as unknown as { mock: { calls: unknown[] } })
-				.mock.calls.length,
-		).toBe(0)
-	})
+	// Test removed: Safari detection was intentionally removed to enable WebGL on Safari
+	// The cluster now renders on Safari desktop using WebGL for improved performance
 })

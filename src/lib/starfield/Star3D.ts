@@ -48,11 +48,9 @@ export class Star3D {
 		const screenX = this.canvasWidth / 2 + (this.x / this.z) * focalLength
 		const screenY = this.canvasHeight / 2 + (this.y / this.z) * focalLength
 
-		// Calculate margin based on screen aspect ratio
-		const aspectRatio =
-			Math.max(this.canvasWidth, this.canvasHeight) /
-			Math.min(this.canvasWidth, this.canvasHeight)
-		const margin = 50 * aspectRatio // 50px base margin scaled by aspect ratio
+		// Use generous margin to handle transitions and course changes
+		// Must match the rendering bounds to ensure stars can slide into view
+		const margin = Math.max(this.canvasWidth, this.canvasHeight) * 1.5
 
 		// Check if within screen bounds plus margin
 		return (
@@ -115,13 +113,20 @@ export class Star3D {
 		const screenY = screenHeight / 2 + (this.y / this.z) * focalLength
 
 		const size = Math.max(0.5, Math.min(2, (20000 / this.z) * 1.5))
-		const opacity = this.intensity * Math.min(1, 50000 / this.z)
+		let opacity = this.intensity * Math.min(1, 50000 / this.z)
+
+		// Add near-clip fade zone to prevent "blinking" appearance
+		// Stars fade in as they get very close (z < 5000)
+		if (this.z < 5000) {
+			const fadeFactor = this.z / 5000 // 0 at camera, 1 at z=5000
+			opacity *= fadeFactor
+		}
 
 		return {
 			x: screenX,
 			y: screenY,
 			size,
-			opacity: Math.max(0.1, Math.min(1, opacity)),
+			opacity: Math.max(0.05, Math.min(1, opacity)),
 			visible:
 				screenX >= -10 &&
 				screenX <= screenWidth + 10 &&

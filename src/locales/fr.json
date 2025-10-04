@@ -39,8 +39,8 @@
 		},
 		"website": {
 			"title": "beverage.me",
-			"description": "Site web personnel interactif avec animations cinématiques de champ d'étoiles",
-			"longDescription": "Un site web portfolio personnel moderne présentant un système d'animation de champ d'étoiles immersif à deux couches avec transitions de changement de cap. Construit avec Next.js et TypeScript, mettant en valeur des animations Canvas 2D avancées, une intégration Framer Motion et une architecture d'animation centralisée. Comprend un défilement de portfolio basé sur les transformations, une gestion dynamique de l'état des animations et un rendu optimisé pour les performances.",
+			"description": "Site web personnel interactif avec animations de champ d'étoiles accélérées par GPU WebGL",
+			"longDescription": "Un site web portfolio personnel moderne présentant un système d'animation de champ d'étoiles immersif à deux couches avec transitions de changement de cap. Construit avec Next.js et TypeScript, mettant en valeur un rendu WebGL accéléré par GPU avec Canvas 2D de secours, une intégration Framer Motion et une architecture d'animation centralisée. Comprend un défilement de portfolio basé sur les transformations, une gestion dynamique de l'état des animations, un rendu optimisé pour les performances avec limitation de FPS et pause sur visibilité des onglets.",
 			"links": {
 				"viewSource": "Voir le code source",
 				"visitSite": "Visiter le site"

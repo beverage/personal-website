@@ -67,32 +67,6 @@ const baseProjects = [
 		status: 'in-progress' as const,
 		translationKey: 'quiz' as const,
 	},
-	{
-		id: 'personal-website',
-		technologies: [
-			'Next.js',
-			'TypeScript',
-			'Framer Motion',
-			'Canvas 2D',
-			'Tailwind CSS',
-		],
-		imageUrl: '/images/portfolio/personal-website-placeholder.svg',
-		links: [
-			{
-				labelKey: 'viewSource',
-				url: 'https://github.com/beverage/personal-website',
-				type: 'github' as const,
-			},
-			{
-				labelKey: 'visitSite',
-				url: 'https://beverage.me',
-				type: 'website' as const,
-			},
-		],
-		featured: true,
-		status: 'completed' as const,
-		translationKey: 'website' as const,
-	},
 ]
 
 export const getTranslatedPortfolioData = (

@@ -18,20 +18,11 @@ export function RenderModeProvider({
 }: {
 	children: React.ReactNode
 }) {
-	// Default to 'webgl' in development for easier debugging
-	const defaultMode: RenderMode =
-		process.env.NODE_ENV === 'development' ? 'webgl' : 'auto'
-
-	const [renderMode, setRenderMode] = useState<RenderMode>(defaultMode)
-
-	const handleSetRenderMode = (mode: RenderMode) => {
-		setRenderMode(mode)
-	}
+	// Default to 'auto' - automatically choose best renderer based on WebGL support
+	const [renderMode, setRenderMode] = useState<RenderMode>('auto')
 
 	return (
-		<RenderModeContext.Provider
-			value={{ renderMode, setRenderMode: handleSetRenderMode }}
-		>
+		<RenderModeContext.Provider value={{ renderMode, setRenderMode }}>
 			{children}
 		</RenderModeContext.Provider>
 	)

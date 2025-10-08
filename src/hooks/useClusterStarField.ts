@@ -167,8 +167,13 @@ export const useClusterStarField = ({
 
 		const resizeCanvas = () => {
 			if (canvasRef.current) {
-				canvasRef.current.width = canvasRef.current.offsetWidth
-				canvasRef.current.height = canvasRef.current.offsetHeight
+				const dpr = window.devicePixelRatio || 1
+				const displayWidth = canvasRef.current.offsetWidth
+				const displayHeight = canvasRef.current.offsetHeight
+
+				// Set canvas resolution to match physical pixels
+				canvasRef.current.width = displayWidth * dpr
+				canvasRef.current.height = displayHeight * dpr
 
 				// Update canvas size for all star types
 				clusterStarsRef.current.forEach(star => {

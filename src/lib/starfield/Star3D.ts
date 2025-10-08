@@ -1,5 +1,9 @@
+import { WEBGL_STARFIELD_CONFIG } from './webglConfig'
+
 // Constants for performance
 const SQRT_2 = Math.sqrt(2)
+// Kept at 120k - rotation pivot at z=-25k provides subtle motion without needing larger spawn area
+// Maintains good density while ensuring rotation coverage
 const BASE_SPAWN_SIZE = 120000
 const BASE_SCALE_DENOMINATOR = 800
 
@@ -18,13 +22,20 @@ export class Star3D {
 		this.x = 0
 		this.y = 0
 		this.z = 0
-		this.intensity = Math.random() * 0.7 + 0.3
+		const intensityConfig = WEBGL_STARFIELD_CONFIG.foreground.intensity
+		this.intensity =
+			Math.random() * (intensityConfig.max - intensityConfig.min) +
+			intensityConfig.min
 		this.cachedScaleFactor = this.calculateScaleFactor()
 		this.reset()
 	}
 
 	private calculateScaleFactor(): number {
-		const maxDimension = Math.max(this.canvasWidth, this.canvasHeight)
+		// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep spawn area constant
+		// This ensures consistent angular coverage across all display sizes
+		const REFERENCE_WIDTH = 1512
+		const REFERENCE_HEIGHT = 884
+		const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
 		return (maxDimension / BASE_SCALE_DENOMINATOR) * SQRT_2
 	}
 
@@ -37,7 +48,8 @@ export class Star3D {
 	reset() {
 		this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
 		this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
-		this.z = 10000 + Math.random() * 40000
+		// Spawn from camera forward (0 to 50k) with fade-in handling distant stars
+		this.z = Math.random() * 50000
 	}
 
 	// Fast visibility pre-check using current projected position
@@ -49,8 +61,8 @@ export class Star3D {
 		const screenY = this.canvasHeight / 2 + (this.y / this.z) * focalLength
 
 		// Use generous margin to handle transitions and course changes
-		// Must match the rendering bounds to ensure stars can slide into view
-		const margin = Math.max(this.canvasWidth, this.canvasHeight) * 1.5
+		// Increased to 3.0x to accommodate larger spawn area after devicePixelRatio fix
+		const margin = Math.max(this.canvasWidth, this.canvasHeight) * 3.0
 
 		// Check if within screen bounds plus margin
 		return (
@@ -68,6 +80,7 @@ export class Star3D {
 		const wrapThreshold = 50
 		if (this.z <= wrapThreshold) {
 			const overshoot = wrapThreshold - this.z
+			// Recycle to far end (50k) with fade-in zone
 			this.z = 50000 + overshoot
 			this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
 			this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
@@ -93,12 +106,14 @@ export class Star3D {
 		const wrapThreshold = 50
 		if (this.z <= wrapThreshold) {
 			const overshoot = wrapThreshold - this.z
+			// Recycle to far end (50k) with fade-in zone
 			this.z = 50000 + overshoot
 			this.x = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
 			this.y = (Math.random() - 0.5) * BASE_SPAWN_SIZE * this.cachedScaleFactor
 		}
 
-		// Apply continuous roll rotation
+		// Apply continuous roll rotation (XY plane only)
+		// Pivot at z=-25k makes angular motion less apparent from camera's perspective
 		const rollAngle = (rollSpeed * deltaTime * Math.PI) / 180
 		const cos = Math.cos(rollAngle)
 		const sin = Math.sin(rollAngle)
@@ -106,6 +121,7 @@ export class Star3D {
 		const newY = this.x * sin + this.y * cos
 		this.x = newX
 		this.y = newY
+		// Z stays unchanged (rotation is only in XY plane)
 	}
 
 	project(screenWidth: number, screenHeight: number, focalLength = 200) {
@@ -119,6 +135,13 @@ export class Star3D {
 		// Stars fade in as they get very close (z < 5000)
 		if (this.z < 5000) {
 			const fadeFactor = this.z / 5000 // 0 at camera, 1 at z=5000
+			opacity *= fadeFactor
+		}
+
+		// Add far-clip fade zone to prevent stars "popping in" at max distance
+		// Stars fade in as they spawn at z=40k-50k
+		if (this.z > 40000) {
+			const fadeFactor = (50000 - this.z) / 10000 // 0 at z=50k, 1 at z=40k
 			opacity *= fadeFactor
 		}
 

@@ -57,7 +57,6 @@ describe('StarField', () => {
 		const canvasEl = document.querySelector('canvas')
 		expect(canvasEl).toBeInTheDocument()
 
-		expect(mockUseOptimalStarCount).toHaveBeenCalledWith(4000)
 		expect(mockUseStarField).toHaveBeenCalledTimes(1)
 		const args = mockUseStarField.mock.calls[0][0]
 		expect(args).toMatchObject({

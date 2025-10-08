@@ -33,7 +33,7 @@ describe('ClusterStar3D', () => {
 		expect(star.y).not.toBe(initialY)
 	})
 
-	it('projects to screen with small size and clamped opacity', () => {
+	it('projects to screen with small size and calculated opacity', () => {
 		star.x = 100
 		star.y = 50
 		star.z = 600000
@@ -42,7 +42,8 @@ describe('ClusterStar3D', () => {
 		expect(projected.visible).toBe(true)
 		expect(projected.size).toBeGreaterThan(0)
 		expect(projected.opacity).toBeGreaterThan(0)
-		expect(projected.opacity).toBeLessThanOrEqual(0.6)
+		// Opacity is now unclamped, should be based on intensity and distance
+		expect(projected.opacity).toBeLessThanOrEqual(1.0)
 	})
 
 	it('respects canvas resize effect on subsequent reset', () => {

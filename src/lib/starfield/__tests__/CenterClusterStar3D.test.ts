@@ -46,7 +46,8 @@ describe('CenterClusterStar3D', () => {
 		const p = star.project(width, height)
 		expect(p.size).toBeGreaterThan(0)
 		expect(p.opacity).toBeGreaterThan(0)
-		// Center stars allow up to 0.8 opacity cap
-		expect(p.opacity).toBeLessThanOrEqual(0.8)
+		// Opacity is now unclamped, but limited by OPACITY_BASE_MAX and intensity multiplier
+		// With intensityMultiplier of 2.0, can reach up to 2.0
+		expect(p.opacity).toBeLessThanOrEqual(2.0)
 	})
 })

@@ -1,3 +1,5 @@
+import { WEBGL_STARFIELD_CONFIG } from './webglConfig'
+
 // Constants for performance and projection calculations
 const BASE_SCALE_DENOMINATOR = 800
 
@@ -6,7 +8,7 @@ const SIZE_MIN = 0.3
 const SIZE_MAX = 1.5
 const SIZE_SCALE_FACTOR = 200000
 const SIZE_SCALE_MULTIPLIER = 2
-const OPACITY_BASE_MAX = 0.8
+const OPACITY_BASE_MAX = 1.0
 const OPACITY_SCALE_FACTOR = 1000000
 
 export class ClusterStar3D {
@@ -19,7 +21,6 @@ export class ClusterStar3D {
 	private clusterSemiMajorAxis: number
 	private clusterSemiMinorAxis: number
 	private clusterDistance: { min: number; max: number }
-	public smoothedSize: number = 0.3 // For temporal smoothing in WebGL
 
 	constructor(
 		canvasWidth: number = 1920,
@@ -39,7 +40,10 @@ export class ClusterStar3D {
 		this.x = 0
 		this.y = 0
 		this.z = 0
-		this.intensity = Math.random() * 0.8 + 0.2
+		const intensityConfig = WEBGL_STARFIELD_CONFIG.core.rendering.intensity
+		this.intensity =
+			Math.random() * (intensityConfig.max - intensityConfig.min) +
+			intensityConfig.min
 		this.reset()
 	}
 
@@ -49,7 +53,12 @@ export class ClusterStar3D {
 	}
 
 	reset() {
-		const maxDimension = Math.max(this.canvasWidth, this.canvasHeight)
+		// Gaussian distributed cluster using Box-Muller transform
+		// This creates a natural elliptical galaxy-like distribution
+		// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
+		const REFERENCE_WIDTH = 1512
+		const REFERENCE_HEIGHT = 884
+		const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
 		const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
 
 		// Generate elliptical cluster distribution using Box-Muller transform
@@ -95,7 +104,10 @@ export class ClusterStar3D {
 			this.z = this.clusterDistance.max + overshoot // Reset to very far distance
 
 			// Regenerate cluster position using same elliptical gaussian distribution
-			const maxDimension = Math.max(this.canvasWidth, this.canvasHeight)
+			// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
+			const REFERENCE_WIDTH = 1512
+			const REFERENCE_HEIGHT = 884
+			const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
 			const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
 			const effectiveSemiMajorAxis = this.clusterSemiMajorAxis * scaleFactor
 			const effectiveSemiMinorAxis = this.clusterSemiMinorAxis * scaleFactor
@@ -135,7 +147,7 @@ export class ClusterStar3D {
 			x: screenX,
 			y: screenY,
 			size,
-			opacity: Math.max(0.05, Math.min(0.6, opacity)),
+			opacity,
 			visible:
 				screenX >= -5 &&
 				screenX <= screenWidth + 5 &&
@@ -159,7 +171,6 @@ export class CenterClusterStar3D {
 	private concentration: number
 	private intensityMultiplier: number
 	private sizeMultiplier: number
-	public smoothedSize: number = 0.3 // For temporal smoothing in WebGL
 
 	constructor(
 		canvasWidth: number = 1920,
@@ -185,7 +196,10 @@ export class CenterClusterStar3D {
 		this.x = 0
 		this.y = 0
 		this.z = 0
-		this.intensity = Math.random() * 0.8 + 0.2
+		const intensityConfig = WEBGL_STARFIELD_CONFIG.outer.rendering.intensity
+		this.intensity =
+			Math.random() * (intensityConfig.max - intensityConfig.min) +
+			intensityConfig.min
 		this.reset()
 	}
 
@@ -195,7 +209,11 @@ export class CenterClusterStar3D {
 	}
 
 	reset() {
-		const maxDimension = Math.max(this.canvasWidth, this.canvasHeight)
+		// Gaussian distributed core stars with higher concentration
+		// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
+		const REFERENCE_WIDTH = 1512
+		const REFERENCE_HEIGHT = 884
+		const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
 		const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
 
 		// Generate concentrated elliptical distribution for center stars
@@ -243,7 +261,10 @@ export class CenterClusterStar3D {
 			this.z = this.clusterDistance.max + overshoot // Reset to far distance
 
 			// Regenerate center star position using concentrated distribution
-			const maxDimension = Math.max(this.canvasWidth, this.canvasHeight)
+			// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
+			const REFERENCE_WIDTH = 1512
+			const REFERENCE_HEIGHT = 884
+			const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
 			const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
 			const effectiveSemiMajorAxis =
 				this.clusterSemiMajorAxis * scaleFactor * this.concentration

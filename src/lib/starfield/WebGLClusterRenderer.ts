@@ -1,6 +1,6 @@
 import { CenterClusterStar3D, ClusterStar3D } from './ClusterStar3D'
 import { isWithinRenderBounds } from './renderUtils'
-import { WEBGL_STARFIELD_CONFIG } from './webglConfig'
+import { getScaledStarfieldConfig, WEBGL_STARFIELD_CONFIG } from './webglConfig'
 
 /**
  * WebGL-based cluster starfield renderer with nebula/halo effects
@@ -193,6 +193,10 @@ export class WebGLClusterRenderer {
 
 		const { gl, program } = this
 
+		// Get DPR-scaled config for consistent appearance across displays
+		const dpr = window.devicePixelRatio || 1
+		const scaledConfig = getScaledStarfieldConfig(dpr)
+
 		// Set viewport to match canvas size
 		gl.viewport(0, 0, canvas.width, canvas.height)
 
@@ -210,10 +214,10 @@ export class WebGLClusterRenderer {
 		// This ensures stars are visible during extreme course changes
 		const margin =
 			Math.max(canvas.width, canvas.height) *
-			WEBGL_STARFIELD_CONFIG.renderingBounds.marginMultiplier
+			scaledConfig.renderingBounds.marginMultiplier
 
 		// Add core stars
-		const coreConfig = WEBGL_STARFIELD_CONFIG.core.rendering
+		const coreConfig = scaledConfig.core.rendering
 		coreStars.forEach(star => {
 			// Skip stars behind the camera
 			if (star.z <= 0) return
@@ -237,17 +241,14 @@ export class WebGLClusterRenderer {
 				// Pre-multiply size with core-specific multiplier
 				const multipliedSize = projected.size * coreConfig.sizeMultiplier
 
-				// Apply temporal smoothing to reduce rapid size fluctuations
-				const smoothingFactor = coreConfig.sizeSmoothingFactor
-				star.smoothedSize =
-					star.smoothedSize * smoothingFactor +
-					multipliedSize * (1 - smoothingFactor)
-
-				// Apply minimum pixel size
-				const finalSize =
+				// Apply DPR compensation for consistent visual size across displays
+				// Divide by DPR first, then multiply by DPR for canvas pixels
+				const dprCompensatedSize = multipliedSize / dpr
+				const baseSize =
 					coreConfig.minPixelSize > 0
-						? Math.max(coreConfig.minPixelSize, star.smoothedSize)
-						: star.smoothedSize
+						? Math.max(coreConfig.minPixelSize, dprCompensatedSize)
+						: dprCompensatedSize
+				const finalSize = baseSize * dpr
 
 				positions.push(x, y)
 				sizes.push(finalSize)
@@ -258,7 +259,7 @@ export class WebGLClusterRenderer {
 		})
 
 		// Add outer stars
-		const outerConfig = WEBGL_STARFIELD_CONFIG.outer.rendering
+		const outerConfig = scaledConfig.outer.rendering
 		outerStars.forEach(star => {
 			// Skip stars behind the camera
 			if (star.z <= 0) return
@@ -281,17 +282,14 @@ export class WebGLClusterRenderer {
 				// Pre-multiply size with outer-specific multiplier
 				const multipliedSize = projected.size * outerConfig.sizeMultiplier
 
-				// Apply temporal smoothing to reduce rapid size fluctuations
-				const smoothingFactor = outerConfig.sizeSmoothingFactor
-				star.smoothedSize =
-					star.smoothedSize * smoothingFactor +
-					multipliedSize * (1 - smoothingFactor)
-
-				// Apply minimum pixel size
-				const finalSize =
+				// Apply DPR compensation for consistent visual size across displays
+				// Divide by DPR first, then multiply by DPR for canvas pixels
+				const dprCompensatedSize = multipliedSize / dpr
+				const baseSize =
 					outerConfig.minPixelSize > 0
-						? Math.max(outerConfig.minPixelSize, star.smoothedSize)
-						: star.smoothedSize
+						? Math.max(outerConfig.minPixelSize, dprCompensatedSize)
+						: dprCompensatedSize
+				const finalSize = baseSize * dpr
 
 				positions.push(x, y)
 				sizes.push(finalSize)

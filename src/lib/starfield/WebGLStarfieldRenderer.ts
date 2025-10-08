@@ -1,6 +1,6 @@
 import { isWithinRenderBounds } from './renderUtils'
 import { Star3D } from './Star3D'
-import { WEBGL_STARFIELD_CONFIG } from './webglConfig'
+import { getScaledStarfieldConfig, WEBGL_STARFIELD_CONFIG } from './webglConfig'
 
 /**
  * WebGL-based starfield renderer for GPU-accelerated performance
@@ -198,6 +198,10 @@ export class WebGLStarfieldRenderer {
 
 		const { gl, program } = this
 
+		// Get DPR-scaled config for consistent appearance across displays
+		const dpr = window.devicePixelRatio || 1
+		const scaledConfig = getScaledStarfieldConfig(dpr)
+
 		// Set viewport to match canvas size
 		gl.viewport(0, 0, canvas.width, canvas.height)
 
@@ -214,7 +218,7 @@ export class WebGLStarfieldRenderer {
 		// This ensures stars are visible during extreme course changes
 		const margin =
 			Math.max(canvas.width, canvas.height) *
-			WEBGL_STARFIELD_CONFIG.renderingBounds.marginMultiplier
+			scaledConfig.renderingBounds.marginMultiplier
 
 		stars.forEach(star => {
 			// Skip stars behind the camera
@@ -237,9 +241,11 @@ export class WebGLStarfieldRenderer {
 				const x = (projected.x / canvas.width) * 2 - 1
 				const y = -(projected.y / canvas.height) * 2 + 1 // Flip Y axis
 
-				// Pre-multiply size with foreground-specific multiplier
-				const finalSize =
-					projected.size * WEBGL_STARFIELD_CONFIG.foreground.sizeMultiplier
+				// Apply size multiplier with DPR compensation for consistent visual size
+				// Divide sizeMultiplier by DPR so stars appear the same size across displays
+				const dprCompensatedMultiplier =
+					scaledConfig.foreground.sizeMultiplier / dpr
+				const finalSize = projected.size * dprCompensatedMultiplier * dpr
 				positions.push(x, y)
 				sizes.push(finalSize)
 				opacities.push(projected.opacity)

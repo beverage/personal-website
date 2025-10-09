@@ -239,6 +239,136 @@ export const WEBGL_STARFIELD_CONFIG = {
 			rollSpeed: -1.5,
 			focalLength: 300,
 		},
+
+		/**
+		 * NEBULA GLOW - Additive haze layer at cluster center
+		 * Creates a soft, luminous core effect for the galactic cluster
+		 *
+		 * Properties:
+		 * - enabled: Whether to render the glow layer
+		 *   • Turn off for performance or stylistic choice
+		 *   • Current: true
+		 *
+		 * - centerDepth: Z-position of the glow center
+		 *   • Should match the visual center of your star cluster
+		 *   • Current: 1650000 (midpoint of 300k-3M range)
+		 *
+		 * - baseSize: Base size of the glow in 3D units
+		 *   • Size in 3D space that gets projected to screen (horizontal width)
+		 *   • Larger values = bigger glow sphere in 3D space
+		 *   • ⚠️ Limited by WebGL max point size (~256px on most GPUs)
+		 *   • Current: 1200000 units (retina optimized)
+		 *
+		 * - aspectRatio: Width to height ratio for elliptical glow
+		 *   • Matches the lenticular galaxy shape (semiMajorAxis / semiMinorAxis)
+		 *   • 1.0 = circular, >1.0 = wider than tall (lenticular)
+		 *   • Current: 3.33 (400000 / 120000)
+		 *
+		 * - color: RGB color of the glow (0.0-1.0 range)
+		 *   • Core color of the nebula effect
+		 *   • Current: [0.7, 0.85, 1.0] (soft cyan-blue)
+		 *
+		 * - opacity: Maximum opacity of the glow center
+		 *   • 0.0 = invisible, 1.0 = fully opaque
+		 *   • Adjust this for brightness
+		 *   • Current: 0.5 for visible luminous effect (retina)
+		 *
+		 * - falloffExponent: How quickly the glow fades from center to edge
+		 *   • THIS controls the PERCEIVED size more than baseSize!
+		 *   • Lower values (1.0-1.5) = larger, softer, more spread out haze
+		 *   • Higher values (2.0-3.0) = smaller, tighter, more concentrated glow
+		 *   • 1.0 = linear, 2.0 = quadratic, 3.0 = cubic
+		 *   • Current: 1.025 for very large, soft nebula glow (nearly linear)
+		 *
+		 * - noise: Procedural noise for cloud-like texture
+		 *   • enabled: Whether to add noise to the glow
+		 *   • scale: Size of cloud features (higher = finer grain, lower = larger clouds)
+		 *   • strength: Intensity of variation (0.0 = none, 1.0 = extreme)
+		 *   • animated: Whether noise drifts over time
+		 *   • speed: Drift velocity [x, y] - slow values like 0.01 recommended
+		 *   • Current: scale 8.0, strength 0.5, gentle diagonal drift
+		 *
+		 * - occlusion: Stars behind the glow are dimmed by density variations
+		 *   • enabled: Whether to apply occlusion to stars behind the glow
+		 *   • strength: How much stars are dimmed (0.0 = no occlusion, 1.0 = full dimming)
+		 *   • noiseScale: Size of density variations (independent from glow visual noise)
+		 *   • Current: enabled, strength 0.4 for subtle flickering effect
+		 */
+		/**
+		 * GLOW - Procedural nebula gradient effect
+		 *
+		 * Renders a smooth, elliptical glow at the cluster center using a
+		 * full-screen quad with procedural gradient shader. This approach:
+		 * - No WebGL point size limits or FBO compatibility issues
+		 * - Smooth gradients on all display types (no banding)
+		 * - Single-pass rendering (no post-processing overhead)
+		 * - Unlimited size and perfect quality
+		 *
+		 * Properties:
+		 * - enabled: Toggle the glow effect
+		 *
+		 * - centerDepth: Z-position of the glow center in 3D space
+		 *   • Should match the visual center of your star cluster
+		 *   • Current: 800000 (midpoint of core star depth range)
+		 *   • Note: Only used for documentation, glow is now fixed-size in screen space
+		 *
+		 * - baseSize: Size multiplier for glow coverage
+		 *   • Multiplies the cluster's projected size to determine glow extent
+		 *   • 1.0 = matches cluster size exactly, >1.0 = extends beyond cluster
+		 *   • Current: 2.5 (glow extends 2.5x beyond cluster core)
+		 *
+		 * - aspectRatio: Width to height ratio for elliptical shape
+		 *   • Matches the lenticular galaxy shape
+		 *   • 1.0 = circular, >1.0 = wider than tall
+		 *   • Current: 3.33 for lenticular appearance
+		 *
+		 * - rotationOffset: Initial rotation angle offset in degrees
+		 *   • Adjusts for any angular mismatch between glow and stars
+		 *   • Positive = counter-clockwise, negative = clockwise
+		 *   • Current: 0 (can adjust if needed for alignment)
+		 *
+		 * - color: RGB color of the glow (0.0-1.0 range)
+		 *   • Core color of the nebula effect
+		 *   • Current: [0.7, 0.85, 1.0] (soft cyan-blue)
+		 *
+		 * - opacity: Maximum opacity at the glow center (DPR-scaled)
+		 *   • 0.0 = invisible, 1.0 = fully opaque
+		 *   • Current: 0.12 (retina), 0.05 (standard) - auto-scaled by DPR
+		 *   • Retina needs higher values due to pixel blending
+		 *
+		 * - falloffExponent: Controls steepness of inverse square falloff (DPR-scaled)
+		 *   • Uses formula: intensity = 1 / (1 + distance² × falloff)
+		 *   • Lower values (1-3) = large, soft, spread out glow
+		 *   • Higher values (5-10) = tight, concentrated glow with rapid edge falloff
+		 *   • Current: 6.0 (retina), 8.0 (standard) - auto-scaled by DPR
+		 *
+		 * - noise: Procedural noise for cloud-like texture
+		 *   • scale: Size of noise features (DPR-scaled)
+		 *     - Higher = finer detail, lower = larger clouds
+		 *     - Current: 1.5 (retina), 2.0 (standard) - auto-scaled by DPR
+		 *     - Retina uses lower values to maintain same visual feature size
+		 *   • strength: Maximum intensity of noise modulation (0.0-1.0, DPR-scaled)
+		 *     - 0.0 = no noise (smooth gradient), 1.0 = full noise
+		 *     - Increases radially (core smooth, edges wispy)
+		 *     - Current: 0.8 for both retina and standard
+		 *   • speed: Animation drift velocity [x, y] in units/second
+		 *     - Uses circular motion for organic drift
+		 *     - Current: [0.05, 0.08] for slow, gentle drift
+		 */
+		glow: {
+			enabled: true,
+			centerDepth: 800000,
+			baseSize: 5.0, // Multiplier (extends 2.5x beyond cluster)
+			aspectRatio: 2.5,
+			color: [0.7, 0.85, 1.0],
+			opacity: 0.12, // Retina baseline (DPR-scaled via getScaledStarfieldConfig)
+			falloffExponent: 6.0, // Inverse square falloff - retina (DPR-scaled)
+			noise: {
+				scale: 1.5, // Retina baseline (DPR-scaled)
+				strength: 0.8, // Retina baseline (DPR-scaled)
+				speed: [0.01, 0.03],
+			},
+		},
 	},
 
 	/**
@@ -401,12 +531,22 @@ export const WEBGL_STARFIELD_CONFIG = {
 const RETINA_CONFIG = {
 	foreground: { sizeMultiplier: 5.0, minPixelSize: 1.5 },
 	core: { sizeMultiplier: 8.0, minPixelSize: 0.3 },
+	glow: {
+		opacity: 0.12,
+		falloffExponent: 6.0,
+		noise: { scale: 1.5, strength: 0.8 },
+	},
 }
 
 // Tuned values for DPR = 1.0 (standard displays)
 const STANDARD_CONFIG = {
 	foreground: { sizeMultiplier: 3.0, minPixelSize: 1.5 },
-	core: { sizeMultiplier: 5.0, minPixelSize: 1.8 },
+	core: { sizeMultiplier: 5.0, minPixelSize: 2.0 },
+	glow: {
+		opacity: 0.05,
+		falloffExponent: 8.0,
+		noise: { scale: 2.0, strength: 0.8 },
+	},
 }
 
 /**
@@ -428,6 +568,10 @@ export function getScaledStarfieldConfig(dpr: number) {
 	let foregroundMinPixelSize: number
 	let coreSizeMultiplier: number
 	let coreMinPixelSize: number
+	let glowOpacity: number
+	let glowFalloffExponent: number
+	let glowNoiseScale: number
+	let glowNoiseStrength: number
 
 	if (dpr >= 2.5) {
 		// DPR >= 2.5: Scale up from retina baseline
@@ -445,12 +589,20 @@ export function getScaledStarfieldConfig(dpr: number) {
 			factor,
 		)
 		coreMinPixelSize = RETINA_CONFIG.core.minPixelSize
+		glowOpacity = RETINA_CONFIG.glow.opacity
+		glowFalloffExponent = RETINA_CONFIG.glow.falloffExponent
+		glowNoiseScale = RETINA_CONFIG.glow.noise.scale
+		glowNoiseStrength = RETINA_CONFIG.glow.noise.strength
 	} else if (dpr >= 1.75) {
 		// DPR 1.75-2.5: Use retina config
 		foregroundSizeMultiplier = RETINA_CONFIG.foreground.sizeMultiplier
 		foregroundMinPixelSize = RETINA_CONFIG.foreground.minPixelSize
 		coreSizeMultiplier = RETINA_CONFIG.core.sizeMultiplier
 		coreMinPixelSize = RETINA_CONFIG.core.minPixelSize
+		glowOpacity = RETINA_CONFIG.glow.opacity
+		glowFalloffExponent = RETINA_CONFIG.glow.falloffExponent
+		glowNoiseScale = RETINA_CONFIG.glow.noise.scale
+		glowNoiseStrength = RETINA_CONFIG.glow.noise.strength
 	} else if (dpr >= 1.25) {
 		// DPR 1.25-1.75: Interpolate between standard and retina
 		const factor = (dpr - 1.0) / 1.0 // 0 at DPR=1, 1 at DPR=2
@@ -470,12 +622,36 @@ export function getScaledStarfieldConfig(dpr: number) {
 			RETINA_CONFIG.core.minPixelSize,
 			factor,
 		)
+		glowOpacity = lerp(
+			STANDARD_CONFIG.glow.opacity,
+			RETINA_CONFIG.glow.opacity,
+			factor,
+		)
+		glowFalloffExponent = lerp(
+			STANDARD_CONFIG.glow.falloffExponent,
+			RETINA_CONFIG.glow.falloffExponent,
+			factor,
+		)
+		glowNoiseScale = lerp(
+			STANDARD_CONFIG.glow.noise.scale,
+			RETINA_CONFIG.glow.noise.scale,
+			factor,
+		)
+		glowNoiseStrength = lerp(
+			STANDARD_CONFIG.glow.noise.strength,
+			RETINA_CONFIG.glow.noise.strength,
+			factor,
+		)
 	} else {
 		// DPR < 1.25: Use standard config
 		foregroundSizeMultiplier = STANDARD_CONFIG.foreground.sizeMultiplier
 		foregroundMinPixelSize = STANDARD_CONFIG.foreground.minPixelSize
 		coreSizeMultiplier = STANDARD_CONFIG.core.sizeMultiplier
 		coreMinPixelSize = STANDARD_CONFIG.core.minPixelSize
+		glowOpacity = STANDARD_CONFIG.glow.opacity
+		glowFalloffExponent = STANDARD_CONFIG.glow.falloffExponent
+		glowNoiseScale = STANDARD_CONFIG.glow.noise.scale
+		glowNoiseStrength = STANDARD_CONFIG.glow.noise.strength
 	}
 
 	return {
@@ -491,6 +667,16 @@ export function getScaledStarfieldConfig(dpr: number) {
 				...WEBGL_STARFIELD_CONFIG.core.rendering,
 				minPixelSize: coreMinPixelSize,
 				sizeMultiplier: coreSizeMultiplier,
+			},
+			glow: {
+				...WEBGL_STARFIELD_CONFIG.core.glow,
+				opacity: glowOpacity,
+				falloffExponent: glowFalloffExponent,
+				noise: {
+					...WEBGL_STARFIELD_CONFIG.core.glow.noise,
+					scale: glowNoiseScale,
+					strength: glowNoiseStrength,
+				},
 			},
 		},
 	}

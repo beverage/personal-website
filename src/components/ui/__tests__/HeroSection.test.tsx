@@ -1,3 +1,4 @@
+import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
@@ -7,7 +8,9 @@ describe('HeroSection', () => {
 	it('renders title and description', () => {
 		render(
 			<LanguageProvider>
-				<HeroSection title="Title" description="Desc" />
+				<HeroTextProvider>
+					<HeroSection title="Title" description="Desc" />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		expect(screen.getByText('Title')).toBeInTheDocument()
@@ -19,12 +22,14 @@ describe('HeroSection', () => {
 		const onSecondary = vi.fn()
 		render(
 			<LanguageProvider>
-				<HeroSection
-					onPrimaryClick={onPrimary}
-					onSecondaryClick={onSecondary}
-					primaryButtonText="Primary"
-					secondaryButtonText="Secondary"
-				/>
+				<HeroTextProvider>
+					<HeroSection
+						onPrimaryClick={onPrimary}
+						onSecondaryClick={onSecondary}
+						primaryButtonText="Primary"
+						secondaryButtonText="Secondary"
+					/>
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		fireEvent.click(screen.getByText('Secondary'))

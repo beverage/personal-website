@@ -1,5 +1,6 @@
 'use client'
 
+import { useHeroText } from '@/contexts/HeroTextContext'
 import { type Project } from '@/types/portfolio'
 import {
 	LANGUAGE_TRANSITION_CONFIG,
@@ -50,6 +51,8 @@ export function ContentSection({
 	projects,
 	contactProps,
 }: ContentSectionProps) {
+	const { heroTextVisible } = useHeroText()
+
 	return (
 		<div className="relative z-10 min-h-screen">
 			{/* Hero Section */}
@@ -96,8 +99,11 @@ export function ContentSection({
 							: 'flex min-h-screen items-center justify-center px-6'
 					}`}
 					style={{
-						opacity: getContentOpacity('contact'),
-						pointerEvents: getContentOpacity('contact') === 0 ? 'none' : 'auto',
+						opacity: heroTextVisible ? getContentOpacity('contact') : 0,
+						pointerEvents:
+							getContentOpacity('contact') === 0 || !heroTextVisible
+								? 'none'
+								: 'auto',
 					}}
 				>
 					<div className="max-w-7xl text-center">

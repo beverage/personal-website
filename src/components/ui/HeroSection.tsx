@@ -1,3 +1,4 @@
+import { useHeroText } from '@/contexts/HeroTextContext'
 import { useTranslation } from '@/hooks/useTranslation'
 import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -44,6 +45,7 @@ export const HeroSection = ({
 	buttonFadeDuration = 500,
 }: HeroSectionProps) => {
 	const { t, language } = useTranslation()
+	const { heroTextVisible } = useHeroText()
 
 	// Use translations as defaults if props not provided
 	const primaryText = primaryButtonText ?? t.hero.getInTouch
@@ -52,10 +54,11 @@ export const HeroSection = ({
 
 	// Calculate dynamic styles based on transition state
 	const containerStyle: React.CSSProperties = {
-		opacity: opacity,
+		opacity: heroTextVisible ? opacity : 0,
 		// No transform - just clean opacity fade for course changes
 		transition: `opacity ${fadeConfig.duration}ms ease-in-out${fadeConfig.delay > 0 ? ` ${fadeConfig.delay}ms` : ''}`,
-		pointerEvents: transitionState === 'hidden' ? 'none' : 'auto',
+		pointerEvents:
+			transitionState === 'hidden' || !heroTextVisible ? 'none' : 'auto',
 	}
 
 	// Button styles for smooth fade-in transitions

@@ -1,3 +1,4 @@
+import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
@@ -97,14 +98,16 @@ describe('PageLayout', () => {
 	it('renders CV pill when cvUrl is provided', () => {
 		render(
 			<LanguageProvider>
-				<PageLayout
-					showStarField={false}
-					clientConfig={{
-						socialLinks: [],
-						copyrightYear: 2025,
-						cvUrl: '/cv/test.pdf',
-					}}
-				/>
+				<HeroTextProvider>
+					<PageLayout
+						showStarField={false}
+						clientConfig={{
+							socialLinks: [],
+							copyrightYear: 2025,
+							cvUrl: '/cv/test.pdf',
+						}}
+					/>
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		expect(screen.getByLabelText('Download CV (PDF)')).toBeInTheDocument()
@@ -113,10 +116,12 @@ describe('PageLayout', () => {
 	it('hides CV pill when cvUrl is missing', () => {
 		render(
 			<LanguageProvider>
-				<PageLayout
-					showStarField={false}
-					clientConfig={{ socialLinks: [], copyrightYear: 2025 }}
-				/>
+				<HeroTextProvider>
+					<PageLayout
+						showStarField={false}
+						clientConfig={{ socialLinks: [], copyrightYear: 2025 }}
+					/>
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		expect(screen.queryByLabelText('Download CV (PDF)')).toBeNull()
@@ -126,10 +131,12 @@ describe('PageLayout', () => {
 		it('starts in sailboat mode when startup sequence is enabled', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={{ enabled: true }}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={{ enabled: true }}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -140,10 +147,12 @@ describe('PageLayout', () => {
 		it('starts in rocket mode when startup sequence is disabled', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={{ enabled: false }}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={{ enabled: false }}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -154,7 +163,9 @@ describe('PageLayout', () => {
 		it('uses default configuration when startupSequence is not provided', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout showStarField={true} />
+					<HeroTextProvider>
+						<PageLayout showStarField={true} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -175,11 +186,13 @@ describe('PageLayout', () => {
 
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={customConfig}
-						heroTitle="Test Hero"
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={customConfig}
+							heroTitle="Test Hero"
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -194,10 +207,12 @@ describe('PageLayout', () => {
 		it('starts with correct initial speed when startup sequence is enabled', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={{ enabled: true }}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={{ enabled: true }}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -209,10 +224,12 @@ describe('PageLayout', () => {
 		it('starts with correct initial speed when startup sequence is disabled', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={{ enabled: false }}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={{ enabled: false }}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -224,17 +241,19 @@ describe('PageLayout', () => {
 		it('renders all UI elements when startup sequence is disabled', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={true}
-						startupSequence={{ enabled: false }}
-						heroTitle="Test Hero"
-						brandName="test.brand"
-						clientConfig={{
-							socialLinks: [],
-							copyrightYear: 2025,
-							cvUrl: '/cv/test.pdf',
-						}}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={true}
+							startupSequence={{ enabled: false }}
+							heroTitle="Test Hero"
+							brandName="test.brand"
+							clientConfig={{
+								socialLinks: [],
+								copyrightYear: 2025,
+								cvUrl: '/cv/test.pdf',
+							}}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -247,10 +266,12 @@ describe('PageLayout', () => {
 		it('respects showStarField prop regardless of startup sequence', () => {
 			render(
 				<LanguageProvider>
-					<PageLayout
-						showStarField={false}
-						startupSequence={{ enabled: true }}
-					/>
+					<HeroTextProvider>
+						<PageLayout
+							showStarField={false}
+							startupSequence={{ enabled: true }}
+						/>
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 

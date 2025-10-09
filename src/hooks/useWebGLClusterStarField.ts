@@ -1,3 +1,4 @@
+import { useGlow } from '@/contexts/GlowContext'
 import {
 	AnimationController,
 	type AnimationSubscriber,
@@ -20,9 +21,11 @@ export const useWebGLClusterStarField = ({
 	opacity,
 	motionVector,
 }: UseWebGLClusterStarFieldProps) => {
+	const { glowEnabled } = useGlow()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const coreStarsRef = useRef<ClusterStar3D[]>([])
 	const outerStarsRef = useRef<CenterClusterStar3D[]>([])
+	const glowEnabledRef = useRef(glowEnabled)
 	const rendererRef = useRef<WebGLClusterRenderer | null>(null)
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
@@ -41,6 +44,10 @@ export const useWebGLClusterStarField = ({
 	useEffect(() => {
 		motionVectorRef.current = motionVector
 	}, [motionVector])
+
+	useEffect(() => {
+		glowEnabledRef.current = glowEnabled
+	}, [glowEnabled])
 
 	useEffect(() => {
 		// Capture the instance ID at the start of the effect to avoid stale closures
@@ -187,13 +194,16 @@ export const useWebGLClusterStarField = ({
 					)
 				})
 
-				// Render using WebGL
+				// Render using WebGL with rotating glow
 				rendererRef.current.render(
 					coreStarsRef.current,
 					outerStarsRef.current,
 					canvas,
 					opacity,
 					WEBGL_STARFIELD_CONFIG.core.physics.focalLength,
+					glowEnabledRef.current,
+					WEBGL_STARFIELD_CONFIG.core.physics.rollSpeed,
+					deltaTime,
 				)
 			},
 		}

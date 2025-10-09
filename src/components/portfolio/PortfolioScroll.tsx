@@ -1,5 +1,6 @@
 'use client'
 
+import { useHeroText } from '@/contexts/HeroTextContext'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { Project } from '@/types/portfolio'
 import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
@@ -213,6 +214,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 	className = '',
 }) => {
 	const { t, language } = useTranslation()
+	const { heroTextVisible } = useHeroText()
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
 	const [currentScrollIndex, setCurrentScrollIndex] = useState(0)
 	const isTransitioningRef = useRef(false)
@@ -294,11 +296,14 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 								<motion.div
 									key={`projects-hero-${language}`}
 									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
+									animate={{ opacity: heroTextVisible ? 1 : 0 }}
 									exit={{ opacity: 0 }}
 									transition={{
 										duration: LANGUAGE_TRANSITION_CONFIG.textDuration / 1000,
 										ease: 'easeInOut',
+									}}
+									style={{
+										pointerEvents: heroTextVisible ? 'auto' : 'none',
 									}}
 								>
 									<motion.h1

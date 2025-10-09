@@ -1,3 +1,4 @@
+import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import type { Project } from '@/types/portfolio'
 import { fireEvent, render, screen } from '@testing-library/react'
@@ -89,7 +90,9 @@ describe('PortfolioScroll', () => {
 		it('should render projects hero section', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -102,7 +105,9 @@ describe('PortfolioScroll', () => {
 		it('should render all project cards', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -113,7 +118,9 @@ describe('PortfolioScroll', () => {
 		it('should render project technologies', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -126,7 +133,9 @@ describe('PortfolioScroll', () => {
 		it('should render project links', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -137,7 +146,9 @@ describe('PortfolioScroll', () => {
 		it('should render status badges', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -150,7 +161,9 @@ describe('PortfolioScroll', () => {
 		it('should handle wheel events', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 			const container = document.querySelector('.portfolio-scroll')
@@ -168,7 +181,9 @@ describe('PortfolioScroll', () => {
 		it('should render navigation arrows when appropriate', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -182,7 +197,9 @@ describe('PortfolioScroll', () => {
 		it('should render links with correct attributes', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -200,7 +217,9 @@ describe('PortfolioScroll', () => {
 		it('should handle empty projects array', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={[]} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={[]} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 
@@ -213,7 +232,9 @@ describe('PortfolioScroll', () => {
 		it('should handle image load errors gracefully', () => {
 			render(
 				<LanguageProvider>
-					<PortfolioScroll projects={mockProjects} />
+					<HeroTextProvider>
+						<PortfolioScroll projects={mockProjects} />
+					</HeroTextProvider>
 				</LanguageProvider>,
 			)
 

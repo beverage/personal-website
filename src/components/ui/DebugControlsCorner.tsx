@@ -1,6 +1,8 @@
 'use client'
 
 import { ForegroundToggle } from './ForegroundToggle'
+import { GlowToggle } from './GlowToggle'
+import { HeroTextToggle } from './HeroTextToggle'
 import { RenderModeSelector } from './RenderModeSelector'
 
 interface DebugControlsCornerProps {
@@ -11,7 +13,7 @@ interface DebugControlsCornerProps {
 
 /**
  * Debug controls positioned in lower-right corner (dev mode only)
- * Groups GL/2D render mode selector and FG/-- foreground toggle
+ * Groups: GL/2D render mode selector, FG foreground toggle, HT hero text toggle, GW glow toggle
  */
 export function DebugControlsCorner({
 	disabled = false,
@@ -30,6 +32,8 @@ export function DebugControlsCorner({
 		>
 			<RenderModeSelector disabled={disabled} />
 			<ForegroundToggle disabled={disabled} />
+			<HeroTextToggle disabled={disabled} />
+			<GlowToggle disabled={disabled} />
 		</div>
 	)
 }

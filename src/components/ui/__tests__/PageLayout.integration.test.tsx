@@ -1,3 +1,4 @@
+import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
@@ -69,7 +70,9 @@ describe('PageLayout Integration Tests', () => {
 	it('renders brand panel and control panel', () => {
 		render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} brandName="test.brand" />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} brandName="test.brand" />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -87,7 +90,9 @@ describe('PageLayout Integration Tests', () => {
 
 		render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} clientConfig={clientConfig} />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} clientConfig={clientConfig} />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -118,7 +123,9 @@ describe('PageLayout Integration Tests', () => {
 
 		render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} enableTransitions={false} />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} enableTransitions={false} />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -129,7 +136,9 @@ describe('PageLayout Integration Tests', () => {
 	it('handles different course change variants', () => {
 		const { rerender } = render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -139,14 +148,18 @@ describe('PageLayout Integration Tests', () => {
 		// Test other variants
 		rerender(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} courseChangeVariant="sharp-maneuver" />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} courseChangeVariant="sharp-maneuver" />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
 
 		rerender(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
@@ -155,12 +168,14 @@ describe('PageLayout Integration Tests', () => {
 	it('passes custom props to starfield', () => {
 		render(
 			<LanguageProvider>
-				<PageLayout
-					{...defaultProps}
-					speed={2000}
-					fadeInDuration={5000}
-					fadeOutDuration={3000}
-				/>
+				<HeroTextProvider>
+					<PageLayout
+						{...defaultProps}
+						speed={2000}
+						fadeInDuration={5000}
+						fadeOutDuration={3000}
+					/>
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -186,7 +201,9 @@ describe('PageLayout Integration Tests', () => {
 
 		render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps} clientConfig={clientConfig} />
+				<HeroTextProvider>
+					<PageLayout {...defaultProps} clientConfig={clientConfig} />
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 
@@ -199,9 +216,11 @@ describe('PageLayout Integration Tests', () => {
 	it('renders custom children when provided', () => {
 		render(
 			<LanguageProvider>
-				<PageLayout {...defaultProps}>
-					<div data-testid="custom-content">Custom Content</div>
-				</PageLayout>
+				<HeroTextProvider>
+					<PageLayout {...defaultProps}>
+						<div data-testid="custom-content">Custom Content</div>
+					</PageLayout>
+				</HeroTextProvider>
 			</LanguageProvider>,
 		)
 

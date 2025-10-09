@@ -16,7 +16,7 @@ describe('getScaledStarfieldConfig', () => {
 			expect(config.foreground.sizeMultiplier).toBe(3.0)
 			expect(config.foreground.minPixelSize).toBe(1.5)
 			expect(config.core.rendering.sizeMultiplier).toBe(5.0)
-			expect(config.core.rendering.minPixelSize).toBe(1.8)
+			expect(config.core.rendering.minPixelSize).toBe(2.0)
 		})
 
 		it('interpolates for DPR = 1.5 (midpoint)', () => {
@@ -24,7 +24,7 @@ describe('getScaledStarfieldConfig', () => {
 			// Should be halfway between standard and retina
 			expect(config.foreground.sizeMultiplier).toBeCloseTo(4.0, 1) // lerp(3.0, 5.0, 0.5)
 			expect(config.core.rendering.sizeMultiplier).toBeCloseTo(6.5, 1) // lerp(5.0, 8.0, 0.5)
-			expect(config.core.rendering.minPixelSize).toBeCloseTo(1.05, 1) // lerp(1.8, 0.3, 0.5)
+			expect(config.core.rendering.minPixelSize).toBeCloseTo(1.15, 1) // lerp(2.0, 0.3, 0.5)
 		})
 
 		it('uses retina config for DPR in bucket 1.75-2.5', () => {
@@ -103,6 +103,61 @@ describe('getScaledStarfieldConfig', () => {
 			expect(configs[1].foreground.sizeMultiplier).toBeGreaterThan(3.0) // DPR 1.25
 			expect(configs[1].foreground.sizeMultiplier).toBeLessThan(5.0)
 			expect(configs[4].foreground.sizeMultiplier).toBe(5.0) // DPR 2.0
+		})
+	})
+
+	describe('glow configuration scaling', () => {
+		it('uses different glow values for retina vs standard displays', () => {
+			const retinaConfig = getScaledStarfieldConfig(2.0)
+			const standardConfig = getScaledStarfieldConfig(1.0)
+
+			// Retina should have higher opacity (more pixel blending)
+			expect(retinaConfig.core.glow.opacity).toBeGreaterThan(
+				standardConfig.core.glow.opacity,
+			)
+
+			// Retina should have softer falloff (lower exponent)
+			expect(retinaConfig.core.glow.falloffExponent).toBeLessThan(
+				standardConfig.core.glow.falloffExponent,
+			)
+
+			// Retina should have lower noise scale (maintain visual feature size)
+			expect(retinaConfig.core.glow.noise.scale).toBeLessThan(
+				standardConfig.core.glow.noise.scale,
+			)
+		})
+
+		it('interpolates glow parameters between DPR buckets', () => {
+			const config1_5 = getScaledStarfieldConfig(1.5)
+			const retinaConfig = getScaledStarfieldConfig(2.0)
+			const standardConfig = getScaledStarfieldConfig(1.0)
+
+			// Midpoint should be between standard and retina
+			expect(config1_5.core.glow.opacity).toBeGreaterThan(
+				standardConfig.core.glow.opacity,
+			)
+			expect(config1_5.core.glow.opacity).toBeLessThan(
+				retinaConfig.core.glow.opacity,
+			)
+		})
+
+		it('preserves non-DPR-dependent glow properties', () => {
+			const retinaConfig = getScaledStarfieldConfig(2.0)
+			const standardConfig = getScaledStarfieldConfig(1.0)
+
+			// These should be the same across DPR values
+			expect(retinaConfig.core.glow.baseSize).toBe(
+				standardConfig.core.glow.baseSize,
+			)
+			expect(retinaConfig.core.glow.aspectRatio).toBe(
+				standardConfig.core.glow.aspectRatio,
+			)
+			expect(retinaConfig.core.glow.color).toEqual(
+				standardConfig.core.glow.color,
+			)
+			expect(retinaConfig.core.glow.noise.speed).toEqual(
+				standardConfig.core.glow.noise.speed,
+			)
 		})
 	})
 })

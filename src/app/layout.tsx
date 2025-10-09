@@ -1,7 +1,9 @@
 import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
+import { GlowProvider } from '@/contexts/GlowContext'
+import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { RenderModeProvider } from '@/contexts/RenderModeContext'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
 
@@ -38,9 +40,6 @@ export const metadata: Metadata = {
 	],
 	authors: [{ name: 'Alex Beverage' }],
 	creator: 'Alex Beverage',
-
-	// Mobile browser theme color (matches cyan theme)
-	themeColor: '#00bcd4',
 
 	// Canonical URL
 	metadataBase: new URL('https://www.beverage.me'),
@@ -83,6 +82,12 @@ export const metadata: Metadata = {
 	referrer: 'strict-origin-when-cross-origin',
 }
 
+// Viewport configuration (separate from metadata in Next.js 14+)
+export const viewport: Viewport = {
+	// Mobile browser theme color (matches cyan theme)
+	themeColor: '#00bcd4',
+}
+
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -93,7 +98,11 @@ export default function RootLayout({
 			<body className={`${exo2.variable} bg-black text-white antialiased`}>
 				<LanguageProvider>
 					<RenderModeProvider>
-						<ForegroundToggleProvider>{children}</ForegroundToggleProvider>
+						<ForegroundToggleProvider>
+							<HeroTextProvider>
+								<GlowProvider>{children}</GlowProvider>
+							</HeroTextProvider>
+						</ForegroundToggleProvider>
 					</RenderModeProvider>
 				</LanguageProvider>
 			</body>

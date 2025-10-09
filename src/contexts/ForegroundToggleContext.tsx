@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 interface ForegroundToggleContextType {
 	foregroundEnabled: boolean
@@ -17,7 +17,20 @@ export function ForegroundToggleProvider({
 	children: React.ReactNode
 }) {
 	// Default to enabled (can be toggled in dev mode via ForegroundToggle control)
-	const [foregroundEnabled, setForegroundEnabled] = useState(true)
+	const [foregroundEnabled, setForegroundEnabledState] = useState(true)
+
+	// Load from localStorage after mounting (client-side only)
+	useEffect(() => {
+		const stored = localStorage.getItem('dev:foregroundEnabled')
+		if (stored !== null) {
+			setForegroundEnabledState(stored === 'true')
+		}
+	}, [])
+
+	const setForegroundEnabled = (enabled: boolean) => {
+		setForegroundEnabledState(enabled)
+		localStorage.setItem('dev:foregroundEnabled', String(enabled))
+	}
 
 	return (
 		<ForegroundToggleContext.Provider

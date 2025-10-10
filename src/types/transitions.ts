@@ -66,35 +66,35 @@ export const COURSE_CHANGE_PRESETS: Record<
 		duration: 2500,
 		parallaxIntensity: 0.2, // Very subtle cinematic drift
 		maxLateralSpeed: 10000, // Scaled for visible screen motion
-		rollIntensity: 200, // Subtle banking roll
+		rollIntensity: 40, // Subtle banking roll (reduced from 200)
 		easingCurve: 'ease-in-out',
 		contentFade: {
 			fadeOutRatio: 0.35, // First 35% - fade out current content
 			starfieldOnlyRatio: 0.3, // Middle 30% - pure starfield visibility
 			fadeInRatio: 0.35, // Last 35% - fade in new content
 		},
-		settlingDuration: 800,
+		settlingDuration: 1200, // Extended for smoother drift
 	},
 	'banking-turn': {
 		variant: 'banking-turn',
 		duration: 4000,
 		parallaxIntensity: 0.4, // Moderate cinematic banking
 		maxLateralSpeed: 20000, // Increased back up for dramatic screen-wide motion
-		rollIntensity: 300, // Moderate banking roll
+		rollIntensity: 150, // Moderate banking roll (half of original 300)
 		easingCurve: 'fast-in-slow-out', // Fixed timing race condition, back to advanced easing
 		contentFade: {
 			fadeOutRatio: 0.25,
 			starfieldOnlyRatio: 0.5,
 			fadeInRatio: 0.25,
 		},
-		settlingDuration: 500,
+		settlingDuration: 2500, // Extended for longer, smoother drift
 	},
 	'sharp-maneuver': {
 		variant: 'sharp-maneuver',
 		duration: 1500,
 		parallaxIntensity: 0.8, // More pronounced but still elegant
 		maxLateralSpeed: 40000, // Scaled for visible screen motion
-		rollIntensity: 600, // More pronounced banking roll
+		rollIntensity: 120, // More pronounced banking roll (reduced from 600)
 		easingCurve: 'custom',
 		customEasing: {
 			accelerationPower: 4, // Very aggressive acceleration
@@ -105,7 +105,7 @@ export const COURSE_CHANGE_PRESETS: Record<
 			starfieldOnlyRatio: 0.4, // Middle 40% - longer pure starfield
 			fadeInRatio: 0.3, // Last 30% - quick fade in
 		},
-		settlingDuration: 400,
+		settlingDuration: 800, // Extended for smoother drift
 	},
 }
 
@@ -159,5 +159,10 @@ export const EASING_FUNCTIONS = {
 	},
 } as const
 
-// Settling phase easing (gradually reduce lateral velocity)
-export const settlingEase = (t: number): number => 1 - Math.pow(1 - t, 3)
+// Settling phase easing (gradually reduce lateral velocity with exponential drift)
+// Uses exponential decay for natural drift-to-stop behavior
+export const settlingEase = (t: number): number => {
+	// Exponential decay: starts fast, asymptotically approaches 1.0
+	// The factor -2.5 controls decay rate: higher = faster stop, lower = longer drift
+	return 1 - Math.exp(-2.5 * t)
+}

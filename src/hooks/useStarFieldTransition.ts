@@ -162,14 +162,19 @@ export const useStarFieldTransition = ({
 						: Math.max(0, Math.min(1, easedProgress))
 				}
 
-				// Update banking roll synchronized with lateral motion (reduced frequency for smoothness)
+				// Calculate lateral velocity multiplier (for both motion and banking)
+				// This represents the current turn rate
+				const lateralVelocityMultiplier = easedProgress
+
+				// Update banking roll proportional to lateral velocity (reduced frequency for smoothness)
 				if (Math.floor(elapsed / 50) !== Math.floor((elapsed - 16) / 50)) {
 					// Update every ~50ms instead of every frame
 					const directionMultiplier =
 						transitionState.direction === 'left' ? 1 : -1
+					// Bank angle proportional to turn rate (lateral velocity), not accumulated distance
 					const bankingRollAmount =
 						((config.rollIntensity * Math.PI) / 180) *
-						easedProgress *
+						lateralVelocityMultiplier *
 						directionMultiplier
 					setBankingRoll({
 						foregroundRollSpeed: -1.5 + bankingRollAmount, // Add banking to foreground
@@ -208,15 +213,18 @@ export const useStarFieldTransition = ({
 				const progress = Math.min(elapsed / config.settlingDuration, 1)
 				const easedProgress = settlingEase(progress)
 
-				// Update banking roll during settling (reduce roll as we settle, reduced frequency)
+				// Calculate remaining lateral velocity during settling (drift to zero)
+				const remainingLateralVelocity = 1 - easedProgress
+
+				// Update banking roll during settling (reduce roll as lateral velocity decreases)
 				if (Math.floor(elapsed / 50) !== Math.floor((elapsed - 16) / 50)) {
 					// Update every ~50ms instead of every frame
 					const directionMultiplier =
 						transitionState.direction === 'left' ? 1 : -1
-					const rollMultiplier = 1 - easedProgress // Reduce roll as we settle
+					// Bank angle proportional to remaining lateral velocity
 					const bankingRollAmount =
 						((config.rollIntensity * Math.PI) / 180) *
-						rollMultiplier *
+						remainingLateralVelocity *
 						directionMultiplier
 					setBankingRoll({
 						foregroundRollSpeed: -1.5 + bankingRollAmount, // Gradually return to base roll

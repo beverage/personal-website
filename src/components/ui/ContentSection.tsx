@@ -99,11 +99,8 @@ export function ContentSection({
 							: 'flex min-h-screen items-center justify-center px-6'
 					}`}
 					style={{
-						opacity: heroTextVisible ? getContentOpacity('contact') : 0,
-						pointerEvents:
-							getContentOpacity('contact') === 0 || !heroTextVisible
-								? 'none'
-								: 'auto',
+						opacity: getContentOpacity('contact'),
+						pointerEvents: getContentOpacity('contact') === 0 ? 'none' : 'auto',
 					}}
 				>
 					<div className="max-w-7xl text-center">
@@ -111,11 +108,14 @@ export function ContentSection({
 							<motion.div
 								key={`contact-text-${contactProps.language}`}
 								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
+								animate={{ opacity: heroTextVisible ? 1 : 0 }}
 								exit={{ opacity: 0 }}
 								transition={{
 									duration: LANGUAGE_TRANSITION_CONFIG.textDuration / 1000,
 									ease: 'easeInOut',
+								}}
+								style={{
+									pointerEvents: heroTextVisible ? 'auto' : 'none',
 								}}
 							>
 								<h1 className="font-exo2 mb-8 text-6xl tracking-wider sm:text-8xl">

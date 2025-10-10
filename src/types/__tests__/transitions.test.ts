@@ -62,7 +62,7 @@ describe('Transition Configuration', () => {
 				// Durations should be reasonable (between 500ms and 10s)
 				expect(config.duration).toBeGreaterThanOrEqual(500)
 				expect(config.duration).toBeLessThanOrEqual(10000)
-				expect(config.settlingDuration).toBeLessThanOrEqual(2000)
+				expect(config.settlingDuration).toBeLessThanOrEqual(3000)
 			})
 		})
 

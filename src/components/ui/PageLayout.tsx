@@ -1,5 +1,6 @@
 'use client'
 
+import { useHeroText } from '@/contexts/HeroTextContext'
 import { getTranslatedPortfolioData } from '@/data/portfolioTranslations'
 import {
 	useContentState,
@@ -85,6 +86,9 @@ export const PageLayout = ({
 	// Get translations
 	const { t, language } = useTranslation()
 	const portfolioData = getTranslatedPortfolioData(language)
+
+	// Hero text visibility (for dev mode navigation arrows)
+	const { heroTextVisible } = useHeroText()
 
 	// Track when starfield has loaded
 	const [starFieldLoaded, setStarFieldLoaded] = React.useState(false)
@@ -385,6 +389,83 @@ export const PageLayout = ({
 					/>
 				</motion.div>
 			)}
+
+			{/* Navigation arrows for hero screen (dev mode only, when hero text is hidden) */}
+			{process.env.NODE_ENV === 'development' &&
+				contentState.contentState === 'hero' &&
+				!heroTextVisible && (
+					<>
+						{/* Left arrow - Navigate to Projects */}
+						<motion.div
+							className="absolute top-1/2 left-8 z-50 -translate-y-1/2"
+							initial={{ opacity: 0, x: -20 }}
+							animate={{
+								opacity:
+									startupSequence?.enabled && !startup.startupComplete
+										? startup.uiControlsVisible
+											? 1
+											: 0
+										: 1,
+								x:
+									startupSequence?.enabled && !startup.startupComplete
+										? startup.uiControlsVisible
+											? 0
+											: -20
+										: 0,
+							}}
+							exit={{ opacity: 0, x: -20 }}
+							transition={{
+								duration:
+									startupSequence?.enabled && !startup.startupComplete
+										? (startupSequence.controlsFadeDuration || 400) / 1000
+										: 0.6,
+								delay:
+									startupSequence?.enabled && !startup.startupComplete ? 0 : 0,
+							}}
+						>
+							<BackButton
+								direction="left"
+								onClick={handleExploreProjectsClick}
+								aria-label="Navigate to Projects"
+							/>
+						</motion.div>
+
+						{/* Right arrow - Navigate to Contact */}
+						<motion.div
+							className="absolute top-1/2 right-8 z-50 -translate-y-1/2"
+							initial={{ opacity: 0, x: 20 }}
+							animate={{
+								opacity:
+									startupSequence?.enabled && !startup.startupComplete
+										? startup.uiControlsVisible
+											? 1
+											: 0
+										: 1,
+								x:
+									startupSequence?.enabled && !startup.startupComplete
+										? startup.uiControlsVisible
+											? 0
+											: 20
+										: 0,
+							}}
+							exit={{ opacity: 0, x: 20 }}
+							transition={{
+								duration:
+									startupSequence?.enabled && !startup.startupComplete
+										? (startupSequence.controlsFadeDuration || 400) / 1000
+										: 0.6,
+								delay:
+									startupSequence?.enabled && !startup.startupComplete ? 0 : 0,
+							}}
+						>
+							<BackButton
+								direction="right"
+								onClick={handleGetInTouchClick}
+								aria-label="Navigate to Contact"
+							/>
+						</motion.div>
+					</>
+				)}
 
 			{/* Main content */}
 			{children || (

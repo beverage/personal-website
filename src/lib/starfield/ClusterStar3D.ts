@@ -1,8 +1,5 @@
 import { WEBGL_STARFIELD_CONFIG } from './webglConfig'
 
-// Constants for performance and projection calculations
-const BASE_SCALE_DENOMINATOR = 800
-
 // Projection constants used by both WebGL and Canvas2D renderers
 const SIZE_MIN = 0.3
 const SIZE_MAX = 1.5
@@ -55,26 +52,17 @@ export class ClusterStar3D {
 	reset() {
 		// Gaussian distributed cluster using Box-Muller transform
 		// This creates a natural elliptical galaxy-like distribution
-		// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
-		const REFERENCE_WIDTH = 1512
-		const REFERENCE_HEIGHT = 884
-		const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
-		const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
-
-		// Generate elliptical cluster distribution using Box-Muller transform
-		// This creates a natural stellar cluster density falloff from center
-		const effectiveSemiMajorAxis = this.clusterSemiMajorAxis * scaleFactor
-		const effectiveSemiMinorAxis = this.clusterSemiMinorAxis * scaleFactor
+		const sigma = WEBGL_STARFIELD_CONFIG.core.geometry.standardDeviation
 
 		// Box-Muller transform for gaussian distribution around center
 		const u1 = Math.random()
 		const u2 = Math.random()
-		const mag = Math.sqrt(-2.0 * Math.log(u1))
+		const mag = sigma * Math.sqrt(-2.0 * Math.log(u1))
 		const angle = 2.0 * Math.PI * u2
 
 		// Scale by ellipse axes to create elliptical distribution
-		this.x = mag * Math.cos(angle) * effectiveSemiMajorAxis
-		this.y = mag * Math.sin(angle) * effectiveSemiMinorAxis
+		this.x = mag * Math.cos(angle) * this.clusterSemiMajorAxis
+		this.y = mag * Math.sin(angle) * this.clusterSemiMinorAxis
 
 		// Much more distant z-range for slow movement effect
 		const range = this.clusterDistance.max - this.clusterDistance.min
@@ -104,21 +92,15 @@ export class ClusterStar3D {
 			this.z = this.clusterDistance.max + overshoot // Reset to very far distance
 
 			// Regenerate cluster position using same elliptical gaussian distribution
-			// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
-			const REFERENCE_WIDTH = 1512
-			const REFERENCE_HEIGHT = 884
-			const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
-			const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
-			const effectiveSemiMajorAxis = this.clusterSemiMajorAxis * scaleFactor
-			const effectiveSemiMinorAxis = this.clusterSemiMinorAxis * scaleFactor
+			const sigma = WEBGL_STARFIELD_CONFIG.core.geometry.standardDeviation
 
 			const u1 = Math.random()
 			const u2 = Math.random()
-			const mag = Math.sqrt(-2.0 * Math.log(u1))
+			const mag = sigma * Math.sqrt(-2.0 * Math.log(u1))
 			const angle = 2.0 * Math.PI * u2
 
-			this.x = mag * Math.cos(angle) * effectiveSemiMajorAxis
-			this.y = mag * Math.sin(angle) * effectiveSemiMinorAxis
+			this.x = mag * Math.cos(angle) * this.clusterSemiMajorAxis
+			this.y = mag * Math.sin(angle) * this.clusterSemiMinorAxis
 		}
 
 		// Apply same rotation as foreground stars for consistency
@@ -209,31 +191,27 @@ export class CenterClusterStar3D {
 	}
 
 	reset() {
-		// Gaussian distributed core stars with higher concentration
-		// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
-		const REFERENCE_WIDTH = 1512
-		const REFERENCE_HEIGHT = 884
-		const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
-		const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
+		// Gaussian distributed outer stars with higher concentration
+		const sigma = WEBGL_STARFIELD_CONFIG.outer.geometry.standardDeviation
 
-		// Generate concentrated elliptical distribution for center stars
+		// Generate concentrated elliptical distribution for outer stars
 		const effectiveSemiMajorAxis =
-			this.clusterSemiMajorAxis * scaleFactor * this.concentration
+			this.clusterSemiMajorAxis * this.concentration
 		const effectiveSemiMinorAxis =
-			this.clusterSemiMinorAxis * scaleFactor * this.concentration
+			this.clusterSemiMinorAxis * this.concentration
 
 		// Box-Muller transform for gaussian distribution around center
 		// Don't apply concentration to magnitude - only to axis sizes above
 		const u1 = Math.random()
 		const u2 = Math.random()
-		const mag = Math.sqrt(-2.0 * Math.log(u1))
+		const mag = sigma * Math.sqrt(-2.0 * Math.log(u1))
 		const angle = 2.0 * Math.PI * u2
 
 		// Scale by ellipse axes to create elliptical distribution
 		this.x = mag * Math.cos(angle) * effectiveSemiMajorAxis
 		this.y = mag * Math.sin(angle) * effectiveSemiMinorAxis
 
-		// Use specified distance range for center stars
+		// Use specified distance range for outer stars
 		const range = this.clusterDistance.max - this.clusterDistance.min
 		this.z = this.clusterDistance.min + Math.random() * range
 	}
@@ -260,20 +238,16 @@ export class CenterClusterStar3D {
 			const overshoot = wrapThreshold - this.z
 			this.z = this.clusterDistance.max + overshoot // Reset to far distance
 
-			// Regenerate center star position using concentrated distribution
-			// Use REFERENCE CSS dimensions (1512×884 retina baseline) to keep cluster size constant
-			const REFERENCE_WIDTH = 1512
-			const REFERENCE_HEIGHT = 884
-			const maxDimension = Math.max(REFERENCE_WIDTH, REFERENCE_HEIGHT)
-			const scaleFactor = maxDimension / BASE_SCALE_DENOMINATOR
+			// Regenerate outer star position using concentrated distribution
+			const sigma = WEBGL_STARFIELD_CONFIG.outer.geometry.standardDeviation
 			const effectiveSemiMajorAxis =
-				this.clusterSemiMajorAxis * scaleFactor * this.concentration
+				this.clusterSemiMajorAxis * this.concentration
 			const effectiveSemiMinorAxis =
-				this.clusterSemiMinorAxis * scaleFactor * this.concentration
+				this.clusterSemiMinorAxis * this.concentration
 
 			const u1 = Math.random()
 			const u2 = Math.random()
-			const mag = Math.sqrt(-2.0 * Math.log(u1))
+			const mag = sigma * Math.sqrt(-2.0 * Math.log(u1))
 			const angle = 2.0 * Math.PI * u2
 
 			this.x = mag * Math.cos(angle) * effectiveSemiMajorAxis

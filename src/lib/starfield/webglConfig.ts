@@ -192,15 +192,22 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 * These define the elliptical distribution of core stars
 		 *
 		 * Properties:
+		 * - standardDeviation: Standard deviation (σ) for Gaussian distribution
+		 *   • Controls how concentrated stars are toward the center
+		 *   • Lower values (0.3-0.5) = tight, concentrated cluster
+		 *   • Higher values (1.0-2.0) = more spread out, diffuse cluster
+		 *   • Current: 1.0 (standard normal distribution)
+		 *   • Applied to Box-Muller transform: mag = σ × √(-2.0 × ln(u₁))
+		 *   • With σ=1.0: ~68% within 1σ, ~95% within 2σ, ~99.7% within 3σ
+		 *
 		 * - semiMajorAxis: Horizontal radius of the ellipse (a)
-		 *   • Defines the width of the lenticular galaxy shape
-		 *   • Doubled to compensate for CSS-based scaling (scaleFactor cut in half)
-		 *   • Current: 800000
+		 *   • Defines the actual width of the lenticular galaxy shape
+		 *   • Current: 756000 units (horizontal spread)
 		 *
 		 * - semiMinorAxis: Vertical radius of the ellipse (b)
-		 *   • Defines the height/thickness of the lenticular galaxy shape
-		 *   • Doubled to compensate for CSS-based scaling
-		 *   • Current: 160000
+		 *   • Defines the actual height/thickness of the lenticular galaxy shape
+		 *   • Current: 226800 units (vertical spread)
+		 *   • Aspect ratio: 756k / 226.8k = 3.33 (wide lenticular shape)
 		 *
 		 * - distance: Z-depth range for core stars
 		 *   • Stars spawn randomly within this range
@@ -208,8 +215,9 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 *   • Current: min 300000, max 3000000
 		 */
 		geometry: {
-			semiMajorAxis: 400000,
-			semiMinorAxis: 120000,
+			standardDeviation: 1.0,
+			semiMajorAxis: 756000,
+			semiMinorAxis: 226800,
 			distance: {
 				min: 300000,
 				max: 3000000,
@@ -413,15 +421,22 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 * GEOMETRY - Physical dimensions and distribution
 		 *
 		 * Properties:
+		 * - standardDeviation: Standard deviation (σ) for Gaussian distribution
+		 *   • Controls how concentrated stars are toward the center
+		 *   • Lower values (0.3-0.5) = tight, concentrated cluster
+		 *   • Higher values (1.0-2.0) = more spread out, diffuse cluster
+		 *   • Current: 1.0 (standard normal distribution, same as core)
+		 *   • Applied to Box-Muller transform: mag = σ × √(-2.0 × ln(u₁))
+		 *   • Note: Outer stars are 4-20x closer (150k-600k vs 300k-3M)
+		 *   •       so projection magnifies their spread significantly on screen
+		 *
 		 * - semiMajorAxis: Horizontal radius of the ellipse (a)
-		 *   • Defines the width of the outer star halo
-		 *   • Doubled to compensate for CSS-based scaling
-		 *   • Current: 800000
+		 *   • Defines the actual width of the outer star halo
+		 *   • Current: 756000 units (horizontal spread, before concentration)
 		 *
 		 * - semiMinorAxis: Vertical radius of the ellipse (b)
-		 *   • Defines the height/thickness of the outer star halo
-		 *   • Doubled to compensate for CSS-based scaling
-		 *   • Current: 160000
+		 *   • Defines the actual height/thickness of the outer star halo
+		 *   • Current: 226800 units (vertical spread, before concentration)
 		 *
 		 * - distance: Z-depth range for outer stars
 		 *   • Current: 150000-600000 (2-5x closer than core!)
@@ -431,11 +446,12 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 *   • Lower values = more concentrated toward center
 		 *   • Higher values = more spread out
 		 *   • Multiplied by ellipse axis radii to get effective distribution size
-		 *   • Current: 0.4 (from cluster-ellipse-4x-center-close-1)
+		 *   • Current: 0.4 (effective size: 756k × 0.4 = 302k units)
 		 */
 		geometry: {
-			semiMajorAxis: 400000,
-			semiMinorAxis: 120000,
+			standardDeviation: 1.0,
+			semiMajorAxis: 756000,
+			semiMinorAxis: 226800,
 			distance: {
 				min: 150000,
 				max: 600000,

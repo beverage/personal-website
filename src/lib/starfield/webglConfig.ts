@@ -69,31 +69,42 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 *   • Equal magnitude to X creates 45° diagonal
 		 *   • Current: -0.01 for lower-right to upper-left wave motion
 		 *
-		 * - amplitude: Strength of the brightness variation
-		 *   • 0.25 means 25% variation range
+		 * - amplitude: Strength of the brightness variation (dynamic uniform, DPR-scaled)
+		 *   • sin() ranges -1 to 1, multiplied by amplitude
 		 *   • Higher values = more dramatic twinkling
 		 *   • Lower values = subtle shimmer
-		 *   • Current: 0.1
+		 *   • Set to 0.0 for no twinkling
+		 *   • DPR 1.0: 0.25 (more dramatic on standard displays)
+		 *   • DPR 2.0: 0.125 (subtle on retina displays)
+		 *   • Can be changed without page refresh (hot-reload supported)
 		 *
-		 * - baseIntensity: Minimum brightness level (when wave is at minimum)
-		 *   • 0.5 means stars can fade to 50% brightness
-		 *   • Higher values = always brighter, less dramatic effect
-		 *   • Lower values = can fade more, more dramatic
-		 *   • Range: baseIntensity to baseIntensity + amplitude*2
-		 *   • Current: 0.75
+		 * - baseIntensity: Center point of brightness variation (dynamic uniform, DPR-scaled)
+		 *   • Stars oscillate around this value
+		 *   • Range: baseIntensity - amplitude to baseIntensity + amplitude
+		 *   • 0.75 with amplitude 0.125 = stars range 0.625 to 0.875 (dim effect)
+		 *   • Higher values = brighter overall
+		 *   • Lower values = dimmer overall
+		 *   • Both DPR levels: 0.75 (consistent dimming)
+		 *   • Can be changed without page refresh (hot-reload supported)
+		 *
+		 * Note: Base values below are overridden by RETINA_CONFIG/STANDARD_CONFIG per DPR
 		 */
 		twinkle: {
 			enabled: true,
-			timeSpeed: 0.003,
-			spatialFrequencyX: 0.01,
-			spatialFrequencyY: -0.01,
-			amplitude: 0.1,
-			baseIntensity: 0.5,
+			timeSpeed: 0.0025,
+			spatialFrequencyX: 0.005,
+			spatialFrequencyY: -0.005,
+			amplitude: 0.125, // Overridden by DPR configs
+			baseIntensity: 0.75, // Overridden by DPR configs
 		},
 
 		/**
-		 * GRADIENT FALLOFF - Controls how the star's brightness fades from center to edge
-		 * These values create the circular "glow" appearance of each star
+		 * GRADIENT FALLOFF - Multi-zone radial gradient for individual star appearance
+		 * Creates depth and luminosity with bright core and softer outer glow
+		 *
+		 * Phase 1 Quality Improvements (DPR 1.0 tuning baseline):
+		 * - Better anti-aliasing for softer circular edges (especially on low DPR)
+		 * - Multi-zone gradient with bright core and outer glow zones
 		 *
 		 * Properties:
 		 * - circleEdgeStart: Where the edge antialiasing begins (0.0 = center, 1.0 = edge)
@@ -104,20 +115,40 @@ export const WEBGL_STARFIELD_CONFIG = {
 		 *
 		 * - circleEdgeEnd: Where the edge antialiasing completes
 		 *   • Works with circleEdgeStart to define the antialiasing range
+		 *   • Extended to 1.0 for softer edges on low DPR displays
 		 *   • Smaller range (closer to start) = sharper edge
 		 *   • Larger range (farther from start) = smoother, more blurred edge
-		 *   • Current: 0.9
+		 *   • Current: 1.0 (improved from 0.9)
 		 *
-		 * - falloffExponent: Power curve for alpha falloff from center to edge
-		 *   • Higher values = steeper falloff, tighter/crisper appearance
-		 *   • Lower values = gentler falloff, more glow
-		 *   • 1.0 = linear, >1.0 = exponential steepening
-		 *   • Current: 1.2 provides softer stars that match Canvas2D glow
+		 * - coreBrightness: Brightness multiplier at the very center of the star
+		 *   • 1.0 = full brightness at center
+		 *   • Creates the "hot spot" luminosity effect
+		 *   • Current: 1.0
+		 *
+		 * - coreRadius: Radius where the bright core zone ends (0.0-1.0)
+		 *   • Inside this radius, stars maintain peak brightness
+		 *   • Beyond this, brightness falls off to create outer glow
+		 *   • Current: 0.3 (30% of star radius is bright core)
+		 *
+		 * - glowFalloff: Exponent for outer glow falloff beyond core radius
+		 *   • Higher values = steeper falloff, tighter appearance
+		 *   • Lower values = gentler falloff, more extended glow
+		 *   • 1.0 = linear, 2.0 = quadratic, 3.0 = cubic
+		 *   • Current: 2.0 (smooth quadratic falloff)
+		 *
+		 * - coreGlowMix: How much core intensity bleeds into the glow zone (0.0-1.0)
+		 *   • 0.0 = sharp boundary between core and glow
+		 *   • 1.0 = smooth continuous gradient from core to glow
+		 *   • Controls the "softness" of the core-to-glow transition
+		 *   • Current: 0.5 (balanced blend)
 		 */
 		gradient: {
 			circleEdgeStart: 0.6,
-			circleEdgeEnd: 0.9,
-			falloffExponent: 1.2,
+			circleEdgeEnd: 1.0,
+			coreBrightness: 1.0,
+			coreRadius: 0.2,
+			glowFalloff: 3.0,
+			coreGlowMix: 0.3,
 		},
 	},
 
@@ -545,7 +576,11 @@ export const WEBGL_STARFIELD_CONFIG = {
 
 // Tuned values for DPR = 2.0 (retina baseline)
 const RETINA_CONFIG = {
-	foreground: { sizeMultiplier: 5.0, minPixelSize: 1.5 },
+	foreground: {
+		sizeMultiplier: 5.0,
+		minPixelSize: 1.5,
+		twinkle: { amplitude: 0.125, baseIntensity: 0.75 },
+	},
 	core: { sizeMultiplier: 8.0, minPixelSize: 0.3 },
 	glow: {
 		opacity: 0.12,
@@ -556,10 +591,14 @@ const RETINA_CONFIG = {
 
 // Tuned values for DPR = 1.0 (standard displays)
 const STANDARD_CONFIG = {
-	foreground: { sizeMultiplier: 3.0, minPixelSize: 1.5 },
+	foreground: {
+		sizeMultiplier: 3.0,
+		minPixelSize: 2.5,
+		twinkle: { amplitude: 0.25, baseIntensity: 0.75 },
+	},
 	core: { sizeMultiplier: 5.0, minPixelSize: 2.0 },
 	glow: {
-		opacity: 0.05,
+		opacity: 0.075,
 		falloffExponent: 8.0,
 		noise: { scale: 2.0, strength: 0.8 },
 	},
@@ -582,6 +621,8 @@ function lerp(a: number, b: number, t: number): number {
 export function getScaledStarfieldConfig(dpr: number) {
 	let foregroundSizeMultiplier: number
 	let foregroundMinPixelSize: number
+	let foregroundTwinkleAmplitude: number
+	let foregroundTwinkleBaseIntensity: number
 	let coreSizeMultiplier: number
 	let coreMinPixelSize: number
 	let glowOpacity: number
@@ -599,6 +640,9 @@ export function getScaledStarfieldConfig(dpr: number) {
 			factor,
 		)
 		foregroundMinPixelSize = RETINA_CONFIG.foreground.minPixelSize
+		foregroundTwinkleAmplitude = RETINA_CONFIG.foreground.twinkle.amplitude
+		foregroundTwinkleBaseIntensity =
+			RETINA_CONFIG.foreground.twinkle.baseIntensity
 		coreSizeMultiplier = lerp(
 			RETINA_CONFIG.core.sizeMultiplier,
 			RETINA_CONFIG.core.sizeMultiplier * 1.2,
@@ -613,6 +657,9 @@ export function getScaledStarfieldConfig(dpr: number) {
 		// DPR 1.75-2.5: Use retina config
 		foregroundSizeMultiplier = RETINA_CONFIG.foreground.sizeMultiplier
 		foregroundMinPixelSize = RETINA_CONFIG.foreground.minPixelSize
+		foregroundTwinkleAmplitude = RETINA_CONFIG.foreground.twinkle.amplitude
+		foregroundTwinkleBaseIntensity =
+			RETINA_CONFIG.foreground.twinkle.baseIntensity
 		coreSizeMultiplier = RETINA_CONFIG.core.sizeMultiplier
 		coreMinPixelSize = RETINA_CONFIG.core.minPixelSize
 		glowOpacity = RETINA_CONFIG.glow.opacity
@@ -628,6 +675,16 @@ export function getScaledStarfieldConfig(dpr: number) {
 			factor,
 		)
 		foregroundMinPixelSize = STANDARD_CONFIG.foreground.minPixelSize
+		foregroundTwinkleAmplitude = lerp(
+			STANDARD_CONFIG.foreground.twinkle.amplitude,
+			RETINA_CONFIG.foreground.twinkle.amplitude,
+			factor,
+		)
+		foregroundTwinkleBaseIntensity = lerp(
+			STANDARD_CONFIG.foreground.twinkle.baseIntensity,
+			RETINA_CONFIG.foreground.twinkle.baseIntensity,
+			factor,
+		)
 		coreSizeMultiplier = lerp(
 			STANDARD_CONFIG.core.sizeMultiplier,
 			RETINA_CONFIG.core.sizeMultiplier,
@@ -662,6 +719,9 @@ export function getScaledStarfieldConfig(dpr: number) {
 		// DPR < 1.25: Use standard config
 		foregroundSizeMultiplier = STANDARD_CONFIG.foreground.sizeMultiplier
 		foregroundMinPixelSize = STANDARD_CONFIG.foreground.minPixelSize
+		foregroundTwinkleAmplitude = STANDARD_CONFIG.foreground.twinkle.amplitude
+		foregroundTwinkleBaseIntensity =
+			STANDARD_CONFIG.foreground.twinkle.baseIntensity
 		coreSizeMultiplier = STANDARD_CONFIG.core.sizeMultiplier
 		coreMinPixelSize = STANDARD_CONFIG.core.minPixelSize
 		glowOpacity = STANDARD_CONFIG.glow.opacity
@@ -676,6 +736,11 @@ export function getScaledStarfieldConfig(dpr: number) {
 			...WEBGL_STARFIELD_CONFIG.foreground,
 			minPixelSize: foregroundMinPixelSize,
 			sizeMultiplier: foregroundSizeMultiplier,
+			twinkle: {
+				...WEBGL_STARFIELD_CONFIG.foreground.twinkle,
+				amplitude: foregroundTwinkleAmplitude,
+				baseIntensity: foregroundTwinkleBaseIntensity,
+			},
 		},
 		core: {
 			...WEBGL_STARFIELD_CONFIG.core,

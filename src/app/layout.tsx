@@ -3,6 +3,7 @@ import { GlowProvider } from '@/contexts/GlowContext'
 import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { RenderModeProvider } from '@/contexts/RenderModeContext'
+import { TwinkleProvider } from '@/contexts/TwinkleContext'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
@@ -100,7 +101,9 @@ export default function RootLayout({
 					<RenderModeProvider>
 						<ForegroundToggleProvider>
 							<HeroTextProvider>
-								<GlowProvider>{children}</GlowProvider>
+								<GlowProvider>
+									<TwinkleProvider>{children}</TwinkleProvider>
+								</GlowProvider>
 							</HeroTextProvider>
 						</ForegroundToggleProvider>
 					</RenderModeProvider>

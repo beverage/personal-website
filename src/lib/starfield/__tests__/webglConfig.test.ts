@@ -14,7 +14,7 @@ describe('getScaledStarfieldConfig', () => {
 		it('uses standard config for DPR = 1.0', () => {
 			const config = getScaledStarfieldConfig(1.0)
 			expect(config.foreground.sizeMultiplier).toBe(3.0)
-			expect(config.foreground.minPixelSize).toBe(1.5)
+			expect(config.foreground.minPixelSize).toBe(2.5)
 			expect(config.core.rendering.sizeMultiplier).toBe(5.0)
 			expect(config.core.rendering.minPixelSize).toBe(2.0)
 		})

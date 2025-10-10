@@ -1,3 +1,4 @@
+import { useTwinkle } from '@/contexts/TwinkleContext'
 import {
 	AnimationController,
 	type AnimationSubscriber,
@@ -34,6 +35,8 @@ export const useWebGLStarField = ({
 		`webgl-starfield-${Math.random().toString(36).substr(2, 9)}`,
 	)
 	const [isClient, setIsClient] = useState(false)
+	const { twinkleEnabled } = useTwinkle()
+	const twinkleEnabledRef = useRef(twinkleEnabled)
 
 	// Update speedRef whenever speed prop changes
 	useEffect(() => {
@@ -49,6 +52,11 @@ export const useWebGLStarField = ({
 	useEffect(() => {
 		motionVectorRef.current = motionVector
 	}, [motionVector])
+
+	// Update twinkleEnabledRef whenever twinkleEnabled changes
+	useEffect(() => {
+		twinkleEnabledRef.current = twinkleEnabled
+	}, [twinkleEnabled])
 
 	// Ensure we're only running client-side
 	useEffect(() => {
@@ -154,7 +162,12 @@ export const useWebGLStarField = ({
 				})
 
 				// Render using WebGL
-				rendererRef.current.render(starsRef.current, canvas, currentTime)
+				rendererRef.current.render(
+					starsRef.current,
+					canvas,
+					currentTime,
+					twinkleEnabledRef.current,
+				)
 			},
 		}
 

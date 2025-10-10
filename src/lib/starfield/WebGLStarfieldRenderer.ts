@@ -63,7 +63,7 @@ export class WebGLStarfieldRenderer {
 		const config = WEBGL_STARFIELD_CONFIG.foreground
 
 		// Vertex shader: transforms star positions and passes data to fragment shader
-		// Note: Size multiplier is now applied CPU-side
+		// Note: Size multiplier and minPixelSize clamping are now applied CPU-side
 		const vertexShaderSource = `
 			attribute vec2 a_position;
 			attribute float a_size;
@@ -74,19 +74,22 @@ export class WebGLStarfieldRenderer {
 			
 			void main() {
 				gl_Position = vec4(a_position, 0.0, 1.0);
-				// Size already includes multiplier from CPU, optionally clamp to minimum
-				gl_PointSize = ${config.minPixelSize > 0 ? `max(${config.minPixelSize.toFixed(1)}, a_size)` : 'a_size'};
+				// Size already includes multiplier and minPixelSize clamping from CPU
+				gl_PointSize = a_size;
 				v_opacity = a_opacity;
 				// Pass normalized screen position for twinkling calculation
 				v_screenPos = a_position;
 			}
 		`
 
-		// Fragment shader: renders circular stars with alpha falloff and twinkling
+		// Fragment shader: renders circular stars with multi-zone radial gradient and optional twinkling
 		const fragmentShaderSource = `
 			precision mediump float;
 			uniform float u_time;
 			uniform vec2 u_resolution;
+			uniform float u_twinkleEnabled;
+			uniform float u_twinkleAmplitude;
+			uniform float u_twinkleBaseIntensity;
 			varying float v_opacity;
 			varying vec2 v_screenPos;
 			
@@ -95,27 +98,35 @@ export class WebGLStarfieldRenderer {
 				vec2 coord = gl_PointCoord - vec2(0.5);
 				float dist = length(coord) * 2.0;
 				
-				// Sharper circular edge - tighter antialiasing
+				// Better anti-aliasing - softer circular edge (Improvement #1)
 				float circle = 1.0 - smoothstep(${config.gradient.circleEdgeStart.toFixed(2)}, ${config.gradient.circleEdgeEnd.toFixed(2)}, dist);
 				
-				// Steeper falloff for more defined, less bloomy appearance
-				float alpha = circle * (1.0 - pow(dist, ${config.gradient.falloffExponent.toFixed(1)})) * v_opacity;
+				// Multi-zone radial gradient (Improvement #2)
+				// Creates bright core with outer glow for depth and luminosity
+				float core = 1.0 - smoothstep(0.0, ${config.gradient.coreRadius.toFixed(2)}, dist); // Bright core
+				float glow = 1.0 - smoothstep(${config.gradient.coreRadius.toFixed(2)}, 1.0, dist); // Outer glow
 				
-				${
-					config.twinkle.enabled
-						? `
-				// Diagonal wave twinkling effect (Canvas2D rendering artifact turned feature)
-				// Convert normalized device coords to pixel space for spatial wave
-				vec2 pixelPos = (v_screenPos * 0.5 + 0.5) * u_resolution;
-				float twinkle = sin(
-					u_time * ${config.twinkle.timeSpeed.toFixed(6)} + 
-					pixelPos.x * ${config.twinkle.spatialFrequencyX.toFixed(6)} + 
-					pixelPos.y * ${config.twinkle.spatialFrequencyY.toFixed(6)}
-				) * ${config.twinkle.amplitude.toFixed(2)} + ${config.twinkle.baseIntensity.toFixed(2)};
+				// Apply glow falloff for smooth transition
+				glow = pow(glow, ${config.gradient.glowFalloff.toFixed(1)});
 				
-				alpha *= twinkle;
-				`
-						: ''
+				// Mix core and glow with configurable blending
+				float intensity = mix(glow, ${config.gradient.coreBrightness.toFixed(1)}, core * ${config.gradient.coreGlowMix.toFixed(2)});
+				
+				// Apply circular mask and opacity
+				float alpha = circle * intensity * v_opacity;
+				
+				// Optional twinkling effect (controlled by uniforms)
+				if (u_twinkleEnabled > 0.5) {
+					// Diagonal wave twinkling effect (Canvas2D rendering artifact turned feature)
+					// Convert normalized device coords to pixel space for spatial wave
+					vec2 pixelPos = (v_screenPos * 0.5 + 0.5) * u_resolution;
+					float twinkle = sin(
+						u_time * ${config.twinkle.timeSpeed.toFixed(6)} + 
+						pixelPos.x * ${config.twinkle.spatialFrequencyX.toFixed(6)} + 
+						pixelPos.y * ${config.twinkle.spatialFrequencyY.toFixed(6)}
+					) * u_twinkleAmplitude + u_twinkleBaseIntensity;
+					
+					alpha *= twinkle;
 				}
 				
 				// Star color (slight blue-white tint)
@@ -191,6 +202,7 @@ export class WebGLStarfieldRenderer {
 		stars: Star3D[],
 		canvas: HTMLCanvasElement,
 		currentTime: number = 0,
+		twinkleEnabled: boolean = true,
 	): void {
 		if (this.isContextLost || !this.program) {
 			return
@@ -245,7 +257,13 @@ export class WebGLStarfieldRenderer {
 				// Divide sizeMultiplier by DPR so stars appear the same size across displays
 				const dprCompensatedMultiplier =
 					scaledConfig.foreground.sizeMultiplier / dpr
-				const finalSize = projected.size * dprCompensatedMultiplier * dpr
+				let finalSize = projected.size * dprCompensatedMultiplier * dpr
+
+				// Apply minPixelSize clamp CPU-side (DPR-aware)
+				if (scaledConfig.foreground.minPixelSize > 0) {
+					finalSize = Math.max(scaledConfig.foreground.minPixelSize, finalSize)
+				}
+
 				positions.push(x, y)
 				sizes.push(finalSize)
 				opacities.push(projected.opacity)
@@ -269,7 +287,40 @@ export class WebGLStarfieldRenderer {
 
 		const resolutionLocation = gl.getUniformLocation(program, 'u_resolution')
 		if (resolutionLocation) {
-			gl.uniform2f(resolutionLocation, canvas.width, canvas.height)
+			// Use CSS pixel dimensions (DPR-compensated) for consistent wavelength across displays
+			gl.uniform2f(resolutionLocation, canvas.width / dpr, canvas.height / dpr)
+		}
+
+		// Set twinkle toggle uniform
+		const twinkleEnabledLocation = gl.getUniformLocation(
+			program,
+			'u_twinkleEnabled',
+		)
+		if (twinkleEnabledLocation) {
+			gl.uniform1f(twinkleEnabledLocation, twinkleEnabled ? 1.0 : 0.0)
+		}
+
+		// Set dynamic twinkle parameters (allows hot-reload tuning)
+		const twinkleAmplitudeLocation = gl.getUniformLocation(
+			program,
+			'u_twinkleAmplitude',
+		)
+		if (twinkleAmplitudeLocation) {
+			gl.uniform1f(
+				twinkleAmplitudeLocation,
+				scaledConfig.foreground.twinkle.amplitude,
+			)
+		}
+
+		const twinkleBaseIntensityLocation = gl.getUniformLocation(
+			program,
+			'u_twinkleBaseIntensity',
+		)
+		if (twinkleBaseIntensityLocation) {
+			gl.uniform1f(
+				twinkleBaseIntensityLocation,
+				scaledConfig.foreground.twinkle.baseIntensity,
+			)
 		}
 
 		// Upload position data

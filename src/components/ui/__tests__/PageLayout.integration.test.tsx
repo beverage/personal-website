@@ -1,3 +1,4 @@
+import { DebugPanelProvider } from '@/contexts/DebugPanelContext'
 import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { fireEvent, render, screen } from '@testing-library/react'
@@ -69,11 +70,13 @@ describe('PageLayout Integration Tests', () => {
 
 	it('renders brand panel and control panel', () => {
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} brandName="test.brand" />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} brandName="test.brand" />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		expect(screen.getByText('test.brand')).toBeInTheDocument()
@@ -89,11 +92,13 @@ describe('PageLayout Integration Tests', () => {
 		}
 
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} clientConfig={clientConfig} />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} clientConfig={clientConfig} />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		const cvLink = screen.getByRole('link', { name: /cv/i })
@@ -122,11 +127,13 @@ describe('PageLayout Integration Tests', () => {
 		}))
 
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} enableTransitions={false} />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} enableTransitions={false} />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		fireEvent.click(screen.getByText('Get In Touch')) // Fixed case
@@ -135,11 +142,13 @@ describe('PageLayout Integration Tests', () => {
 
 	it('handles different course change variants', () => {
 		const { rerender } = render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} courseChangeVariant="gentle-drift" />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		// Should render without errors
@@ -147,36 +156,45 @@ describe('PageLayout Integration Tests', () => {
 
 		// Test other variants
 		rerender(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} courseChangeVariant="sharp-maneuver" />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout
+							{...defaultProps}
+							courseChangeVariant="sharp-maneuver"
+						/>
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
 
 		rerender(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} courseChangeVariant="banking-turn" />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 		expect(screen.getByText('Test Hero')).toBeInTheDocument()
 	})
 
 	it('passes custom props to starfield', () => {
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout
-						{...defaultProps}
-						speed={2000}
-						fadeInDuration={5000}
-						fadeOutDuration={3000}
-					/>
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout
+							{...defaultProps}
+							speed={2000}
+							fadeInDuration={5000}
+							fadeOutDuration={3000}
+						/>
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		const starfield = screen.getByTestId('starfield')
@@ -200,11 +218,13 @@ describe('PageLayout Integration Tests', () => {
 		}
 
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps} clientConfig={clientConfig} />
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps} clientConfig={clientConfig} />
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		// Footer should contain social links and copyright
@@ -215,13 +235,15 @@ describe('PageLayout Integration Tests', () => {
 
 	it('renders custom children when provided', () => {
 		render(
-			<LanguageProvider>
-				<HeroTextProvider>
-					<PageLayout {...defaultProps}>
-						<div data-testid="custom-content">Custom Content</div>
-					</PageLayout>
-				</HeroTextProvider>
-			</LanguageProvider>,
+			<DebugPanelProvider>
+				<LanguageProvider>
+					<HeroTextProvider>
+						<PageLayout {...defaultProps}>
+							<div data-testid="custom-content">Custom Content</div>
+						</PageLayout>
+					</HeroTextProvider>
+				</LanguageProvider>
+			</DebugPanelProvider>,
 		)
 
 		expect(screen.getByTestId('custom-content')).toBeInTheDocument()

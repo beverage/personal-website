@@ -1,3 +1,4 @@
+import { DebugPanelProvider } from '@/contexts/DebugPanelContext'
 import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
 import { GlowProvider } from '@/contexts/GlowContext'
 import { HeroTextProvider } from '@/contexts/HeroTextContext'
@@ -102,7 +103,9 @@ export default function RootLayout({
 						<ForegroundToggleProvider>
 							<HeroTextProvider>
 								<GlowProvider>
-									<TwinkleProvider>{children}</TwinkleProvider>
+									<TwinkleProvider>
+										<DebugPanelProvider>{children}</DebugPanelProvider>
+									</TwinkleProvider>
 								</GlowProvider>
 							</HeroTextProvider>
 						</ForegroundToggleProvider>

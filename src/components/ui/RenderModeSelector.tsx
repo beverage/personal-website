@@ -1,7 +1,7 @@
 'use client'
 
 import { useRenderMode } from '@/contexts/RenderModeContext'
-import { ControlButton } from './ControlButton'
+import { Cuboid } from 'lucide-react'
 
 interface RenderModeSelectorProps {
 	className?: string
@@ -23,43 +23,25 @@ export const RenderModeSelector = ({
 		return null
 	}
 
-	const handleWebGLClick = () => {
-		setRenderMode('webgl')
-	}
+	const isWebGL = renderMode === 'webgl' || renderMode === 'auto'
 
-	const handleCanvas2DClick = () => {
-		setRenderMode('canvas2d')
+	const handleToggle = () => {
+		setRenderMode(isWebGL ? 'canvas2d' : 'webgl')
 	}
 
 	return (
-		<ControlButton className={`gap-0 ${className}`}>
-			<button
-				onClick={handleWebGLClick}
-				disabled={disabled}
-				className={`font-exo2 rounded-l-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
-					renderMode === 'webgl' || renderMode === 'auto'
-						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
-						: 'text-white/40 hover:text-cyan-300'
-				}`}
-				aria-label="Force WebGL rendering"
-				title="WebGL"
-			>
-				GL
-			</button>
-			<div className="h-4 w-px bg-cyan-400/30" />
-			<button
-				onClick={handleCanvas2DClick}
-				disabled={disabled}
-				className={`font-exo2 rounded-r-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
-					renderMode === 'canvas2d'
-						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
-						: 'text-white/40 hover:text-cyan-300'
-				}`}
-				aria-label="Force Canvas2D rendering"
-				title="Canvas2D"
-			>
-				2D
-			</button>
-		</ControlButton>
+		<button
+			onClick={handleToggle}
+			disabled={disabled}
+			className={`font-exo2 rounded-lg border px-3 py-3 text-sm font-medium transition-all duration-300 ${
+				isWebGL
+					? 'border-cyan-500 bg-cyan-500 text-white shadow-lg shadow-cyan-500/40 hover:border-cyan-600 hover:bg-cyan-600 hover:shadow-lg hover:shadow-cyan-500/60'
+					: 'border-cyan-400 text-cyan-300 hover:bg-cyan-400/10'
+			} ${className}`}
+			aria-label={`Toggle render mode (currently ${isWebGL ? 'WebGL' : 'Canvas2D'})`}
+			title={isWebGL ? 'WebGL' : 'Canvas2D'}
+		>
+			<Cuboid size={16} />
+		</button>
 	)
 }

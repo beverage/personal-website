@@ -583,7 +583,7 @@ const RETINA_CONFIG = {
 	},
 	core: { sizeMultiplier: 8.0, minPixelSize: 0.3 },
 	glow: {
-		opacity: 0.12,
+		opacity: 0.15,
 		falloffExponent: 6.0,
 		noise: { scale: 1.5, strength: 0.8 },
 	},

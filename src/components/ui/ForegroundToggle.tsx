@@ -1,7 +1,7 @@
 'use client'
 
 import { useForegroundToggle } from '@/contexts/ForegroundToggleContext'
-import { ControlButton } from './ControlButton'
+import { Star } from 'lucide-react'
 
 interface ForegroundToggleProps {
 	className?: string
@@ -23,43 +23,23 @@ export const ForegroundToggle = ({
 		return null
 	}
 
-	const handleOnClick = () => {
-		setForegroundEnabled(true)
-	}
-
-	const handleOffClick = () => {
-		setForegroundEnabled(false)
+	const handleToggle = () => {
+		setForegroundEnabled(!foregroundEnabled)
 	}
 
 	return (
-		<ControlButton className={`gap-0 ${className}`}>
-			<button
-				onClick={handleOnClick}
-				disabled={disabled}
-				className={`font-exo2 rounded-l-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
-					foregroundEnabled
-						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
-						: 'text-white/40 hover:text-cyan-300'
-				}`}
-				aria-label="Enable foreground starfield"
-				title="Foreground On"
-			>
-				FG
-			</button>
-			<div className="h-4 w-px bg-cyan-400/30" />
-			<button
-				onClick={handleOffClick}
-				disabled={disabled}
-				className={`font-exo2 rounded-r-full px-3 py-3 text-sm font-medium transition-all duration-1000 ${
-					!foregroundEnabled
-						? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/40'
-						: 'text-white/40 hover:text-cyan-300'
-				}`}
-				aria-label="Disable foreground starfield"
-				title="Foreground Off"
-			>
-				--
-			</button>
-		</ControlButton>
+		<button
+			onClick={handleToggle}
+			disabled={disabled}
+			className={`font-exo2 rounded-lg border px-3 py-3 text-sm font-medium transition-all duration-300 ${
+				foregroundEnabled
+					? 'border-cyan-500 bg-cyan-500 text-white shadow-lg shadow-cyan-500/40 hover:border-cyan-600 hover:bg-cyan-600 hover:shadow-lg hover:shadow-cyan-500/60'
+					: 'border-cyan-400 text-cyan-300 hover:bg-cyan-400/10'
+			} ${className}`}
+			aria-label={`Toggle foreground starfield (${foregroundEnabled ? 'on' : 'off'})`}
+			title={`Foreground ${foregroundEnabled ? 'On' : 'Off'}`}
+		>
+			<Star size={16} fill="currentColor" />
+		</button>
 	)
 }

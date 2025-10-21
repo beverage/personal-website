@@ -117,7 +117,7 @@ export const DEFAULT_PARALLAX_FACTORS: ParallaxFactors = {
 }
 
 // Content states for the application
-export type ContentState = 'hero' | 'projects' | 'contact'
+export type ContentState = 'hero' | 'projects' | 'contact' | 'quiz'
 
 // Language transition configuration
 // All UI elements (text, buttons, cards) use simple crossfade animation

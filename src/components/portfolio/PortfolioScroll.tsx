@@ -12,15 +12,24 @@ import { NavigationArrow } from './NavigationArrows'
 interface PortfolioScrollProps {
 	projects: Project[]
 	className?: string
+	onNavigateToQuiz?: () => void
+	initialScrollIndex?: number
 }
 
 interface ProjectCardProps {
 	project: Project
 	index: number
+	onNavigateToQuiz?: () => void
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({
+	project,
+	index,
+	onNavigateToQuiz,
+}) => {
 	const { language } = useTranslation()
+	const isDevelopment = process.env.NODE_ENV === 'development'
+	const isQuizProject = project.id === 'language-quiz-service'
 
 	const cardVariants = {
 		hidden: {
@@ -179,28 +188,60 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 							viewport={{ once: false }}
 							transition={{ duration: 0.8, delay: 1.2 }}
 						>
-							{project.links.map((link, linkIndex) => (
-								<motion.a
-									key={link.url}
-									href={link.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
-									initial={{ opacity: 0, scale: 0.8 }}
-									whileInView={{ opacity: 1, scale: 1 }}
-									viewport={{ once: false }}
-									transition={{
-										duration: 0.6,
-										delay: 1.0 + linkIndex * 0.1,
-										ease: 'easeOut',
-									}}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-								>
-									{getLinkIcon(link.type)}
-									{link.label}
-								</motion.a>
-							))}
+							{project.links.map((link, linkIndex) => {
+								// Special handling for quiz demo link in dev mode
+								const isQuizDemoLink =
+									isQuizProject && link.type === 'demo' && isDevelopment
+
+								if (isQuizDemoLink) {
+									return (
+										<motion.button
+											key={link.url}
+											onClick={e => {
+												e.preventDefault()
+												onNavigateToQuiz?.()
+											}}
+											className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
+											initial={{ opacity: 0, scale: 0.8 }}
+											whileInView={{ opacity: 1, scale: 1 }}
+											viewport={{ once: false }}
+											transition={{
+												duration: 0.6,
+												delay: 1.0 + linkIndex * 0.1,
+												ease: 'easeOut',
+											}}
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}
+										>
+											{getLinkIcon(link.type)}
+											{link.label}
+										</motion.button>
+									)
+								}
+
+								return (
+									<motion.a
+										key={link.url}
+										href={link.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
+										initial={{ opacity: 0, scale: 0.8 }}
+										whileInView={{ opacity: 1, scale: 1 }}
+										viewport={{ once: false }}
+										transition={{
+											duration: 0.6,
+											delay: 1.0 + linkIndex * 0.1,
+											ease: 'easeOut',
+										}}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										{getLinkIcon(link.type)}
+										{link.label}
+									</motion.a>
+								)
+							})}
 						</motion.div>
 					</div>
 				</div>
@@ -212,13 +253,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 	projects,
 	className = '',
+	onNavigateToQuiz,
+	initialScrollIndex = 0,
 }) => {
 	const { t, language } = useTranslation()
 	const { heroTextVisible } = useHeroText()
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
-	const [currentScrollIndex, setCurrentScrollIndex] = useState(0)
+	const [currentScrollIndex, setCurrentScrollIndex] =
+		useState(initialScrollIndex)
 	const isTransitioningRef = useRef(false)
 	const totalItems = projects.length + 1 // +1 for hero
+
+	// Update scroll index when initialScrollIndex changes
+	useEffect(() => {
+		setCurrentScrollIndex(initialScrollIndex)
+	}, [initialScrollIndex])
 
 	const handleNavigate = useCallback(
 		(direction: 'up' | 'down') => {
@@ -401,7 +450,11 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 								)}
 							</AnimatePresence>
 
-							<ProjectCard project={project} index={index} />
+							<ProjectCard
+								project={project}
+								index={index}
+								onNavigateToQuiz={onNavigateToQuiz}
+							/>
 
 							{/* Down Arrow - Below project card content */}
 							<AnimatePresence>

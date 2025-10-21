@@ -87,6 +87,13 @@ export const PageLayout = ({
 	const { t, language } = useTranslation()
 	const portfolioData = getTranslatedPortfolioData(language)
 
+	// Find the index of the quiz project for navigation
+	const quizProjectIndex =
+		portfolioData.projects.findIndex(p => p.id === 'language-quiz-service') + 1 // +1 for hero offset
+
+	// Track initial scroll index for projects page
+	const [projectsScrollIndex, setProjectsScrollIndex] = React.useState(0)
+
 	// Hero text visibility (for dev mode navigation arrows)
 	const { heroTextVisible } = useHeroText()
 
@@ -220,7 +227,11 @@ export const PageLayout = ({
 		if (!success) return
 
 		const direction =
-			contentState.contentState === 'projects' ? 'right' : 'left'
+			contentState.contentState === 'projects'
+				? 'right'
+				: contentState.contentState === 'quiz'
+					? 'right'
+					: 'left'
 		contentState.setIsTransitioning(true)
 		contentState.setFromContentState(contentState.contentState)
 		contentState.setToContentState('hero')
@@ -228,9 +239,54 @@ export const PageLayout = ({
 		createTrackedTimeout(() => contentState.navigateToHero(), 50)
 	}
 
+	const handleNavigateToQuiz = () => {
+		// Check if we can transition using the state machine
+		if (!enableTransitions || !canTransitionTo(AnimationState.COURSE_CHANGE)) {
+			return
+		}
+
+		// Request course change state transition
+		const success = requestTransition(AnimationState.COURSE_CHANGE)
+		if (!success) return
+
+		// Set the scroll index to the quiz project so we return to it
+		setProjectsScrollIndex(quizProjectIndex)
+
+		contentState.setIsTransitioning(true)
+		contentState.setFromContentState(contentState.contentState)
+		contentState.setToContentState('quiz')
+		startTransition('left') // Drift left like Hero -> Projects
+		createTrackedTimeout(() => {
+			contentState.navigateToQuiz()
+		}, 50)
+	}
+
+	const handleBackFromQuiz = () => {
+		// Check if we can transition using the state machine
+		if (!canTransitionTo(AnimationState.COURSE_CHANGE)) {
+			return
+		}
+
+		// Request course change state transition
+		const success = requestTransition(AnimationState.COURSE_CHANGE)
+		if (!success) return
+
+		contentState.setIsTransitioning(true)
+		contentState.setFromContentState(contentState.contentState)
+		contentState.setToContentState('projects')
+		startTransition('right') // Drift right back to Projects
+		createTrackedTimeout(() => {
+			contentState.navigateToProjects()
+			// Transition to portfolio scroll state after navigation completes
+			createTrackedTimeout(() => {
+				requestTransition(AnimationState.PORTFOLIO_SCROLL)
+			}, 100)
+		}, 50)
+	}
+
 	// Wrapper for getContentOpacity utility
 	const getOpacity = useCallback(
-		(contentType: 'hero' | 'projects' | 'contact') => {
+		(contentType: 'hero' | 'projects' | 'contact' | 'quiz') => {
 			return getContentOpacity(
 				contentType,
 				isTransitioning,
@@ -251,7 +307,7 @@ export const PageLayout = ({
 
 	// Wrapper for shouldRenderContent utility
 	const shouldRender = useCallback(
-		(contentType: 'hero' | 'projects' | 'contact') => {
+		(contentType: 'hero' | 'projects' | 'contact' | 'quiz') => {
 			return shouldRenderContent(
 				contentType,
 				contentState.contentState,
@@ -498,6 +554,9 @@ export const PageLayout = ({
 						description: t.contact.description,
 						language: language,
 					}}
+					onNavigateToQuiz={handleNavigateToQuiz}
+					onBackFromQuiz={handleBackFromQuiz}
+					projectsInitialScrollIndex={projectsScrollIndex}
 				/>
 			)}
 

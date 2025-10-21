@@ -8,6 +8,7 @@ import {
 } from '@/types/transitions'
 import { AnimatePresence, motion } from 'framer-motion'
 import { PortfolioScroll } from '../portfolio/PortfolioScroll'
+import { QuizPage } from '../quiz/QuizPage'
 import { HeroSection } from './HeroSection'
 
 interface HeroProps {
@@ -35,10 +36,13 @@ interface ContentSectionProps {
 	heroFadeStyle?: React.CSSProperties
 	projects: Project[]
 	contactProps: ContactProps
+	onNavigateToQuiz?: () => void
+	onBackFromQuiz?: () => void
+	projectsInitialScrollIndex?: number
 }
 
 /**
- * Handles conditional rendering of hero, projects, and contact content
+ * Handles conditional rendering of hero, projects, contact, and quiz content
  * Manages opacity and pointer events during transitions
  */
 export function ContentSection({
@@ -50,6 +54,9 @@ export function ContentSection({
 	heroFadeStyle = {},
 	projects,
 	contactProps,
+	onNavigateToQuiz,
+	onBackFromQuiz,
+	projectsInitialScrollIndex = 0,
 }: ContentSectionProps) {
 	const { heroTextVisible } = useHeroText()
 
@@ -86,7 +93,27 @@ export function ContentSection({
 							getContentOpacity('projects') === 0 ? 'none' : 'auto',
 					}}
 				>
-					<PortfolioScroll projects={projects} className="h-full w-full" />
+					<PortfolioScroll
+						projects={projects}
+						className="h-full w-full"
+						onNavigateToQuiz={onNavigateToQuiz}
+						initialScrollIndex={projectsInitialScrollIndex}
+					/>
+				</div>
+			)}
+
+			{/* Quiz Section */}
+			{shouldRenderContent('quiz') && (
+				<div
+					className={`${
+						isTransitioning ? 'absolute inset-0' : 'fixed inset-0'
+					}`}
+					style={{
+						opacity: getContentOpacity('quiz'),
+						pointerEvents: getContentOpacity('quiz') === 0 ? 'none' : 'auto',
+					}}
+				>
+					<QuizPage onBack={onBackFromQuiz || (() => {})} />
 				</div>
 			)}
 

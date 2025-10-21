@@ -9,6 +9,7 @@ interface UseContentStateReturn {
 	navigateToProjects: () => void
 	navigateToContact: () => void
 	navigateToHero: () => void
+	navigateToQuiz: () => void
 	isTransitioning: boolean
 	setIsTransitioning: (transitioning: boolean) => void
 	fromContentState: ContentState
@@ -40,12 +41,18 @@ export const useContentState = (): UseContentStateReturn => {
 		setContentState('hero')
 	}, [isTransitioning])
 
+	const navigateToQuiz = useCallback(() => {
+		if (isTransitioning) return
+		setContentState('quiz')
+	}, [isTransitioning])
+
 	return {
 		contentState,
 		setContentState,
 		navigateToProjects,
 		navigateToContact,
 		navigateToHero,
+		navigateToQuiz,
 		isTransitioning,
 		setIsTransitioning,
 		fromContentState,

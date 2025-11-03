@@ -7,19 +7,13 @@ interface DebugExpandButtonProps {
 }
 
 /**
- * Debug expand button for dev mode - triggers debug panel expansion
+ * Debug expand button - triggers debug panel expansion
  * Styled to match the SpeedSelector in the upper right corner
- * Only visible in development mode
  */
 export const DebugExpandButton = ({
 	onClick,
 	className = '',
 }: DebugExpandButtonProps) => {
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
-
 	return (
 		<ControlButton
 			onClick={onClick}

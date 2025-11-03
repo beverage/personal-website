@@ -81,7 +81,7 @@ describe('PageLayout Integration Tests', () => {
 
 		expect(screen.getByText('test.brand')).toBeInTheDocument()
 		// Control panel (rocket button + language toggle buttons) should be present - there are multiple buttons so we count them
-		expect(screen.getAllByRole('button')).toHaveLength(4) // rocket + language toggle (2 buttons) + hero button
+		expect(screen.getAllByRole('button')).toHaveLength(5) // rocket + language toggle (2 buttons) + hero button
 	})
 
 	it('renders CV link when provided', () => {

@@ -9,19 +9,13 @@ interface HeroTextToggleProps {
 }
 
 /**
- * Debug control for dev mode - toggle hero text visibility
- * Only visible in development mode
+ * Debug control - toggle hero text visibility
  */
 export const HeroTextToggle = ({
 	className = '',
 	disabled = false,
 }: HeroTextToggleProps) => {
 	const { heroTextVisible, setHeroTextVisible } = useHeroText()
-
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const handleToggle = () => {
 		setHeroTextVisible(!heroTextVisible)

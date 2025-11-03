@@ -9,19 +9,13 @@ interface GlowToggleProps {
 }
 
 /**
- * Debug control for dev mode - toggle point cloud nebula effect
- * Only visible in development mode
+ * Debug control - toggle point cloud nebula effect
  */
 export const GlowToggle = ({
 	className = '',
 	disabled = false,
 }: GlowToggleProps) => {
 	const { glowEnabled, setGlowEnabled } = useGlow()
-
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const handleToggle = () => {
 		setGlowEnabled(!glowEnabled)

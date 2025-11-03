@@ -31,7 +31,7 @@ type AnimationStage =
 	| 'collapsing-plus-in'
 
 /**
- * Debug controls positioned in lower-right corner (dev mode only)
+ * Debug controls positioned in lower-right corner
  * Features animated expand/collapse with multi-stage transitions
  */
 export function DebugControlsCorner({
@@ -204,11 +204,6 @@ export function DebugControlsCorner({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isExpanded])
-
-	// Only render in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const handleExpand = () => {
 		setIsExpanded(true)

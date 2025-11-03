@@ -9,19 +9,13 @@ interface RenderModeSelectorProps {
 }
 
 /**
- * Debug control for dev mode - toggle between WebGL and Canvas2D rendering
- * Only visible in development mode
+ * Debug control - toggle between WebGL and Canvas2D rendering
  */
 export const RenderModeSelector = ({
 	className = '',
 	disabled = false,
 }: RenderModeSelectorProps) => {
 	const { renderMode, setRenderMode } = useRenderMode()
-
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const isWebGL = renderMode === 'webgl' || renderMode === 'auto'
 

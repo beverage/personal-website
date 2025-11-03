@@ -9,19 +9,13 @@ interface TwinkleToggleProps {
 }
 
 /**
- * Debug control for dev mode - toggle star twinkling effect
- * Only visible in development mode
+ * Debug control - toggle star twinkling effect
  */
 export const TwinkleToggle = ({
 	className = '',
 	disabled = false,
 }: TwinkleToggleProps) => {
 	const { twinkleEnabled, setTwinkleEnabled } = useTwinkle()
-
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const handleToggle = () => {
 		setTwinkleEnabled(!twinkleEnabled)

@@ -9,19 +9,13 @@ interface ForegroundToggleProps {
 }
 
 /**
- * Debug control for dev mode - toggle foreground starfield on/off
- * Only visible in development mode
+ * Debug control - toggle foreground starfield on/off
  */
 export const ForegroundToggle = ({
 	className = '',
 	disabled = false,
 }: ForegroundToggleProps) => {
 	const { foregroundEnabled, setForegroundEnabled } = useForegroundToggle()
-
-	// Only show in development
-	if (process.env.NODE_ENV !== 'development') {
-		return null
-	}
 
 	const handleToggle = () => {
 		setForegroundEnabled(!foregroundEnabled)

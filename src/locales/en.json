@@ -18,13 +18,13 @@
 	},
 	"projects": {
 		"levelang": {
-			"title": "LeveLang.app",
+			"title": "levelang.app",
 			"description": "Skill-level-aware translation assistant for language learners",
 			"longDescription": "A translation application for iOS and Android that adapts translation complexity to match your language proficiency level and desired mood. Like Google Translate, but tailored for learners - providing beginner-friendly, intermediate, or advanced translations. Features voice input/output, transliterations, and comprehensive language support for French, Italian, German, Mandarin Chinese, and Cantonese.",
 			"links": {
 				"appRepository": "App Repository",
 				"backendRepository": "Backend Repository",
-				"visitWebsite": "Visit LeveLang.app"
+				"visitWebsite": "Visit levelang.app"
 			}
 		},
 		"quiz": {

@@ -64,10 +64,10 @@ describe('Portfolio Data', () => {
 	})
 
 	describe('specific project validation', () => {
-		it('should have LeveLang as first project', () => {
+		it('should have levelang.app as first project', () => {
 			const levelang = projects[0]
 			expect(levelang.id).toBe('levelang-app')
-			expect(levelang.title).toBe('LeveLang')
+			expect(levelang.title).toBe('levelang.app')
 			expect(levelang.status).toBe('in-progress')
 			expect(levelang.featured).toBe(true)
 		})

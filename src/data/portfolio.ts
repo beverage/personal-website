@@ -8,7 +8,7 @@ import type { PortfolioData, Project } from '@/types/portfolio'
 export const projects: Project[] = [
 	{
 		id: 'levelang-app',
-		title: 'LeveLang',
+		title: 'levelang.app',
 		description:
 			'Skill-level-aware translation assistant for language learners',
 		longDescription:
@@ -34,7 +34,7 @@ export const projects: Project[] = [
 				type: 'github',
 			},
 			{
-				label: 'Visit LeveLang.app',
+				label: 'Visit levelang.app',
 				url: 'https://www.levelang.app',
 				type: 'website',
 			},

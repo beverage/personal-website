@@ -400,7 +400,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 						<div className="relative z-10 flex min-h-screen items-center justify-center px-6">
 							<HeroSection
 								title="Alex Beverage"
-								description="Under Construction"
+								description="Agentic Software Engineer"
 							/>
 						</div>
 					)}
@@ -431,7 +431,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 										</span>
 									</h1>
 									<p className="font-exo2 mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90 sm:text-2xl">
-										Under Construction
+										Agentic Software Engineer
 									</p>
 									<div className="flex flex-col justify-center gap-4 sm:flex-row">
 										<button

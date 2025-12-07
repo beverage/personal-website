@@ -19,6 +19,8 @@ interface LayeredStarFieldProps {
 	foregroundMotionVector?: MotionVector
 	backgroundMotionVector?: MotionVector
 	bankingRoll?: BankingRoll
+	// Depth-based parallax for continuous depth perception during transitions
+	depthParallaxFactor?: number
 }
 
 export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
@@ -34,6 +36,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
 	foregroundMotionVector,
 	backgroundMotionVector,
 	bankingRoll,
+	depthParallaxFactor = 0,
 }) => {
 	return (
 		<div
@@ -67,6 +70,7 @@ export const LayeredStarField: React.FC<LayeredStarFieldProps> = ({
 				rollSpeed={bankingRoll?.foregroundRollSpeed}
 				className="absolute inset-0"
 				motionVector={foregroundMotionVector}
+				depthParallaxFactor={depthParallaxFactor}
 			/>
 		</div>
 	)
@@ -84,6 +88,8 @@ export interface HomepageLayeredStarFieldProps {
 	foregroundMotionVector?: MotionVector
 	backgroundMotionVector?: MotionVector
 	bankingRoll?: BankingRoll
+	// Depth-based parallax for continuous depth perception during transitions
+	depthParallaxFactor?: number
 	// Callback when starfield has rendered
 	onRender?: () => void
 }
@@ -99,6 +105,7 @@ export const HomepageLayeredStarField: React.FC<
 	foregroundMotionVector,
 	backgroundMotionVector,
 	bankingRoll,
+	depthParallaxFactor = 0,
 	onRender,
 }) => {
 	// Call onRender when component mounts
@@ -120,6 +127,7 @@ export const HomepageLayeredStarField: React.FC<
 			foregroundMotionVector={foregroundMotionVector}
 			backgroundMotionVector={backgroundMotionVector}
 			bankingRoll={bankingRoll}
+			depthParallaxFactor={depthParallaxFactor}
 		/>
 	)
 }

@@ -23,6 +23,8 @@ interface StarFieldProps {
 	rollSpeed?: number
 	// Course change transition support
 	motionVector?: MotionVector
+	// Depth-based parallax for continuous depth perception during transitions
+	depthParallaxFactor?: number
 }
 
 export const StarField: React.FC<StarFieldProps> = ({
@@ -34,6 +36,7 @@ export const StarField: React.FC<StarFieldProps> = ({
 	speed = 1000,
 	rollSpeed = -1.5,
 	motionVector,
+	depthParallaxFactor = 0,
 }) => {
 	// Debug: motion vector received (disabled for cleaner output)
 	// console.log('⭐ StarField motion:', motionVector?.lateral)
@@ -79,6 +82,7 @@ export const StarField: React.FC<StarFieldProps> = ({
 				className={className}
 				style={style}
 				motionVector={motionVector}
+				depthParallaxFactor={depthParallaxFactor}
 			/>
 		)
 	}
@@ -95,6 +99,7 @@ export const StarField: React.FC<StarFieldProps> = ({
 			className={className}
 			style={style}
 			motionVector={motionVector}
+			depthParallaxFactor={depthParallaxFactor}
 		/>
 	)
 }
@@ -107,7 +112,16 @@ const WebGLStarFieldRenderer: React.FC<{
 	className: string
 	style?: React.CSSProperties
 	motionVector?: MotionVector
-}> = ({ starCount, speed, rollSpeed, className, style, motionVector }) => {
+	depthParallaxFactor?: number
+}> = ({
+	starCount,
+	speed,
+	rollSpeed,
+	className,
+	style,
+	motionVector,
+	depthParallaxFactor,
+}) => {
 	const { foregroundEnabled } = useForegroundToggle()
 
 	// WebGL can handle full star count - no need for Safari/mobile reduction
@@ -121,6 +135,7 @@ const WebGLStarFieldRenderer: React.FC<{
 		speed,
 		rollSpeed,
 		motionVector,
+		depthParallaxFactor,
 	})
 
 	return (
@@ -147,6 +162,7 @@ const Canvas2DStarFieldRenderer: React.FC<{
 	className: string
 	style?: React.CSSProperties
 	motionVector?: MotionVector
+	depthParallaxFactor?: number
 }> = ({
 	starCount,
 	speed,
@@ -156,6 +172,7 @@ const Canvas2DStarFieldRenderer: React.FC<{
 	className,
 	style,
 	motionVector,
+	depthParallaxFactor,
 }) => {
 	const { foregroundEnabled } = useForegroundToggle()
 
@@ -172,6 +189,7 @@ const Canvas2DStarFieldRenderer: React.FC<{
 		opacity,
 		variant,
 		motionVector,
+		depthParallaxFactor,
 	})
 
 	return (

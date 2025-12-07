@@ -13,6 +13,7 @@ interface UseWebGLStarFieldProps {
 	speed: number
 	rollSpeed: number
 	motionVector?: MotionVector
+	depthParallaxFactor?: number
 }
 
 export const useWebGLStarField = ({
@@ -20,6 +21,7 @@ export const useWebGLStarField = ({
 	speed,
 	rollSpeed,
 	motionVector,
+	depthParallaxFactor = 0,
 }: UseWebGLStarFieldProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const starsRef = useRef<Star3D[]>([])
@@ -30,6 +32,8 @@ export const useWebGLStarField = ({
 	const rollSpeedRef = useRef(rollSpeed)
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
+	// Keep latest depthParallaxFactor in a ref
+	const depthParallaxFactorRef = useRef(depthParallaxFactor)
 	// Unique ID for this starfield instance
 	const instanceIdRef = useRef(
 		`webgl-starfield-${Math.random().toString(36).substr(2, 9)}`,
@@ -52,6 +56,11 @@ export const useWebGLStarField = ({
 	useEffect(() => {
 		motionVectorRef.current = motionVector
 	}, [motionVector])
+
+	// Update depthParallaxFactorRef whenever depthParallaxFactor prop changes
+	useEffect(() => {
+		depthParallaxFactorRef.current = depthParallaxFactor
+	}, [depthParallaxFactor])
 
 	// Update twinkleEnabledRef whenever twinkleEnabled changes
 	useEffect(() => {
@@ -151,6 +160,7 @@ export const useWebGLStarField = ({
 							deltaTime,
 							lateralSpeed,
 							verticalSpeed,
+							depthParallaxFactorRef.current,
 						)
 					} else {
 						// Minimal update for off-screen stars (no rotation, just forward movement)

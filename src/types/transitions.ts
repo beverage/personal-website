@@ -67,7 +67,7 @@ export const COURSE_CHANGE_PRESETS: Record<
 		parallaxIntensity: 0.2, // Very subtle cinematic drift
 		maxLateralSpeed: 10000, // Scaled for visible screen motion
 		rollIntensity: 40, // Subtle banking roll (reduced from 200)
-		easingCurve: 'ease-in-out',
+		easingCurve: 'fast-in-slow-out',
 		contentFade: {
 			fadeOutRatio: 0.35, // First 35% - fade out current content
 			starfieldOnlyRatio: 0.3, // Middle 30% - pure starfield visibility
@@ -77,17 +77,17 @@ export const COURSE_CHANGE_PRESETS: Record<
 	},
 	'banking-turn': {
 		variant: 'banking-turn',
-		duration: 4000,
-		parallaxIntensity: 0.4, // Moderate cinematic banking
+		duration: 3000,
+		parallaxIntensity: 0.8, // Moderate cinematic banking
 		maxLateralSpeed: 20000, // Increased back up for dramatic screen-wide motion
-		rollIntensity: 150, // Moderate banking roll (half of original 300)
+		rollIntensity: 80, // Moderate banking roll (half of original 300)
 		easingCurve: 'fast-in-slow-out', // Fixed timing race condition, back to advanced easing
 		contentFade: {
 			fadeOutRatio: 0.25,
 			starfieldOnlyRatio: 0.5,
 			fadeInRatio: 0.25,
 		},
-		settlingDuration: 2500, // Extended for longer, smoother drift
+		settlingDuration: 3000, // Extended for longer, smoother drift
 	},
 	'sharp-maneuver': {
 		variant: 'sharp-maneuver',

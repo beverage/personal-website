@@ -335,6 +335,7 @@ export const PageLayout = ({
 				foregroundMotionVector={motionVectors.foreground}
 				backgroundMotionVector={motionVectors.background}
 				bankingRoll={bankingRoll}
+				depthParallaxFactor={transitionConfig.parallaxIntensity}
 				onLoaded={() => setStarFieldLoaded(true)}
 				fadeInDurationMs={400} // Smooth fade-in from black when starfield loads
 			/>
@@ -563,7 +564,13 @@ export const PageLayout = ({
 			{/* Footer */}
 			<div
 				className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform"
-				style={startup.controlFadeStyle}
+				style={{
+					...startup.controlFadeStyle,
+					opacity:
+						contentState.contentState === 'quiz' ? 0 : getOpacity('projects'),
+					pointerEvents: contentState.contentState === 'quiz' ? 'none' : 'auto',
+					transition: 'opacity 0.5s ease-in-out',
+				}}
 			>
 				<FooterPanel
 					year={clientConfig?.copyrightYear}

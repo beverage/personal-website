@@ -93,12 +93,20 @@ export class Star3D {
 		deltaTime: number,
 		lateralSpeed: number = 0,
 		verticalSpeed: number = 0,
+		depthParallaxFactor: number = 0,
 	) {
 		// Forward motion (toward viewer)
 		this.z -= forwardSpeed * deltaTime
 
-		// Lateral motion (left/right during course changes)
-		this.x += lateralSpeed * deltaTime
+		// Depth-modulated lateral motion (left/right during course changes)
+		// Closer stars (lower z) move faster, creating continuous depth perception
+		// Reference depth chosen so mid-range stars move at base speed
+		const referenceDepth = 5000
+		const depthModulation =
+			depthParallaxFactor > 0
+				? 1 + (referenceDepth / this.z - 1) * depthParallaxFactor
+				: 1
+		this.x += lateralSpeed * depthModulation * deltaTime
 
 		// Vertical motion (up/down, minimal during course changes)
 		this.y += verticalSpeed * deltaTime

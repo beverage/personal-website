@@ -13,6 +13,7 @@ interface UseStarFieldProps {
 	opacity: number
 	variant: TwinkleVariant
 	motionVector?: MotionVector
+	depthParallaxFactor?: number
 }
 
 export const useStarField = ({
@@ -22,6 +23,7 @@ export const useStarField = ({
 	opacity,
 	variant,
 	motionVector,
+	depthParallaxFactor = 0,
 }: UseStarFieldProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const starsRef = useRef<Star3D[]>([])
@@ -31,6 +33,8 @@ export const useStarField = ({
 	const rollSpeedRef = useRef(rollSpeed)
 	// Keep latest motionVector in a ref so changing it doesn't re-create animation loop
 	const motionVectorRef = useRef(motionVector)
+	// Keep latest depthParallaxFactor in a ref
+	const depthParallaxFactorRef = useRef(depthParallaxFactor)
 	// Unique ID for this starfield instance
 	const instanceIdRef = useRef(
 		`starfield-${Math.random().toString(36).substr(2, 9)}`,
@@ -51,6 +55,11 @@ export const useStarField = ({
 	useEffect(() => {
 		motionVectorRef.current = motionVector
 	}, [motionVector])
+
+	// Update depthParallaxFactorRef whenever depthParallaxFactor prop changes
+	useEffect(() => {
+		depthParallaxFactorRef.current = depthParallaxFactor
+	}, [depthParallaxFactor])
 
 	// Ensure we're only running client-side
 	useEffect(() => {
@@ -139,6 +148,7 @@ export const useStarField = ({
 							deltaTime,
 							lateralSpeed,
 							verticalSpeed,
+							depthParallaxFactorRef.current,
 						)
 
 						const projected = star.project(canvas.width, canvas.height)

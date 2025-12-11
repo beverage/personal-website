@@ -5,7 +5,9 @@
 	},
 	"hero": {
 		"getInTouch": "Contactez-moi",
+		"getInTouchShort": "Contact",
 		"exploreProjects": "Explorer les projets",
+		"exploreProjectsShort": "Projets",
 		"description": "Agentic Software Engineer"
 	},
 	"projectsPage": {

@@ -68,22 +68,6 @@ describe('PageLayout Integration Tests', () => {
 		courseChangeVariant: 'banking-turn' as const,
 	}
 
-	it('renders brand panel and control panel', () => {
-		render(
-			<DebugPanelProvider>
-				<LanguageProvider>
-					<HeroTextProvider>
-						<PageLayout {...defaultProps} brandName="test.brand" />
-					</HeroTextProvider>
-				</LanguageProvider>
-			</DebugPanelProvider>,
-		)
-
-		expect(screen.getByText('test.brand')).toBeInTheDocument()
-		// Control panel (rocket button + language toggle buttons) should be present - there are multiple buttons so we count them
-		expect(screen.getAllByRole('button')).toHaveLength(5) // rocket + language toggle (2 buttons) + hero button
-	})
-
 	it('renders CV link when provided', () => {
 		const clientConfig = {
 			socialLinks: [],

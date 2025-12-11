@@ -48,8 +48,11 @@ export const HeroSection = ({
 	const { heroTextVisible } = useHeroText()
 
 	// Use translations as defaults if props not provided
+	// Full text for desktop, short text for mobile
 	const primaryText = primaryButtonText ?? t.hero.getInTouch
+	const primaryTextShort = t.hero.getInTouchShort ?? 'Contact'
 	const secondaryText = secondaryButtonText ?? t.hero.exploreProjects
+	const secondaryTextShort = t.hero.exploreProjectsShort ?? 'Projects'
 	const heroDescription = description ?? t.hero.description
 
 	// Calculate dynamic styles based on transition state
@@ -86,22 +89,23 @@ export const HeroSection = ({
 							ease: 'easeInOut',
 						}}
 					>
-						<h1 className="font-exo2 mb-6 text-6xl tracking-wider sm:text-8xl">
+						<h1 className="font-exo2 mb-6 text-5xl tracking-wider whitespace-nowrap sm:text-6xl md:text-7xl lg:text-8xl">
 							<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
 								{title}
 							</span>
 						</h1>
-						<p className="font-exo2 mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-white/90 sm:text-2xl">
+						<p className="font-exo2 mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-white/90 sm:text-xl md:text-2xl lg:text-3xl">
 							{heroDescription}
 						</p>
 					</motion.div>
 				</AnimatePresence>
-				<div className="flex flex-col justify-center gap-4 sm:flex-row">
+				{/* Buttons: side-by-side on all screen sizes, shorter text on mobile */}
+				<div className="flex flex-row justify-center gap-3 sm:gap-4">
 					<AnimatePresence mode="wait">
 						<motion.button
 							key={`secondary-button-${language}`}
 							onClick={onSecondaryClick}
-							className="font-exo2 rounded-lg border border-cyan-400 px-8 py-4 text-cyan-300 transition-all hover:bg-cyan-400/10"
+							className="font-exo2 rounded-lg border border-cyan-400 px-4 py-3 text-cyan-300 transition-all hover:bg-cyan-400/10 sm:px-8 sm:py-4"
 							style={buttonStyle}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -111,14 +115,16 @@ export const HeroSection = ({
 							}}
 							disabled={transitionState !== 'visible' || !buttonsEnabled}
 						>
-							{secondaryText}
+							{/* Short text on mobile, full text on tablet+ */}
+							<span className="sm:hidden">{secondaryTextShort}</span>
+							<span className="hidden sm:inline">{secondaryText}</span>
 						</motion.button>
 					</AnimatePresence>
 					<AnimatePresence mode="wait">
 						<motion.button
 							key={`primary-button-${language}`}
 							onClick={onPrimaryClick}
-							className="font-exo2 rounded-lg bg-cyan-500 px-8 py-4 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50"
+							className="font-exo2 rounded-lg bg-cyan-500 px-4 py-3 text-white shadow-lg shadow-cyan-500/40 transition-all hover:bg-cyan-600 hover:shadow-cyan-400/50 sm:px-8 sm:py-4"
 							style={buttonStyle}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -128,7 +134,9 @@ export const HeroSection = ({
 							}}
 							disabled={transitionState !== 'visible' || !buttonsEnabled}
 						>
-							{primaryText}
+							{/* Short text on mobile, full text on tablet+ */}
+							<span className="sm:hidden">{primaryTextShort}</span>
+							<span className="hidden sm:inline">{primaryText}</span>
 						</motion.button>
 					</AnimatePresence>
 				</div>

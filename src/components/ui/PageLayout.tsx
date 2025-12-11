@@ -32,6 +32,7 @@ import { ContentSection } from './ContentSection'
 import { ControlsCorner } from './ControlsCorner'
 import { DebugControlsCorner } from './DebugControlsCorner'
 import { FooterPanel } from './FooterPanel'
+import { LanguageSelector } from './LanguageSelector'
 
 interface SocialLink {
 	icon: 'github' | 'linkedin' | 'instagram' | 'mail'
@@ -340,12 +341,22 @@ export const PageLayout = ({
 				fadeInDurationMs={400} // Smooth fade-in from black when starfield loads
 			/>
 
-			{/* Brand Panel - Top Left */}
+			{/* Brand Panel - Top Left (hidden on mobile) */}
 			<div
-				className="absolute top-8 left-8 z-50 flex items-center gap-3"
+				className="absolute top-8 left-8 z-50 hidden items-center gap-3 md:flex"
 				style={startup.controlFadeStyle}
 			>
 				<BrandPanel brandName={brandName} />
+			</div>
+
+			{/* Language Selector - Top Left on mobile only */}
+			<div
+				className="absolute top-8 left-8 z-50 flex items-center gap-3 md:hidden"
+				style={startup.controlFadeStyle}
+			>
+				<LanguageSelector
+					disabled={isTransitioning || isLanguageTransitioning}
+				/>
 			</div>
 
 			{/* Controls - Top Right */}

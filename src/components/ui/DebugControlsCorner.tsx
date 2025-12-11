@@ -228,7 +228,7 @@ export function DebugControlsCorner({
 
 	return (
 		<div
-			className={`absolute right-8 bottom-8 z-50 ${className}`}
+			className={`absolute right-8 bottom-8 z-[60] ${className}`}
 			style={fadeStyle}
 		>
 			{/* Plus button - visible when collapsed */}

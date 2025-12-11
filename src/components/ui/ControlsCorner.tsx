@@ -16,6 +16,8 @@ interface ControlsCornerProps {
 
 /**
  * Groups the top-right controls: Language selector, CV button, and Speed selector
+ * On mobile (<768px): Language selector moves to left side, only CV + Speed here
+ * On desktop (>=768px): All controls grouped together on the right
  */
 export function ControlsCorner({
 	cvUrl,
@@ -30,7 +32,10 @@ export function ControlsCorner({
 			className={`absolute top-8 right-8 z-50 flex items-center gap-3 ${className}`}
 			style={fadeStyle}
 		>
-			<LanguageSelector disabled={disabled} />
+			{/* Language selector - hidden on mobile, shown on desktop */}
+			<div className="hidden md:block">
+				<LanguageSelector disabled={disabled} />
+			</div>
 			{cvUrl && (
 				<ControlButton
 					href={cvUrl}

@@ -19,19 +19,17 @@ export const projects: Project[] = [
 			'FastAPI',
 			'Python',
 			'PostgreSQL',
+			'Supabase',
 			'OpenAI',
+			'Docker',
+			'Fly.io',
 		],
 		imageUrl: '/images/portfolio/levelang-placeholder.svg',
 		links: [
 			{
-				label: 'App Repository',
-				url: 'https://github.com/beverage/language-levels/tree/main/language-level-app',
-				type: 'github',
-			},
-			{
-				label: 'Backend Repository',
-				url: 'https://github.com/beverage/language-levels/tree/main/language-level-backend',
-				type: 'github',
+				label: 'Gallery',
+				url: '#gallery',
+				type: 'gallery',
 			},
 			{
 				label: 'Visit levelang.app',
@@ -49,7 +47,16 @@ export const projects: Project[] = [
 			'AI-powered French grammar quiz app with dynamic content generation',
 		longDescription:
 			'A French language grammar quiz generator application that uses AI to dynamically generate content tailored to specific language features a user wants to study. The system adapts questions and exercises based on user preferences, creating personalized grammar practice sessions for targeted learning.',
-		technologies: ['Python', 'FastAPI', 'PostgreSQL', 'OpenAI'],
+		technologies: [
+			'Python',
+			'FastAPI',
+			'PostgreSQL',
+			'Supabase',
+			'Kafka',
+			'OpenAI',
+			'Docker',
+			'Fly.io',
+		],
 		imageUrl: '/images/portfolio/quiz-service-placeholder.svg',
 		links: [
 			{
@@ -64,7 +71,7 @@ export const projects: Project[] = [
 			},
 			{
 				label: 'API Documentation',
-				url: 'https://language-quiz.beverage.me/api/docs',
+				url: 'https://bump.sh/beverage/doc/language-quiz-service/',
 				type: 'api',
 			},
 		],

@@ -24,8 +24,7 @@
 			"description": "Assistant de traduction adapté au niveau pour apprenants de langues",
 			"longDescription": "Une application de traduction pour iOS et Android qui adapte la complexité des traductions à votre niveau de compétence linguistique et au ton souhaité. Comme Google Traduction, mais conçu pour les apprenants - proposant des traductions pour débutants, intermédiaires ou avancés. Inclut la saisie/sortie vocale, les translittérations et une prise en charge complète pour le français, l'italien, l'allemand, le mandarin et le cantonais.",
 			"links": {
-				"appRepository": "Dépôt de l'application",
-				"backendRepository": "Dépôt backend",
+				"gallery": "Galerie",
 				"visitWebsite": "Visiter levelang.app"
 			}
 		},

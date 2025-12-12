@@ -18,19 +18,17 @@ const baseProjects = [
 			'FastAPI',
 			'Python',
 			'PostgreSQL',
+			'Supabase',
 			'OpenAI',
+			'Docker',
+			'Fly.io',
 		],
 		imageUrl: '/images/portfolio/levelang-placeholder.svg',
 		links: [
 			{
-				labelKey: 'appRepository',
-				url: 'https://github.com/beverage/language-levels/tree/main/language-level-app',
-				type: 'github' as const,
-			},
-			{
-				labelKey: 'backendRepository',
-				url: 'https://github.com/beverage/language-levels/tree/main/language-level-backend',
-				type: 'github' as const,
+				labelKey: 'gallery',
+				url: '#gallery',
+				type: 'gallery' as const,
 			},
 			{
 				labelKey: 'visitWebsite',
@@ -44,7 +42,16 @@ const baseProjects = [
 	},
 	{
 		id: 'language-quiz-service',
-		technologies: ['Python', 'FastAPI', 'PostgreSQL', 'OpenAI'],
+		technologies: [
+			'Python',
+			'FastAPI',
+			'PostgreSQL',
+			'Supabase',
+			'Kafka',
+			'OpenAI',
+			'Docker',
+			'Fly.io',
+		],
 		imageUrl: '/images/portfolio/quiz-service-placeholder.svg',
 		links: [
 			{
@@ -59,7 +66,7 @@ const baseProjects = [
 			},
 			{
 				labelKey: 'apiDocs',
-				url: 'https://language-quiz.beverage.me/api/docs',
+				url: 'https://bump.sh/beverage/doc/language-quiz-service/',
 				type: 'api' as const,
 			},
 		],

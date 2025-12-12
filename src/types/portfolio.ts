@@ -2,7 +2,13 @@
  * Portfolio project data types
  */
 
-export const PROJECT_LINK_TYPES = ['github', 'demo', 'website', 'api'] as const
+export const PROJECT_LINK_TYPES = [
+	'github',
+	'demo',
+	'website',
+	'api',
+	'gallery',
+] as const
 export type ProjectLinkType = (typeof PROJECT_LINK_TYPES)[number]
 
 export const PROJECT_STATUS = ['completed', 'in-progress', 'planned'] as const

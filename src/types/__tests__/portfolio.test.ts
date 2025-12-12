@@ -10,7 +10,13 @@ import { PROJECT_LINK_TYPES, PROJECT_STATUS } from '../portfolio'
 describe('Portfolio Types', () => {
 	describe('PROJECT_LINK_TYPES', () => {
 		it('should contain all expected link types', () => {
-			expect(PROJECT_LINK_TYPES).toEqual(['github', 'demo', 'website', 'api'])
+			expect(PROJECT_LINK_TYPES).toEqual([
+				'github',
+				'demo',
+				'website',
+				'api',
+				'gallery',
+			])
 		})
 	})
 

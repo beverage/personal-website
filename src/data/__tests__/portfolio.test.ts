@@ -30,7 +30,8 @@ describe('Portfolio Data', () => {
 			projects.forEach(project => {
 				project.links.forEach(link => {
 					expect(PROJECT_LINK_TYPES).toContain(link.type)
-					expect(link.url).toMatch(/^https?:\/\//)
+					// Allow http(s) URLs or internal anchors (#)
+					expect(link.url).toMatch(/^(https?:\/\/|#)/)
 					expect(link.label).toBeTruthy()
 				})
 			})

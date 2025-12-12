@@ -5,7 +5,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import type { Project } from '@/types/portfolio'
 import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ExternalLink, Github } from 'lucide-react'
+import { ExternalLink, Github, Images } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NavigationArrow } from './NavigationArrows'
 
@@ -13,6 +13,7 @@ interface PortfolioScrollProps {
 	projects: Project[]
 	className?: string
 	onNavigateToQuiz?: () => void
+	onBack?: () => void
 	initialScrollIndex?: number
 }
 
@@ -53,6 +54,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 		switch (type) {
 			case 'github':
 				return <Github size={16} />
+			case 'gallery':
+				return <Images size={16} />
 			default:
 				return <ExternalLink size={16} />
 		}
@@ -61,6 +64,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 	const getLinkColor = (type: string) => {
 		switch (type) {
 			case 'github':
+			case 'gallery':
 				return 'border-purple-400 text-purple-300 transition-all duration-700 hover:bg-purple-500 hover:text-white hover:shadow-lg hover:shadow-purple-500/40'
 			case 'demo':
 				return 'border-green-400 text-green-300 transition-all duration-700 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/40'
@@ -89,11 +93,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 					margin: '-50px', // Trigger animation closer to center
 					amount: 0.3, // Start animation when 30% visible
 				}}
-				className="mx-auto max-w-4xl rounded-xl border border-cyan-400/30 bg-black/40 p-8 backdrop-blur-sm"
+				className="mx-auto max-h-[70vh] max-w-4xl overflow-y-auto rounded-xl border border-cyan-400/30 bg-black/40 p-4 backdrop-blur-sm sm:max-h-none sm:overflow-visible sm:p-8"
 			>
-				<div className="grid gap-8 lg:grid-cols-2">
-					{/* Project Image */}
-					<div className="relative overflow-hidden rounded-lg">
+				<div className="grid gap-4 sm:gap-8 lg:grid-cols-2">
+					{/* Project Image - hidden on mobile */}
+					<div className="relative hidden overflow-hidden rounded-lg md:block">
 						<motion.img
 							src={project.imageUrl}
 							alt={project.title}
@@ -129,17 +133,37 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 					{/* Project Content */}
 					<div className="flex flex-col justify-between">
 						<div>
-							<motion.h3
-								className="font-exo2 mb-4 text-3xl font-bold text-white"
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: false }}
-								transition={{ duration: 0.8, delay: 0.2 }}
-							>
-								{project.title}
-							</motion.h3>
+							{/* Title - linked to website if available */}
+							{(() => {
+								const websiteLink = project.links.find(
+									l => l.type === 'website',
+								)
+								const titleContent = (
+									<motion.h3
+										className="font-exo2 mb-2 text-xl font-bold text-white sm:mb-4 sm:text-3xl"
+										initial={{ opacity: 0, y: 20 }}
+										whileInView={{ opacity: 1, y: 0 }}
+										viewport={{ once: false }}
+										transition={{ duration: 0.8, delay: 0.2 }}
+									>
+										{websiteLink ? (
+											<a
+												href={websiteLink.url}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="transition-colors hover:text-cyan-300"
+											>
+												{project.title}
+											</a>
+										) : (
+											project.title
+										)}
+									</motion.h3>
+								)
+								return titleContent
+							})()}
 							<motion.p
-								className="mb-4 text-lg leading-relaxed text-white/90"
+								className="mb-3 text-sm leading-relaxed text-white/90 sm:mb-4 sm:text-lg"
 								initial={{ opacity: 0, y: 20 }}
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: false }}
@@ -150,20 +174,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
 							{/* Technologies */}
 							<motion.div
-								className="mb-6"
+								className="mb-4 sm:mb-6"
 								initial={{ opacity: 0, y: 20 }}
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: false }}
 								transition={{ duration: 0.8, delay: 0.6 }}
 							>
-								<h4 className="mb-2 text-sm font-semibold tracking-wider text-cyan-300 uppercase">
+								<h4 className="mb-2 text-xs font-semibold tracking-wider text-cyan-300 uppercase sm:text-sm">
 									Technologies
 								</h4>
-								<div className="flex flex-wrap gap-2">
+								<div className="flex flex-wrap gap-1.5 sm:gap-2">
 									{project.technologies.map((tech, techIndex) => (
 										<motion.span
 											key={tech}
-											className="rounded-full bg-white/10 px-3 py-1 text-sm text-white/80"
+											className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/80 sm:px-3 sm:py-1 sm:text-sm"
 											initial={{ opacity: 0, scale: 0.8 }}
 											whileInView={{ opacity: 1, scale: 1 }}
 											viewport={{ once: false }}
@@ -182,7 +206,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
 						{/* Project Links */}
 						<motion.div
-							className="flex flex-wrap gap-3"
+							className="flex flex-wrap gap-2 sm:gap-3"
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: false }}
@@ -201,7 +225,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 												e.preventDefault()
 												onNavigateToQuiz?.()
 											}}
-											className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
+											className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
 											initial={{ opacity: 0, scale: 0.8 }}
 											whileInView={{ opacity: 1, scale: 1 }}
 											viewport={{ once: false }}
@@ -225,7 +249,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 										href={link.url}
 										target="_blank"
 										rel="noopener noreferrer"
-										className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${getLinkColor(link.type)}`}
+										className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
 										initial={{ opacity: 0, scale: 0.8 }}
 										whileInView={{ opacity: 1, scale: 1 }}
 										viewport={{ once: false }}
@@ -254,6 +278,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 	projects,
 	className = '',
 	onNavigateToQuiz,
+	onBack,
 	initialScrollIndex = 0,
 }) => {
 	const { t, language } = useTranslation()
@@ -379,7 +404,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 							</AnimatePresence>
 						</motion.div>
 
-						{/* Down Arrow - Just below hero content container */}
+						{/* Down Arrow and Back Button - Just below hero content container */}
 						<AnimatePresence>
 							{currentScrollIndex === 0 && projects.length > 0 && (
 								<motion.div
@@ -397,11 +422,32 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 										transition: { duration: 0.15 }, // Rapid fade-out
 									}}
 								>
-									<NavigationArrow
-										direction="down"
-										onClick={() => handleNavigate('down')}
-										aria-label="View projects"
-									/>
+									{/* Down button centered, gallery left (disabled), back right */}
+									<div className="relative">
+										{/* Gallery button - mobile/medium only, absolutely positioned to the left (disabled) */}
+										<div className="absolute top-0 right-full mr-3 lg:hidden">
+											<NavigationArrow
+												direction="left"
+												disabled
+												aria-label="View gallery (coming soon)"
+											/>
+										</div>
+										<NavigationArrow
+											direction="down"
+											onClick={() => handleNavigate('down')}
+											aria-label="View projects"
+										/>
+										{/* Back button - mobile/medium only, absolutely positioned to the right */}
+										{onBack && (
+											<div className="absolute top-0 left-full ml-3 lg:hidden">
+												<NavigationArrow
+													direction="right"
+													onClick={onBack}
+													aria-label="Back to home"
+												/>
+											</div>
+										)}
+									</div>
 								</motion.div>
 							)}
 						</AnimatePresence>
@@ -456,32 +502,54 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 								onNavigateToQuiz={onNavigateToQuiz}
 							/>
 
-							{/* Down Arrow - Below project card content */}
+							{/* Down Arrow and Back Button - Below project card content */}
 							<AnimatePresence>
-								{currentScrollIndex === index + 1 &&
-									currentScrollIndex < totalItems - 1 && (
-										<motion.div
-											key={`down-arrow-${index}`}
-											className="pointer-events-auto absolute -bottom-16 left-1/2 -translate-x-1/2"
-											initial={{ opacity: 0, y: 10 }}
-											animate={{
-												opacity: 1,
-												y: 0,
-												transition: { duration: 0.8, delay: 1.2 }, // Slow fade-in, late
-											}}
-											exit={{
-												opacity: 0,
-												y: -10,
-												transition: { duration: 0.15 }, // Rapid fade-out
-											}}
-										>
-											<NavigationArrow
-												direction="down"
-												onClick={() => handleNavigate('down')}
-												aria-label="Next project"
-											/>
-										</motion.div>
-									)}
+								{currentScrollIndex === index + 1 && (
+									<motion.div
+										key={`down-arrow-${index}`}
+										className="pointer-events-auto absolute -bottom-16 left-1/2 -translate-x-1/2"
+										initial={{ opacity: 0, y: 10 }}
+										animate={{
+											opacity: 1,
+											y: 0,
+											transition: { duration: 0.8, delay: 1.2 }, // Slow fade-in, late
+										}}
+										exit={{
+											opacity: 0,
+											y: -10,
+											transition: { duration: 0.15 }, // Rapid fade-out
+										}}
+									>
+										{/* Down button centered, gallery left (disabled), back right */}
+										<div className="relative">
+											{/* Gallery button - mobile/medium only, absolutely positioned to the left (disabled) */}
+											<div className="absolute top-0 right-full mr-3 lg:hidden">
+												<NavigationArrow
+													direction="left"
+													disabled
+													aria-label="View gallery (coming soon)"
+												/>
+											</div>
+											{currentScrollIndex < totalItems - 1 && (
+												<NavigationArrow
+													direction="down"
+													onClick={() => handleNavigate('down')}
+													aria-label="Next project"
+												/>
+											)}
+											{/* Back button - mobile/medium only, absolutely positioned to the right */}
+											{onBack && (
+												<div className="absolute top-0 left-full ml-3 lg:hidden">
+													<NavigationArrow
+														direction="right"
+														onClick={onBack}
+														aria-label="Back to home"
+													/>
+												</div>
+											)}
+										</div>
+									</motion.div>
+								)}
 							</AnimatePresence>
 						</div>
 					</motion.div>

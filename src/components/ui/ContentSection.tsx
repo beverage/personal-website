@@ -38,6 +38,7 @@ interface ContentSectionProps {
 	contactProps: ContactProps
 	onNavigateToQuiz?: () => void
 	onBackFromQuiz?: () => void
+	onBackFromProjects?: () => void
 	projectsInitialScrollIndex?: number
 }
 
@@ -56,6 +57,7 @@ export function ContentSection({
 	contactProps,
 	onNavigateToQuiz,
 	onBackFromQuiz,
+	onBackFromProjects,
 	projectsInitialScrollIndex = 0,
 }: ContentSectionProps) {
 	const { heroTextVisible } = useHeroText()
@@ -97,6 +99,7 @@ export function ContentSection({
 						projects={projects}
 						className="h-full w-full"
 						onNavigateToQuiz={onNavigateToQuiz}
+						onBack={onBackFromProjects}
 						initialScrollIndex={projectsInitialScrollIndex}
 					/>
 				</div>

@@ -372,11 +372,17 @@ export const PageLayout = ({
 				fadeStyle={startup.controlFadeStyle}
 			/>
 
-			{/* Debug Controls - Bottom Right (dev mode only) */}
-			<DebugControlsCorner
-				disabled={isTransitioning || isLanguageTransitioning}
-				fadeStyle={startup.controlFadeStyle}
-			/>
+			{/* Debug Controls - Bottom Right (dev mode only, hidden on mobile for projects) */}
+			<div
+				className={
+					contentState.contentState === 'projects' ? 'hidden md:block' : ''
+				}
+			>
+				<DebugControlsCorner
+					disabled={isTransitioning || isLanguageTransitioning}
+					fadeStyle={startup.controlFadeStyle}
+				/>
+			</div>
 
 			{/* Back button for Contact page - Vertically centered, aligned with brand */}
 			{contentState.contentState === 'contact' && (
@@ -418,10 +424,50 @@ export const PageLayout = ({
 				</motion.div>
 			)}
 
-			{/* Back button for Projects page - Vertically centered, aligned with rocket */}
+			{/* Gallery button for Projects page - large screens only (disabled, left side) */}
 			{contentState.contentState === 'projects' && (
 				<motion.div
-					className="absolute top-1/2 right-8 z-50 -translate-y-1/2"
+					className="absolute top-1/2 left-8 z-50 hidden -translate-y-1/2 lg:block"
+					initial={{ opacity: 0, x: -20 }}
+					animate={{
+						opacity:
+							startupSequence?.enabled && !startup.startupComplete
+								? startup.uiControlsVisible
+									? 1
+									: 0
+								: 1,
+						x:
+							startupSequence?.enabled && !startup.startupComplete
+								? startup.uiControlsVisible
+									? 0
+									: -20
+								: 0,
+					}}
+					transition={{
+						duration:
+							startupSequence?.enabled && !startup.startupComplete
+								? (startupSequence.controlsFadeDuration || 400) / 1000
+								: 0.6,
+						delay:
+							startupSequence?.enabled && !startup.startupComplete
+								? 0
+								: (transitionConfig.duration +
+										(transitionConfig.settlingDuration || 0)) /
+									1000,
+					}}
+				>
+					<BackButton
+						direction="left"
+						disabled
+						aria-label="View gallery (coming soon)"
+					/>
+				</motion.div>
+			)}
+
+			{/* Back button for Projects page - large screens only (mobile/medium uses card navigation) */}
+			{contentState.contentState === 'projects' && (
+				<motion.div
+					className="absolute top-1/2 right-8 z-50 hidden -translate-y-1/2 lg:block"
 					initial={{ opacity: 0, x: 20 }}
 					animate={{
 						opacity:
@@ -568,13 +614,16 @@ export const PageLayout = ({
 					}}
 					onNavigateToQuiz={handleNavigateToQuiz}
 					onBackFromQuiz={handleBackFromQuiz}
+					onBackFromProjects={handleBackClick}
 					projectsInitialScrollIndex={projectsScrollIndex}
 				/>
 			)}
 
-			{/* Footer */}
+			{/* Footer - hidden on mobile when viewing projects */}
 			<div
-				className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform"
+				className={`absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform ${
+					contentState.contentState === 'projects' ? 'hidden md:block' : ''
+				}`}
 				style={{
 					...startup.controlFadeStyle,
 					opacity:

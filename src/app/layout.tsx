@@ -88,6 +88,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
 	// Mobile browser theme color (matches cyan theme)
 	themeColor: '#00bcd4',
+	// Enable full-screen mode on iOS, accounting for notch/safe areas
+	viewportFit: 'cover',
 }
 
 export default function RootLayout({

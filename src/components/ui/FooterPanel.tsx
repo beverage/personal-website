@@ -28,8 +28,9 @@ export const FooterPanel = ({
 		<div
 			className={`rounded-full border border-white/10 bg-black/20 px-6 py-3 backdrop-blur-sm ${className}`}
 		>
-			<div className="flex items-center space-x-6">
-				<div className="text-sm text-white/60">© {year}</div>
+			<div className="flex items-center space-x-4 sm:space-x-6">
+				{/* Hide copyright on mobile to prevent overflow */}
+				<div className="hidden text-sm text-white/60 sm:block">© {year}</div>
 				<div className="flex space-x-4">
 					{socialLinks.map((link, index) => {
 						const Icon = iconMap[link.icon]

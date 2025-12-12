@@ -326,7 +326,7 @@ export const PageLayout = ({
 	)
 
 	return (
-		<div className="relative min-h-screen overflow-hidden bg-black text-white">
+		<div className="relative h-dvh overflow-hidden bg-black text-white">
 			{/* Star Field Background */}
 			<LazyStarField
 				showCluster={startup.clusterVisible}

@@ -50,4 +50,11 @@ EXPOSE 3000
 
 ENV PORT 3000
 
+# Runtime environment variables - these can be overridden by fly.io
+ENV GITHUB_PROFILE_URL=""
+ENV LINKEDIN_PROFILE_URL=""
+ENV INSTAGRAM_PROFILE_URL=""
+ENV CONTACT_EMAIL_ADDRESS=""
+ENV CV_URL=""
+
 CMD ["node", "server.js"]

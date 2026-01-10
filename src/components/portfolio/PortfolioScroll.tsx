@@ -75,199 +75,239 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 		}
 	}
 
+	// Helper to render a single link (used in both desktop and mobile sections)
+	const renderLink = (link: (typeof project.links)[0], linkIndex: number) => {
+		// Hide quiz demo link entirely in production
+		const isQuizDemoLink = isQuizProject && link.type === 'demo'
+		if (isQuizDemoLink && !isDevelopment) {
+			return null
+		}
+
+		// In dev mode, quiz demo link triggers internal navigation
+		if (isQuizDemoLink && isDevelopment) {
+			return (
+				<motion.button
+					key={link.url}
+					onClick={e => {
+						e.preventDefault()
+						onNavigateToQuiz?.()
+					}}
+					className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
+					initial={{ opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{
+						duration: 0.6,
+						delay: 1.2 + linkIndex * 0.1,
+						ease: 'easeOut',
+					}}
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
+				>
+					{getLinkIcon(link.type)}
+					{link.label}
+				</motion.button>
+			)
+		}
+
+		return (
+			<motion.a
+				key={link.url}
+				href={link.url}
+				target="_blank"
+				rel="noopener noreferrer"
+				className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
+				initial={{ opacity: 0, scale: 0.8 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{
+					duration: 0.6,
+					delay: 1.2 + linkIndex * 0.1,
+					ease: 'easeOut',
+				}}
+				whileHover={{ scale: 1.05 }}
+				whileTap={{ scale: 0.95 }}
+			>
+				{getLinkIcon(link.type)}
+				{link.label}
+			</motion.a>
+		)
+	}
+
 	return (
 		<AnimatePresence mode="wait">
 			<motion.div
 				key={`project-card-${project.id}-${language}`}
 				variants={cardVariants}
 				initial="hidden"
-				whileInView="visible"
+				animate="visible"
 				exit={{
 					opacity: 0,
 					transition: {
 						duration: LANGUAGE_TRANSITION_CONFIG.textDuration / 1000,
 					},
 				}}
-				viewport={{
-					once: false, // Animate every time card comes into view
-					margin: '-50px', // Trigger animation closer to center
-					amount: 0.3, // Start animation when 30% visible
-				}}
 				className="mx-auto max-h-[70vh] max-w-4xl overflow-y-auto rounded-xl border border-cyan-400/30 bg-black/40 p-4 backdrop-blur-sm sm:max-h-none sm:overflow-visible sm:p-8"
 			>
 				<div className="grid gap-4 sm:gap-8 lg:grid-cols-2">
-					{/* Project Image - hidden on mobile */}
-					<div className="relative hidden overflow-hidden rounded-lg md:block">
-						<motion.img
-							src={project.imageUrl}
-							alt={project.title}
-							className="h-64 w-full object-cover transition-transform duration-300 hover:scale-105"
-							whileHover={{ scale: 1.05 }}
-							transition={{ duration: 0.3 }}
-							onError={e => {
-								// Fallback to CSS placeholder if image fails to load
-								const target = e.target as HTMLImageElement
-								target.style.display = 'none'
-								const parent = target.parentElement
-								if (parent && !parent.querySelector('.fallback-placeholder')) {
-									const fallback = document.createElement('div')
-									fallback.className =
-										'fallback-placeholder h-64 w-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 rounded-lg flex items-center justify-center'
-									fallback.innerHTML = `<span class="text-cyan-300 text-lg font-semibold">${project.title}</span>`
-									parent.appendChild(fallback)
-								}
-							}}
-						/>
-						{project.status === 'in-progress' && (
-							<div className="absolute top-4 right-4 rounded-full bg-yellow-500/20 px-3 py-1 text-xs text-yellow-300 backdrop-blur-sm">
-								In Progress
-							</div>
-						)}
-						{project.featured && (
-							<div className="absolute top-4 left-4 rounded-full bg-cyan-500/20 px-3 py-1 text-xs text-cyan-300 backdrop-blur-sm">
-								Featured
-							</div>
-						)}
-					</div>
-
-					{/* Project Content */}
-					<div className="flex flex-col justify-between">
-						<div>
-							{/* Title - linked to website if available */}
-							{(() => {
-								const websiteLink = project.links.find(
-									l => l.type === 'website',
-								)
-								const titleContent = (
-									<motion.h3
-										className="font-exo2 mb-2 text-xl font-bold text-white sm:mb-4 sm:text-3xl"
-										initial={{ opacity: 0, y: 20 }}
-										whileInView={{ opacity: 1, y: 0 }}
-										viewport={{ once: false }}
-										transition={{ duration: 0.8, delay: 0.2 }}
-									>
-										{websiteLink ? (
-											<a
-												href={websiteLink.url}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="transition-colors hover:text-cyan-300"
-											>
-												{project.title}
-											</a>
-										) : (
-											project.title
-										)}
-									</motion.h3>
-								)
-								return titleContent
-							})()}
-							<motion.p
-								className="mb-3 text-sm leading-relaxed text-white/90 sm:mb-4 sm:text-lg"
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: false }}
-								transition={{ duration: 0.8, delay: 0.4 }}
-							>
-								{project.longDescription}
-							</motion.p>
-
-							{/* Technologies */}
-							<motion.div
-								className="mb-4 sm:mb-6"
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: false }}
-								transition={{ duration: 0.8, delay: 0.6 }}
-							>
-								<h4 className="mb-2 text-xs font-semibold tracking-wider text-cyan-300 uppercase sm:text-sm">
-									Technologies
-								</h4>
-								<div className="flex flex-wrap gap-1.5 sm:gap-2">
-									{project.technologies.map((tech, techIndex) => (
-										<motion.span
-											key={tech}
-											className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/80 sm:px-3 sm:py-1 sm:text-sm"
-											initial={{ opacity: 0, scale: 0.8 }}
-											whileInView={{ opacity: 1, scale: 1 }}
-											viewport={{ once: false }}
-											transition={{
-												duration: 0.5,
-												delay: 0.8 + techIndex * 0.1,
-												ease: 'easeOut',
-											}}
-										>
-											{tech}
-										</motion.span>
-									))}
+					{/* Left Column: Image, Technologies, Links (on desktop only) */}
+					<div className="hidden flex-col gap-4 sm:gap-6 lg:flex">
+						{/* Project Image */}
+						<div className="relative overflow-hidden rounded-lg">
+							<motion.img
+								src={project.imageUrl}
+								alt={project.title}
+								className="h-64 w-full object-cover transition-transform duration-300 hover:scale-105"
+								whileHover={{ scale: 1.05 }}
+								transition={{ duration: 0.3 }}
+								onError={e => {
+									// Fallback to CSS placeholder if image fails to load
+									const target = e.target as HTMLImageElement
+									target.style.display = 'none'
+									const parent = target.parentElement
+									if (
+										parent &&
+										!parent.querySelector('.fallback-placeholder')
+									) {
+										const fallback = document.createElement('div')
+										fallback.className =
+											'fallback-placeholder h-64 w-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 rounded-lg flex items-center justify-center'
+										fallback.innerHTML = `<span class="text-cyan-300 text-lg font-semibold">${project.title}</span>`
+										parent.appendChild(fallback)
+									}
+								}}
+							/>
+							{project.status === 'in-progress' && (
+								<div className="absolute top-4 right-4 rounded-full bg-yellow-500/20 px-3 py-1 text-xs text-yellow-300 backdrop-blur-sm">
+									In Progress
 								</div>
-							</motion.div>
+							)}
+							{project.featured && (
+								<div className="absolute top-4 left-4 rounded-full bg-cyan-500/20 px-3 py-1 text-xs text-cyan-300 backdrop-blur-sm">
+									Featured
+								</div>
+							)}
 						</div>
+
+						{/* Technologies */}
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.8, delay: 0.6 }}
+						>
+							<h4 className="mb-2 text-xs font-semibold tracking-wider text-cyan-300 uppercase sm:text-sm">
+								Technologies
+							</h4>
+							<div className="flex flex-wrap gap-1.5 sm:gap-2">
+								{project.technologies.map((tech, techIndex) => (
+									<motion.span
+										key={tech}
+										className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/80 sm:px-3 sm:py-1 sm:text-sm"
+										initial={{ opacity: 0, scale: 0.8 }}
+										animate={{ opacity: 1, scale: 1 }}
+										transition={{
+											duration: 0.5,
+											delay: 0.8 + techIndex * 0.05,
+											ease: 'easeOut',
+										}}
+									>
+										{tech}
+									</motion.span>
+								))}
+							</div>
+						</motion.div>
 
 						{/* Project Links */}
 						<motion.div
 							className="flex flex-wrap gap-2 sm:gap-3"
 							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							viewport={{ once: false }}
-							transition={{ duration: 0.8, delay: 1.2 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.8, delay: 1.0 }}
 						>
-							{project.links.map((link, linkIndex) => {
-								// Special handling for quiz demo link in dev mode
-								const isQuizDemoLink =
-									isQuizProject && link.type === 'demo' && isDevelopment
-
-								if (isQuizDemoLink) {
-									return (
-										<motion.button
-											key={link.url}
-											onClick={e => {
-												e.preventDefault()
-												onNavigateToQuiz?.()
-											}}
-											className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
-											initial={{ opacity: 0, scale: 0.8 }}
-											whileInView={{ opacity: 1, scale: 1 }}
-											viewport={{ once: false }}
-											transition={{
-												duration: 0.6,
-												delay: 1.0 + linkIndex * 0.1,
-												ease: 'easeOut',
-											}}
-											whileHover={{ scale: 1.05 }}
-											whileTap={{ scale: 0.95 }}
-										>
-											{getLinkIcon(link.type)}
-											{link.label}
-										</motion.button>
-									)
-								}
-
-								return (
-									<motion.a
-										key={link.url}
-										href={link.url}
-										target="_blank"
-										rel="noopener noreferrer"
-										className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
-										initial={{ opacity: 0, scale: 0.8 }}
-										whileInView={{ opacity: 1, scale: 1 }}
-										viewport={{ once: false }}
-										transition={{
-											duration: 0.6,
-											delay: 1.0 + linkIndex * 0.1,
-											ease: 'easeOut',
-										}}
-										whileHover={{ scale: 1.05 }}
-										whileTap={{ scale: 0.95 }}
-									>
-										{getLinkIcon(link.type)}
-										{link.label}
-									</motion.a>
-								)
-							})}
+							{project.links.map((link, linkIndex) =>
+								renderLink(link, linkIndex),
+							)}
 						</motion.div>
 					</div>
+
+					{/* Right Column: Title and Description */}
+					<div>
+						{/* Title - linked to website if available */}
+						{(() => {
+							const websiteLink = project.links.find(l => l.type === 'website')
+							const titleContent = (
+								<motion.h3
+									className="font-exo2 mb-2 text-xl font-bold text-white sm:mb-4 sm:text-3xl"
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.8, delay: 0.2 }}
+								>
+									{websiteLink ? (
+										<a
+											href={websiteLink.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="transition-colors hover:text-cyan-300"
+										>
+											{project.title}
+										</a>
+									) : (
+										project.title
+									)}
+								</motion.h3>
+							)
+							return titleContent
+						})()}
+						<motion.p
+							className="text-sm leading-relaxed whitespace-pre-line text-white/90 sm:text-lg"
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.8, delay: 0.4 }}
+						>
+							{project.longDescription}
+						</motion.p>
+					</div>
+				</div>
+
+				{/* Mobile/Medium: Technologies and Links (hidden on desktop, shown on mobile/medium) */}
+				<div className="mt-4 flex flex-col gap-4 sm:mt-6 sm:gap-6 lg:hidden">
+					{/* Technologies */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.6 }}
+					>
+						<h4 className="mb-2 text-xs font-semibold tracking-wider text-cyan-300 uppercase sm:text-sm">
+							Technologies
+						</h4>
+						<div className="flex flex-wrap gap-1.5 sm:gap-2">
+							{project.technologies.map((tech, techIndex) => (
+								<motion.span
+									key={tech}
+									className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/80 sm:px-3 sm:py-1 sm:text-sm"
+									initial={{ opacity: 0, scale: 0.8 }}
+									animate={{ opacity: 1, scale: 1 }}
+									transition={{
+										duration: 0.5,
+										delay: 0.8 + techIndex * 0.05,
+										ease: 'easeOut',
+									}}
+								>
+									{tech}
+								</motion.span>
+							))}
+						</div>
+					</motion.div>
+
+					{/* Project Links */}
+					<motion.div
+						className="flex flex-wrap gap-2 sm:gap-3"
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 1.0 }}
+					>
+						{project.links.map((link, linkIndex) =>
+							renderLink(link, linkIndex),
+						)}
+					</motion.div>
 				</div>
 			</motion.div>
 		</AnimatePresence>
@@ -521,7 +561,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 										}}
 									>
 										{/* Down button centered, gallery left (disabled), back right */}
-										<div className="relative">
+										<div className="relative flex items-center justify-center">
 											{/* Gallery button - mobile/medium only, absolutely positioned to the left (disabled) */}
 											<div className="absolute top-0 right-full mr-3 lg:hidden">
 												<NavigationArrow

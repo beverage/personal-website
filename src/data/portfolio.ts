@@ -71,7 +71,7 @@ export const projects: Project[] = [
 			},
 			{
 				label: 'API Documentation',
-				url: 'https://bump.sh/beverage/doc/language-quiz-service/',
+				url: 'https://registry.scalar.com/@lqs/apis/language-quiz-service-api/latest',
 				type: 'api',
 			},
 		],

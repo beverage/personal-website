@@ -116,7 +116,7 @@ export function ContentSection({
 						pointerEvents: getContentOpacity('quiz') === 0 ? 'none' : 'auto',
 					}}
 				>
-					<QuizPage onBack={onBackFromQuiz || (() => {})} />
+					<QuizPage key="quiz-page" onBack={onBackFromQuiz || (() => {})} />
 				</div>
 			)}
 

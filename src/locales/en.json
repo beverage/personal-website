@@ -29,9 +29,9 @@
 			}
 		},
 		"quiz": {
-			"title": "AI Language Quiz Generator",
-			"description": "AI-powered French grammar quiz app with dynamic content generation",
-			"longDescription": "A French language grammar quiz generator application that uses AI to dynamically generate content tailored to specific language features a user wants to study. The system adapts questions and exercises based on user preferences, creating personalized grammar practice sessions for targeted learning.",
+			"title": "Language Quiz Service",
+			"description": "AI-powered French grammar quiz backend with async problem generation",
+			"longDescription": "A backend service for generating AI-powered French grammar quiz problems. Each quiz presents one correct sentence alongside incorrect alternatives with targeted grammatical errors—not random mistakes—helping learners practice language features such as conjugation patterns, auxiliary selection, past participle agreement, pronoun placement, and more.\n\nBuilt on an async generation pattern with Kafka workers, problems are pre-generated and served from a pool with sub-50ms latency. The compositional prompt system supports multiple LLM providers (OpenAI, Gemini) and includes full observability via OpenTelemetry and Grafana dashboards.",
 			"links": {
 				"viewGithub": "View on GitHub",
 				"tryQuiz": "Try the Quiz",

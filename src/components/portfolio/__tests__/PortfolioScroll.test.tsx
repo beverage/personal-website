@@ -124,10 +124,22 @@ describe('PortfolioScroll', () => {
 				</LanguageProvider>,
 			)
 
-			expect(screen.getByText('React')).toBeInTheDocument()
-			expect(screen.getByText('TypeScript')).toBeInTheDocument()
-			expect(screen.getByText('Python')).toBeInTheDocument()
-			expect(screen.getByText('FastAPI')).toBeInTheDocument()
+			// Technologies appear in both desktop and mobile sections
+			const reactElements = screen.getAllByText('React')
+			const typescriptElements = screen.getAllByText('TypeScript')
+			const pythonElements = screen.getAllByText('Python')
+			const fastApiElements = screen.getAllByText('FastAPI')
+
+			expect(reactElements.length).toBeGreaterThan(0)
+			expect(typescriptElements.length).toBeGreaterThan(0)
+			expect(pythonElements.length).toBeGreaterThan(0)
+			expect(fastApiElements.length).toBeGreaterThan(0)
+
+			// Verify at least one instance is in the document
+			expect(reactElements[0]).toBeInTheDocument()
+			expect(typescriptElements[0]).toBeInTheDocument()
+			expect(pythonElements[0]).toBeInTheDocument()
+			expect(fastApiElements[0]).toBeInTheDocument()
 		})
 
 		it('should render project links', () => {
@@ -139,8 +151,16 @@ describe('PortfolioScroll', () => {
 				</LanguageProvider>,
 			)
 
-			expect(screen.getByText('GitHub')).toBeInTheDocument()
-			expect(screen.getByText('Demo')).toBeInTheDocument()
+			// Links appear in both desktop and mobile sections
+			const githubLinks = screen.getAllByText('GitHub')
+			const demoLinks = screen.getAllByText('Demo')
+
+			expect(githubLinks.length).toBeGreaterThan(0)
+			expect(demoLinks.length).toBeGreaterThan(0)
+
+			// Verify at least one instance is in the document
+			expect(githubLinks[0]).toBeInTheDocument()
+			expect(demoLinks[0]).toBeInTheDocument()
 		})
 
 		it('should render status badges', () => {
@@ -203,12 +223,15 @@ describe('PortfolioScroll', () => {
 				</LanguageProvider>,
 			)
 
-			const githubLink = screen.getByText('GitHub').closest('a')
+			// Links appear in both desktop and mobile sections, use getAllByText
+			const githubLinks = screen.getAllByText('GitHub')
+			const githubLink = githubLinks[0].closest('a')
 			expect(githubLink).toHaveAttribute('href', 'https://github.com/test/1')
 			expect(githubLink).toHaveAttribute('target', '_blank')
 			expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer')
 
-			const demoLink = screen.getByText('Demo').closest('a')
+			const demoLinks = screen.getAllByText('Demo')
+			const demoLink = demoLinks[0].closest('a')
 			expect(demoLink).toHaveAttribute('href', 'https://demo.example.com')
 		})
 	})

@@ -65,7 +65,7 @@ export const projects: Project[] = [
 				type: 'github',
 			},
 			{
-				label: 'Try the Quiz',
+				label: 'Try a Quiz',
 				url: 'https://language-quiz.beverage.me',
 				type: 'demo',
 			},

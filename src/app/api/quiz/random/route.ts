@@ -6,10 +6,29 @@ import { NextResponse } from 'next/server'
  * Proxies requests to the language-quiz-service backend
  * This keeps the API key secure on the server side
  */
-export async function GET() {
+export async function GET(request: Request) {
 	try {
 		const serviceUrl = process.env.LQS_SERVICE_URL || 'http://localhost:8000'
 		const apiKey = process.env.LQS_SERVICE_API_KEY || ''
+
+		// Parse query parameters
+		const { searchParams } = new URL(request.url)
+		const grammaticalFocus = searchParams.getAll('grammatical_focus')
+		const tensesUsed = searchParams.getAll('tenses_used')
+
+		// Build query string
+		const queryParams = new URLSearchParams()
+		if (grammaticalFocus.length > 0) {
+			grammaticalFocus.forEach(focus =>
+				queryParams.append('grammatical_focus', focus),
+			)
+		}
+		if (tensesUsed.length > 0) {
+			tensesUsed.forEach(tense => queryParams.append('tenses_used', tense))
+		}
+
+		const queryString = queryParams.toString()
+		const url = `${serviceUrl}/api/v1/problems/grammar/random${queryString ? `?${queryString}` : ''}`
 
 		// Build headers
 		const headers: HeadersInit = {
@@ -22,16 +41,39 @@ export async function GET() {
 		}
 
 		// Call the language-quiz-service
-		const response = await fetch(`${serviceUrl}/api/v1/problems/random`, {
+		const response = await fetch(url, {
 			method: 'GET',
 			headers,
 		})
 
 		if (!response.ok) {
-			const errorText = await response.text()
-			console.error('Quiz service error:', errorText)
+			let errorDetail: string
+			try {
+				const errorData = await response.json()
+				// Extract error message, ensuring it's a string
+				const detail = errorData.detail
+				const error = errorData.error
+
+				if (typeof detail === 'string' && detail.trim() !== '') {
+					errorDetail = detail
+				} else if (typeof error === 'string' && error.trim() !== '') {
+					errorDetail = error
+				} else {
+					errorDetail = 'Failed to fetch problem from the service'
+				}
+			} catch {
+				const errorText = await response.text()
+				errorDetail =
+					typeof errorText === 'string' && errorText.trim() !== ''
+						? errorText
+						: 'Failed to fetch problem from the service'
+			}
+			console.error('Quiz service error:', errorDetail)
 			return NextResponse.json(
-				{ error: 'Failed to fetch quiz from service' },
+				{
+					error: errorDetail,
+					status: response.status,
+				},
 				{ status: response.status },
 			)
 		}

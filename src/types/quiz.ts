@@ -3,13 +3,18 @@
  */
 
 /**
+ * Problem type categories
+ */
+export type ProblemType = 'grammar' | 'functional' | 'vocabulary'
+
+/**
  * A single statement/answer option in a quiz problem
  */
 export interface ProblemStatementResponse {
 	content: string
 	is_correct: boolean
-	translation: string
-	explanation: string
+	translation: string | null
+	explanation: string | null
 }
 
 /**
@@ -17,7 +22,8 @@ export interface ProblemStatementResponse {
  */
 export interface ProblemResponse {
 	id: string
-	title: string
+	problem_type: ProblemType
+	title: string | null
 	instructions: string
 	statements: ProblemStatementResponse[]
 	correct_answer_index: number

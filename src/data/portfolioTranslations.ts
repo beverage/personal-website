@@ -60,14 +60,14 @@ const baseProjects = [
 				type: 'github' as const,
 			},
 			{
-				labelKey: 'tryQuiz',
-				url: 'https://language-quiz.beverage.me',
-				type: 'demo' as const,
-			},
-			{
 				labelKey: 'apiDocs',
 				url: 'https://registry.scalar.com/@lqs/apis/language-quiz-service-api/latest',
 				type: 'api' as const,
+			},
+			{
+				labelKey: 'tryQuiz',
+				url: '#quiz', // Internal navigation - uses LQS_SERVICE_URL via API route
+				type: 'demo' as const,
 			},
 		],
 		featured: true,

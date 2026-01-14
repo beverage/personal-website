@@ -1,6 +1,7 @@
 'use client'
 
 import { useHeroText } from '@/contexts/HeroTextContext'
+import { useQuizDemo } from '@/contexts/QuizDemoContext'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { Project } from '@/types/portfolio'
 import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
@@ -29,7 +30,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 	onNavigateToQuiz,
 }) => {
 	const { language } = useTranslation()
-	const isDevelopment = process.env.NODE_ENV === 'development'
+	const { quizDemoEnabled } = useQuizDemo()
 	const isQuizProject = project.id === 'language-quiz-service'
 
 	const cardVariants = {
@@ -77,14 +78,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
 	// Helper to render a single link (used in both desktop and mobile sections)
 	const renderLink = (link: (typeof project.links)[0], linkIndex: number) => {
-		// Hide quiz demo link entirely in production
+		// Hide quiz demo link when toggle is off
 		const isQuizDemoLink = isQuizProject && link.type === 'demo'
-		if (isQuizDemoLink && !isDevelopment) {
+		if (isQuizDemoLink && !quizDemoEnabled) {
 			return null
 		}
 
-		// In dev mode, quiz demo link triggers internal navigation
-		if (isQuizDemoLink && isDevelopment) {
+		// When quiz demo is enabled, quiz demo link triggers internal navigation
+		// No animation delay - appears instantly when toggle is pressed
+		if (isQuizDemoLink && quizDemoEnabled) {
 			return (
 				<motion.button
 					key={link.url}
@@ -93,11 +95,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 						onNavigateToQuiz?.()
 					}}
 					className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
-					initial={{ opacity: 0, scale: 0.8 }}
+					initial={{ opacity: 0, scale: 0.9 }}
 					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.9 }}
 					transition={{
-						duration: 0.6,
-						delay: 1.2 + linkIndex * 0.1,
+						duration: 0.2,
 						ease: 'easeOut',
 					}}
 					whileHover={{ scale: 1.05 }}

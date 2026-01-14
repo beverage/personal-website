@@ -31,7 +31,7 @@
 		"quiz": {
 			"title": "Language Quiz Service",
 			"description": "AI-powered French grammar quiz backend with async problem generation",
-			"longDescription": "A backend service for generating AI-powered French grammar quiz problems. Each problem presents one correct sentence alongside incorrect alternatives with targeted grammatical errors—not random mistakes—helping learners practice language features such as conjugation patterns, auxiliary selection, past participle agreement, pronoun placement, and more.\n\nBuilt on an async generation pattern with Kafka workers, problems are pre-generated and served from a pool with sub-50ms latency. The compositional prompt system supports multiple LLM providers (OpenAI, Gemini) and includes full observability via OpenTelemetry and Grafana dashboards.",
+			"longDescription": "A backend service for generating AI-powered French grammar quiz problems. Each problem presents one correct sentence alongside incorrect alternatives with targeted grammatical errors—not random mistakes—helping learners practice language features such as conjugation patterns, auxiliary selection, past participle agreement, pronoun placement, and more.\n\nBuilt on an async generation pattern with Kafka workers, problems are pre-generated and served from a pool using staleness-weighted random selection—ensuring variety while preventing repetition. A compositional prompt system supports multiple LLM providers (OpenAI, Gemini).",
 			"links": {
 				"viewGithub": "View on GitHub",
 				"tryQuiz": "Try a Quiz",

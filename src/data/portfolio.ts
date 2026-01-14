@@ -65,14 +65,14 @@ export const projects: Project[] = [
 				type: 'github',
 			},
 			{
-				label: 'Try a Quiz',
-				url: 'https://language-quiz.beverage.me',
-				type: 'demo',
-			},
-			{
 				label: 'API Documentation',
 				url: 'https://registry.scalar.com/@lqs/apis/language-quiz-service-api/latest',
 				type: 'api',
+			},
+			{
+				label: 'Try a Quiz',
+				url: '#quiz',
+				type: 'demo',
 			},
 		],
 		featured: true,

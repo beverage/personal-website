@@ -24,7 +24,6 @@ const AVAILABLE_TENSES = [
 	'conditionnel',
 	'subjonctif',
 	'plus_que_parfait',
-	'passe_simple',
 ] as const
 
 /**
@@ -44,7 +43,6 @@ const tenseDisplayNames: Record<string, string> = {
 	conditionnel: 'Conditionnel',
 	subjonctif: 'Subjonctif',
 	plus_que_parfait: 'Plus-que-parfait',
-	passe_simple: 'Passé Simple',
 }
 
 /**

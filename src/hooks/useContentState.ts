@@ -20,46 +20,41 @@ interface UseContentStateReturn {
 
 const CONTENT_STATE_KEY = 'contentState'
 
-/**
- * Get the initial content state from sessionStorage or default to 'hero'
- */
-function getInitialContentState(): ContentState {
-	if (typeof window === 'undefined') return 'hero'
-
-	try {
-		const stored = sessionStorage.getItem(CONTENT_STATE_KEY)
-		if (stored && ['hero', 'projects', 'contact', 'quiz'].includes(stored)) {
-			return stored as ContentState
-		}
-	} catch (error) {
-		console.error('Failed to read content state from sessionStorage:', error)
-	}
-
-	return 'hero'
-}
-
 export const useContentState = (): UseContentStateReturn => {
-	const [contentState, setContentStateInternal] = useState<ContentState>(
-		getInitialContentState,
-	)
+	// Always start with 'hero' to avoid hydration mismatch
+	const [contentState, setContentStateInternal] = useState<ContentState>('hero')
 	const [isTransitioning, setIsTransitioning] = useState(false)
+	const [hasHydrated, setHasHydrated] = useState(false)
 
 	// Track what content we're transitioning FROM and TO
-	const [fromContentState, setFromContentState] = useState<ContentState>(
-		getInitialContentState,
-	)
-	const [toContentState, setToContentState] = useState<ContentState>(
-		getInitialContentState,
-	)
+	const [fromContentState, setFromContentState] = useState<ContentState>('hero')
+	const [toContentState, setToContentState] = useState<ContentState>('hero')
 
-	// Persist content state to sessionStorage whenever it changes
+	// Restore from sessionStorage after hydration (client-side only)
 	useEffect(() => {
+		try {
+			const stored = sessionStorage.getItem(CONTENT_STATE_KEY)
+			if (stored && ['hero', 'projects', 'contact', 'quiz'].includes(stored)) {
+				const restoredState = stored as ContentState
+				setContentStateInternal(restoredState)
+				setFromContentState(restoredState)
+				setToContentState(restoredState)
+			}
+		} catch (error) {
+			console.error('Failed to read content state from sessionStorage:', error)
+		}
+		setHasHydrated(true)
+	}, [])
+
+	// Persist content state to sessionStorage whenever it changes (after hydration)
+	useEffect(() => {
+		if (!hasHydrated) return
 		try {
 			sessionStorage.setItem(CONTENT_STATE_KEY, contentState)
 		} catch (error) {
 			console.error('Failed to save content state to sessionStorage:', error)
 		}
-	}, [contentState])
+	}, [contentState, hasHydrated])
 
 	// Wrapper to persist state when setting
 	const setContentState = useCallback((state: ContentState) => {

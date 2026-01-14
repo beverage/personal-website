@@ -1,5 +1,6 @@
 import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { QuizDemoProvider } from '@/contexts/QuizDemoContext'
 import type { Project } from '@/types/portfolio'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
@@ -91,7 +92,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -106,7 +109,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -119,7 +124,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -146,7 +153,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -167,7 +176,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -182,7 +193,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -202,7 +215,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -218,7 +233,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -241,7 +258,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={[]} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={[]} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)
@@ -256,7 +275,9 @@ describe('PortfolioScroll', () => {
 			render(
 				<LanguageProvider>
 					<HeroTextProvider>
-						<PortfolioScroll projects={mockProjects} />
+						<QuizDemoProvider>
+							<PortfolioScroll projects={mockProjects} />
+						</QuizDemoProvider>
 					</HeroTextProvider>
 				</LanguageProvider>,
 			)

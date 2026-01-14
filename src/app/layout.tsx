@@ -3,6 +3,7 @@ import { ForegroundToggleProvider } from '@/contexts/ForegroundToggleContext'
 import { GlowProvider } from '@/contexts/GlowContext'
 import { HeroTextProvider } from '@/contexts/HeroTextContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { QuizDemoProvider } from '@/contexts/QuizDemoContext'
 import { RenderModeProvider } from '@/contexts/RenderModeContext'
 import { TwinkleProvider } from '@/contexts/TwinkleContext'
 import type { Metadata, Viewport } from 'next'
@@ -106,7 +107,9 @@ export default function RootLayout({
 							<HeroTextProvider>
 								<GlowProvider>
 									<TwinkleProvider>
-										<DebugPanelProvider>{children}</DebugPanelProvider>
+										<QuizDemoProvider>
+											<DebugPanelProvider>{children}</DebugPanelProvider>
+										</QuizDemoProvider>
 									</TwinkleProvider>
 								</GlowProvider>
 							</HeroTextProvider>

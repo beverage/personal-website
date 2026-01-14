@@ -9,6 +9,7 @@ import { DebugExpandButton } from './DebugExpandButton'
 import { ForegroundToggle } from './ForegroundToggle'
 import { GlowToggle } from './GlowToggle'
 import { HeroTextToggle } from './HeroTextToggle'
+import { QuizDemoToggle } from './QuizDemoToggle'
 import { RenderModeSelector } from './RenderModeSelector'
 import { TwinkleToggle } from './TwinkleToggle'
 
@@ -354,6 +355,7 @@ export function DebugControlsCorner({
 								<HeroTextToggle disabled={!buttonsEnabled} />
 								<GlowToggle disabled={!buttonsEnabled} />
 								<TwinkleToggle disabled={!buttonsEnabled} />
+								<QuizDemoToggle disabled={!buttonsEnabled} />
 							</motion.div>
 						</div>
 					</motion.div>

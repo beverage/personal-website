@@ -8,6 +8,7 @@ import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ExternalLink, Github, Images } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { MediaCarousel } from './MediaCarousel'
 import { NavigationArrow } from './NavigationArrows'
 
 interface PortfolioScrollProps {
@@ -32,6 +33,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 	const { language } = useTranslation()
 	const { quizDemoEnabled } = useQuizDemo()
 	const isQuizProject = project.id === 'language-quiz-service'
+	const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+	const hasGallery = project.previewVideos && project.previewVideos.length > 0
 
 	const cardVariants = {
 		hidden: {
@@ -111,6 +114,32 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 			)
 		}
 
+		// Gallery link opens the expanded gallery modal
+		if (link.type === 'gallery' && hasGallery) {
+			return (
+				<motion.button
+					key={link.url}
+					onClick={e => {
+						e.preventDefault()
+						setIsGalleryOpen(true)
+					}}
+					className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs sm:gap-2 sm:px-4 sm:py-2 sm:text-sm ${getLinkColor(link.type)}`}
+					initial={{ opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{
+						duration: 0.6,
+						delay: 1.2 + linkIndex * 0.1,
+						ease: 'easeOut',
+					}}
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
+				>
+					{getLinkIcon(link.type)}
+					{link.label}
+				</motion.button>
+			)
+		}
+
 		return (
 			<motion.a
 				key={link.url}
@@ -150,41 +179,46 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 				className="mx-auto max-h-[70vh] max-w-4xl overflow-y-auto rounded-xl border border-cyan-400/30 bg-black/40 p-4 backdrop-blur-sm sm:max-h-none sm:overflow-visible sm:p-8"
 			>
 				<div className="grid gap-4 sm:gap-8 lg:grid-cols-2">
-					{/* Left Column: Image, Technologies, Links (on desktop only) */}
+					{/* Left Column: Image/Video, Technologies, Links (on desktop only) */}
 					<div className="hidden flex-col gap-4 sm:gap-6 lg:flex">
-						{/* Project Image */}
+						{/* Project Preview - Video Carousel or Image */}
 						<div className="relative overflow-hidden rounded-lg">
-							<motion.img
-								src={project.imageUrl}
-								alt={project.title}
-								className="h-64 w-full object-cover transition-transform duration-300 hover:scale-105"
-								whileHover={{ scale: 1.05 }}
-								transition={{ duration: 0.3 }}
-								onError={e => {
-									// Fallback to CSS placeholder if image fails to load
-									const target = e.target as HTMLImageElement
-									target.style.display = 'none'
-									const parent = target.parentElement
-									if (
-										parent &&
-										!parent.querySelector('.fallback-placeholder')
-									) {
-										const fallback = document.createElement('div')
-										fallback.className =
-											'fallback-placeholder h-64 w-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 rounded-lg flex items-center justify-center'
-										fallback.innerHTML = `<span class="text-cyan-300 text-lg font-semibold">${project.title}</span>`
-										parent.appendChild(fallback)
-									}
-								}}
-							/>
-							{project.status === 'in-progress' && (
-								<div className="absolute top-4 right-4 rounded-full bg-yellow-500/20 px-3 py-1 text-xs text-yellow-300 backdrop-blur-sm">
-									In Progress
-								</div>
+							{project.previewVideos && project.previewVideos.length > 0 ? (
+								<MediaCarousel
+									videos={project.previewVideos}
+									expandedVideos={project.expandedVideos}
+									alt={project.title}
+									isModalOpen={isGalleryOpen}
+									onModalOpenChange={setIsGalleryOpen}
+								/>
+							) : (
+								<motion.img
+									src={project.imageUrl}
+									alt={project.title}
+									className="h-64 w-full object-cover transition-transform duration-300 hover:scale-105"
+									whileHover={{ scale: 1.05 }}
+									transition={{ duration: 0.3 }}
+									onError={e => {
+										// Fallback to CSS placeholder if image fails to load
+										const target = e.target as HTMLImageElement
+										target.style.display = 'none'
+										const parent = target.parentElement
+										if (
+											parent &&
+											!parent.querySelector('.fallback-placeholder')
+										) {
+											const fallback = document.createElement('div')
+											fallback.className =
+												'fallback-placeholder h-64 w-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 rounded-lg flex items-center justify-center'
+											fallback.innerHTML = `<span class="text-cyan-300 text-lg font-semibold">${project.title}</span>`
+											parent.appendChild(fallback)
+										}
+									}}
+								/>
 							)}
-							{project.featured && (
-								<div className="absolute top-4 left-4 rounded-full bg-cyan-500/20 px-3 py-1 text-xs text-cyan-300 backdrop-blur-sm">
-									Featured
+							{project.status === 'in-progress' && (
+								<div className="absolute top-4 left-4 z-20 rounded-full bg-yellow-500/20 px-3 py-1 text-xs text-yellow-300 backdrop-blur-sm">
+									In Progress
 								</div>
 							)}
 						</div>

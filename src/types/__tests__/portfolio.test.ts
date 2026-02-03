@@ -41,7 +41,6 @@ describe('Portfolio Types', () => {
 					type: 'github' as ProjectLinkType,
 				},
 			],
-			featured: true,
 			status: 'completed' as ProjectStatus,
 		}
 

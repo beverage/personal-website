@@ -27,8 +27,11 @@ export interface Project {
 	longDescription: string
 	technologies: string[]
 	imageUrl: string
+	/** Optional array of video URLs for preview carousel (lower resolution) */
+	previewVideos?: string[]
+	/** Optional array of video URLs for expanded gallery modal (higher resolution) */
+	expandedVideos?: string[]
 	links: ProjectLink[]
-	featured: boolean
 	status: ProjectStatus
 }
 

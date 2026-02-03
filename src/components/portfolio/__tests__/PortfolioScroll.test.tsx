@@ -71,7 +71,6 @@ describe('PortfolioScroll', () => {
 			links: [
 				{ label: 'GitHub', url: 'https://github.com/test/1', type: 'github' },
 			],
-			featured: true,
 			status: 'completed',
 		},
 		{
@@ -82,7 +81,6 @@ describe('PortfolioScroll', () => {
 			technologies: ['Python', 'FastAPI'],
 			imageUrl: 'https://example.com/image2.jpg',
 			links: [{ label: 'Demo', url: 'https://demo.example.com', type: 'demo' }],
-			featured: false,
 			status: 'in-progress',
 		},
 	]
@@ -183,7 +181,6 @@ describe('PortfolioScroll', () => {
 				</LanguageProvider>,
 			)
 
-			expect(screen.getByText('Featured')).toBeInTheDocument()
 			expect(screen.getByText('In Progress')).toBeInTheDocument()
 		})
 	})

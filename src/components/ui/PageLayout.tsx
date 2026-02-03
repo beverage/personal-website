@@ -1,7 +1,7 @@
 'use client'
 
 import { useHeroText } from '@/contexts/HeroTextContext'
-import { getTranslatedPortfolioData } from '@/data/portfolioTranslations'
+import { getTranslatedPortfolioData } from '@/data/portfolio'
 import {
 	useContentState,
 	useLanguageTransition,

@@ -1,6 +1,10 @@
 import { PROJECT_LINK_TYPES, PROJECT_STATUS } from '@/types/portfolio'
 import { describe, expect, it } from 'vitest'
-import { portfolioData, projects } from '../portfolio'
+import { getTranslatedPortfolioData } from '../portfolio'
+
+// Get portfolio data for English locale for testing
+const portfolioData = getTranslatedPortfolioData('en')
+const { projects } = portfolioData
 
 describe('Portfolio Data', () => {
 	describe('projects array', () => {
@@ -15,7 +19,6 @@ describe('Portfolio Data', () => {
 				expect(project).toHaveProperty('technologies')
 				expect(project).toHaveProperty('imageUrl')
 				expect(project).toHaveProperty('links')
-				expect(project).toHaveProperty('featured')
 				expect(project).toHaveProperty('status')
 			})
 		})
@@ -59,8 +62,8 @@ describe('Portfolio Data', () => {
 			expect(portfolioData.totalProjects).toBe(projects.length)
 		})
 
-		it('should reference the same projects array', () => {
-			expect(portfolioData.projects).toBe(projects)
+		it('should contain the projects array', () => {
+			expect(portfolioData.projects).toEqual(projects)
 		})
 	})
 
@@ -70,13 +73,12 @@ describe('Portfolio Data', () => {
 			expect(levelang.id).toBe('levelang-app')
 			expect(levelang.title).toBe('levelang.app')
 			expect(levelang.status).toBe('in-progress')
-			expect(levelang.featured).toBe(true)
 		})
 
 		it('should have AI Language Quiz Generator as second project', () => {
 			const quizGenerator = projects[1]
 			expect(quizGenerator.id).toBe('language-quiz-service')
-			expect(quizGenerator.title).toBe('AI Language Quiz Generator')
+			expect(quizGenerator.title).toBe('Language Quiz Service')
 			expect(quizGenerator.technologies).toContain('OpenAI')
 		})
 	})

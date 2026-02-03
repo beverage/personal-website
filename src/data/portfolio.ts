@@ -1,18 +1,17 @@
+import type { Language } from '@/contexts/LanguageContext'
+import enTranslations from '@/locales/en.json'
+import frTranslations from '@/locales/fr.json'
 import type { PortfolioData, Project } from '@/types/portfolio'
 
-/**
- * Portfolio project data
- * Using self-hosted placeholder images for China accessibility
- */
+const translations = {
+	en: enTranslations,
+	fr: frTranslations,
+}
 
-export const projects: Project[] = [
+// Base project data (without translatable content)
+const baseProjects = [
 	{
 		id: 'levelang-app',
-		title: 'levelang.app',
-		description:
-			'Skill-level-aware translation assistant for language learners',
-		longDescription:
-			'A translation application for iOS and Android that adapts translation complexity to match your language proficiency level and desired mood. Like Google Translate, but tailored for learners - providing beginner-friendly, intermediate, or advanced translations. Features voice input/output, transliterations, and comprehensive language support for French, German, Mandarin Chinese, and Cantonese.',
 		technologies: [
 			'React Native',
 			'TypeScript',
@@ -25,28 +24,31 @@ export const projects: Project[] = [
 			'Fly.io',
 		],
 		imageUrl: '/images/portfolio/levelang-placeholder.svg',
+		previewVideos: [
+			'/videos/portfolio/levelang-preview-1-user-perspective-360.mp4',
+			'/videos/portfolio/levelang-preview-2-user-perspective-response-360.mp4',
+		],
+		expandedVideos: [
+			'/videos/portfolio/levelang-preview-1-user-perspective-1024.mp4',
+			'/videos/portfolio/levelang-preview-2-user-perspective-response-1024.mp4',
+		],
 		links: [
 			{
-				label: 'Gallery',
+				labelKey: 'gallery',
 				url: '#gallery',
-				type: 'gallery',
+				type: 'gallery' as const,
 			},
 			{
-				label: 'Visit levelang.app',
+				labelKey: 'visitWebsite',
 				url: 'https://www.levelang.app',
-				type: 'website',
+				type: 'website' as const,
 			},
 		],
-		featured: true,
-		status: 'in-progress',
+		status: 'in-progress' as const,
+		translationKey: 'levelang' as const,
 	},
 	{
 		id: 'language-quiz-service',
-		title: 'AI Language Quiz Generator',
-		description:
-			'AI-powered French grammar quiz app with dynamic content generation',
-		longDescription:
-			'A French language grammar quiz generator application that uses AI to dynamically generate content tailored to specific language features a user wants to study. The system adapts questions and exercises based on user preferences, creating personalized grammar practice sessions for targeted learning.',
 		technologies: [
 			'Python',
 			'FastAPI',
@@ -60,27 +62,56 @@ export const projects: Project[] = [
 		imageUrl: '/images/portfolio/quiz-service-placeholder.svg',
 		links: [
 			{
-				label: 'View on GitHub',
+				labelKey: 'viewGithub',
 				url: 'https://github.com/beverage/language-quiz-service',
-				type: 'github',
+				type: 'github' as const,
 			},
 			{
-				label: 'API Documentation',
+				labelKey: 'apiDocs',
 				url: 'https://registry.scalar.com/@lqs/apis/language-quiz-service-api/latest',
-				type: 'api',
+				type: 'api' as const,
 			},
 			{
-				label: 'Try a Quiz',
-				url: '#quiz',
-				type: 'demo',
+				labelKey: 'tryQuiz',
+				url: '#quiz', // Internal navigation - uses LQS_SERVICE_URL via API route
+				type: 'demo' as const,
 			},
 		],
-		featured: true,
-		status: 'in-progress',
+		status: 'in-progress' as const,
+		translationKey: 'quiz' as const,
 	},
 ]
 
-export const portfolioData: PortfolioData = {
-	projects,
-	totalProjects: projects.length,
+export const getTranslatedPortfolioData = (
+	language: Language,
+): PortfolioData => {
+	const t = translations[language].projects
+
+	const projects: Project[] = baseProjects.map(project => {
+		const projectTranslations = t[project.translationKey]
+
+		return {
+			id: project.id,
+			title: projectTranslations.title,
+			description: projectTranslations.description,
+			longDescription: projectTranslations.longDescription,
+			technologies: project.technologies,
+			imageUrl: project.imageUrl,
+			previewVideos: project.previewVideos,
+			expandedVideos: project.expandedVideos,
+			links: project.links.map(link => ({
+				label: (projectTranslations.links as Record<string, string>)[
+					link.labelKey
+				],
+				url: link.url,
+				type: link.type,
+			})),
+			status: project.status,
+		}
+	})
+
+	return {
+		projects,
+		totalProjects: projects.length,
+	}
 }

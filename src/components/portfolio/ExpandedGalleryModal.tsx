@@ -1,7 +1,7 @@
 'use client'
 
+import { useVideoCarousel } from '@/hooks/useVideoCarousel'
 import { GALLERY_MODAL_ANIMATION_CONFIG } from '@/lib/animation/GalleryModalAnimationConfig'
-import useEmblaCarousel from 'embla-carousel-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -43,61 +43,34 @@ export function ExpandedGalleryModal({
 	initialIndex = 0,
 	alt = 'Preview video',
 }: ExpandedGalleryModalProps) {
-	const [emblaRef, emblaApi] = useEmblaCarousel({
-		loop: true,
-		startIndex: initialIndex,
-	})
-	const [canScrollPrev, setCanScrollPrev] = useState(false)
-	const [canScrollNext, setCanScrollNext] = useState(false)
 	const [mounted, setMounted] = useState(false)
 	const [stage, setStage] = useState<AnimationStage>('closed')
 
-	// Track which slides have been visited (to keep them loaded)
-	const [visitedSlides, setVisitedSlides] = useState<Set<number>>(
-		() => new Set([initialIndex]),
-	)
-	// Track which videos are still loading
-	const [loadingVideos, setLoadingVideos] = useState<Set<number>>(
-		() => new Set([initialIndex]),
-	)
+	const isActive = stage !== 'closed'
+
+	const {
+		emblaRef,
+		currentIndex,
+		canScrollPrev,
+		canScrollNext,
+		scrollPrev,
+		scrollNext,
+		visitedSlides,
+		loadingVideos,
+		videoRefs,
+		handleVideoPlaying,
+		handleVideoWaiting,
+		resetState,
+	} = useVideoCarousel({
+		initialIndex,
+		isActive,
+		resetOnActivate: false,
+	})
 
 	// Handle client-side mounting for portal
 	useEffect(() => {
 		setMounted(true)
 	}, [])
-
-	const scrollPrev = useCallback(() => {
-		if (emblaApi) emblaApi.scrollPrev()
-	}, [emblaApi])
-
-	const scrollNext = useCallback(() => {
-		if (emblaApi) emblaApi.scrollNext()
-	}, [emblaApi])
-
-	const onSelect = useCallback(() => {
-		if (!emblaApi) return
-		const index = emblaApi.selectedScrollSnap()
-		// Only add to loading if this is a newly visited slide
-		setVisitedSlides(prev => {
-			if (!prev.has(index)) {
-				setLoadingVideos(loading => new Set(loading).add(index))
-			}
-			return new Set(prev).add(index)
-		})
-		setCanScrollPrev(emblaApi.canScrollPrev())
-		setCanScrollNext(emblaApi.canScrollNext())
-	}, [emblaApi])
-
-	useEffect(() => {
-		if (!emblaApi) return
-		onSelect()
-		emblaApi.on('select', onSelect)
-		emblaApi.on('reInit', onSelect)
-		return () => {
-			emblaApi.off('select', onSelect)
-			emblaApi.off('reInit', onSelect)
-		}
-	}, [emblaApi, onSelect])
 
 	// Handle opening animation sequence
 	useEffect(() => {
@@ -232,13 +205,12 @@ export function ExpandedGalleryModal({
 		}
 	}, [stage])
 
-	// Reset lazy loading state when modal closes for fresh load on next open
+	// Reset state when modal closes for fresh load on next open
 	useEffect(() => {
 		if (stage === 'closed') {
-			setVisitedSlides(new Set([initialIndex]))
-			setLoadingVideos(new Set([initialIndex]))
+			resetState()
 		}
-	}, [stage, initialIndex])
+	}, [stage, resetState])
 
 	if (!mounted || stage === 'closed') return null
 
@@ -396,46 +368,57 @@ export function ExpandedGalleryModal({
 							</button>
 
 							{/* Embla viewport */}
-							<div ref={emblaRef} className="h-full overflow-hidden rounded-lg">
-								<div className="flex h-full">
-									{videos.map((videoUrl, index) => (
-										<div
-											key={videoUrl}
-											className="relative h-full min-w-0 flex-[0_0_100%]"
-										>
-											{/* Loading spinner - shows during initial load and stalls */}
-											{loadingVideos.has(index) && (
-												<div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/50">
-													<Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-												</div>
-											)}
-											{/* Only render video if slide has been visited */}
-											{visitedSlides.has(index) && (
-												<video
-													src={videoUrl}
-													autoPlay
-													muted
-													loop
-													playsInline
-													className="h-full w-full object-contain"
-													aria-label={`${alt} ${index + 1}`}
-													onPlaying={() => {
-														// Hide spinner when video starts/resumes playing
-														setLoadingVideos(prev => {
-															const next = new Set(prev)
-															next.delete(index)
-															return next
-														})
-													}}
-													onWaiting={() => {
-														// Show spinner when video stalls (buffering)
-														setLoadingVideos(prev => new Set(prev).add(index))
-													}}
-												/>
-											)}
-										</div>
-									))}
+							<div className="flex h-full flex-col">
+								{/* Spacer to balance page indicator below */}
+								{videos.length > 1 && <div className="h-8 shrink-0" />}
+
+								<div
+									ref={emblaRef}
+									className="min-h-0 flex-1 overflow-hidden rounded-lg"
+								>
+									<div className="flex h-full">
+										{videos.map((videoUrl, index) => (
+											<div
+												key={videoUrl}
+												className="relative h-full min-w-0 flex-[0_0_100%]"
+											>
+												{/* Loading spinner - shows during initial load and stalls */}
+												{loadingVideos.has(index) && (
+													<div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/50">
+														<Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+													</div>
+												)}
+												{/* Only render video if slide has been visited */}
+												{visitedSlides.has(index) && (
+													<video
+														ref={el => {
+															videoRefs.current[index] = el
+														}}
+														src={videoUrl}
+														autoPlay
+														muted
+														loop
+														playsInline
+														className="h-full w-full object-contain"
+														aria-label={`${alt} ${index + 1}`}
+														onPlaying={() => handleVideoPlaying(index)}
+														onWaiting={() => handleVideoWaiting(index)}
+													/>
+												)}
+											</div>
+										))}
+									</div>
 								</div>
+
+								{/* Page indicator - centered underneath videos */}
+								{videos.length > 1 && (
+									<div
+										className="mt-3 text-center text-sm font-medium text-cyan-300"
+										aria-label={`Slide ${currentIndex + 1} of ${videos.length}`}
+									>
+										{currentIndex + 1} / {videos.length}
+									</div>
+								)}
 							</div>
 
 							{/* Navigation arrows - only show if multiple items */}

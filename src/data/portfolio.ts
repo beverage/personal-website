@@ -19,6 +19,7 @@ const baseProjects = [
 			'Python',
 			'PostgreSQL',
 			'Supabase',
+			'Gemini',
 			'OpenAI',
 			'Docker',
 			'Fly.io',
@@ -27,10 +28,12 @@ const baseProjects = [
 		previewVideos: [
 			'/videos/portfolio/levelang-preview-1-user-perspective-360.mp4',
 			'/videos/portfolio/levelang-preview-2-user-perspective-response-360.mp4',
+			'/videos/portfolio/levelang-preview-3-german-continuation-360.mp4',
 		],
 		expandedVideos: [
 			'/videos/portfolio/levelang-preview-1-user-perspective-1024.mp4',
 			'/videos/portfolio/levelang-preview-2-user-perspective-response-1024.mp4',
+			'/videos/portfolio/levelang-preview-3-german-continuation-1024.mp4',
 		],
 		links: [
 			{

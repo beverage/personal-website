@@ -1,7 +1,7 @@
 'use client'
 
-import useEmblaCarousel from 'embla-carousel-react'
-import { ChevronLeft, ChevronRight, Expand } from 'lucide-react'
+import { useVideoCarousel } from '@/hooks/useVideoCarousel'
+import { ChevronLeft, ChevronRight, Expand, Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { ExpandedGalleryModal } from './ExpandedGalleryModal'
 
@@ -18,6 +18,8 @@ interface MediaCarouselProps {
 	isModalOpen?: boolean
 	/** Callback when modal open state changes */
 	onModalOpenChange?: (open: boolean) => void
+	/** Whether this carousel is currently focused/visible */
+	isFocused?: boolean
 }
 
 /**
@@ -33,42 +35,39 @@ export function MediaCarousel({
 	alt = 'Preview video',
 	isModalOpen: controlledIsOpen,
 	onModalOpenChange,
+	isFocused = false,
 }: MediaCarouselProps) {
-	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
-	const [canScrollPrev, setCanScrollPrev] = useState(false)
-	const [canScrollNext, setCanScrollNext] = useState(false)
 	const [internalIsOpen, setInternalIsOpen] = useState(false)
-	const [currentIndex, setCurrentIndex] = useState(0)
 
 	// Support both controlled and uncontrolled modes
 	const isModalOpen = controlledIsOpen ?? internalIsOpen
 	const setIsModalOpen = onModalOpenChange ?? setInternalIsOpen
 
-	const scrollPrev = useCallback(() => {
-		if (emblaApi) emblaApi.scrollPrev()
-	}, [emblaApi])
+	const {
+		emblaRef,
+		currentIndex,
+		canScrollPrev,
+		canScrollNext,
+		scrollPrev,
+		scrollNext,
+		visitedSlides,
+		loadingVideos,
+		videoRefs,
+		handleVideoPlaying,
+		handleVideoWaiting,
+		resetState,
+	} = useVideoCarousel({
+		initialIndex: 0,
+		isActive: isFocused,
+		resetOnActivate: true,
+	})
 
-	const scrollNext = useCallback(() => {
-		if (emblaApi) emblaApi.scrollNext()
-	}, [emblaApi])
-
-	const onSelect = useCallback(() => {
-		if (!emblaApi) return
-		setCanScrollPrev(emblaApi.canScrollPrev())
-		setCanScrollNext(emblaApi.canScrollNext())
-		setCurrentIndex(emblaApi.selectedScrollSnap())
-	}, [emblaApi])
-
+	// Reset lazy loading state when focus is lost for fresh load on next focus
 	useEffect(() => {
-		if (!emblaApi) return
-		onSelect()
-		emblaApi.on('select', onSelect)
-		emblaApi.on('reInit', onSelect)
-		return () => {
-			emblaApi.off('select', onSelect)
-			emblaApi.off('reInit', onSelect)
+		if (!isFocused) {
+			resetState()
 		}
-	}, [emblaApi, onSelect])
+	}, [isFocused, resetState])
 
 	const handleOpenModal = useCallback(() => {
 		setIsModalOpen(true)
@@ -89,16 +88,30 @@ export function MediaCarousel({
 				<div ref={emblaRef} className="overflow-hidden">
 					<div className="flex">
 						{videos.map((videoUrl, index) => (
-							<div key={videoUrl} className="min-w-0 flex-[0_0_100%]">
-								<video
-									src={videoUrl}
-									autoPlay
-									muted
-									loop
-									playsInline
-									className="h-64 w-full object-contain"
-									aria-label={`${alt} ${index + 1}`}
-								/>
+							<div key={videoUrl} className="relative min-w-0 flex-[0_0_100%]">
+								{/* Loading spinner - shows during initial load and stalls */}
+								{loadingVideos.has(index) && (
+									<div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/50">
+										<Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+									</div>
+								)}
+								{/* Only render video if slide has been visited */}
+								{visitedSlides.has(index) && (
+									<video
+										ref={el => {
+											videoRefs.current[index] = el
+										}}
+										src={videoUrl}
+										autoPlay
+										muted
+										loop
+										playsInline
+										className="h-64 w-full object-contain"
+										aria-label={`${alt} ${index + 1}`}
+										onPlaying={() => handleVideoPlaying(index)}
+										onWaiting={() => handleVideoWaiting(index)}
+									/>
+								)}
 							</div>
 						))}
 					</div>
@@ -113,9 +126,17 @@ export function MediaCarousel({
 					<Expand size={20} />
 				</button>
 
-				{/* Navigation arrows - only show if multiple items */}
+				{/* Navigation arrows and page indicator - only show if multiple items */}
 				{showArrows && (
 					<>
+						{/* Page indicator - upper right, centered over next button */}
+						<div
+							className="absolute top-2 right-2 z-10 flex w-9 justify-center text-sm font-medium text-cyan-300"
+							aria-label={`Slide ${currentIndex + 1} of ${videos.length}`}
+						>
+							{currentIndex + 1} / {videos.length}
+						</div>
+
 						{/* Previous button */}
 						<button
 							onClick={scrollPrev}

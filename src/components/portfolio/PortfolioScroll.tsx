@@ -23,12 +23,14 @@ interface ProjectCardProps {
 	project: Project
 	index: number
 	onNavigateToQuiz?: () => void
+	isFocused?: boolean
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
 	project,
 	index,
 	onNavigateToQuiz,
+	isFocused = false,
 }) => {
 	const { language } = useTranslation()
 	const { quizDemoEnabled } = useQuizDemo()
@@ -190,6 +192,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 									alt={project.title}
 									isModalOpen={isGalleryOpen}
 									onModalOpenChange={setIsGalleryOpen}
+									isFocused={isFocused}
 								/>
 							) : (
 								<motion.img
@@ -576,6 +579,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 								project={project}
 								index={index}
 								onNavigateToQuiz={onNavigateToQuiz}
+								isFocused={currentScrollIndex === index + 1}
 							/>
 
 							{/* Down Arrow and Back Button - Below project card content */}

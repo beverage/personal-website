@@ -134,6 +134,7 @@ export const PageLayout = ({
 		currentContentOpacity,
 		newContentOpacity,
 		isTransitioning,
+		controlsReady,
 	} = useStarFieldTransition({
 		config: transitionConfig,
 		baseForwardSpeed: speed ?? starSpeed,
@@ -355,7 +356,7 @@ export const PageLayout = ({
 				style={startup.controlFadeStyle}
 			>
 				<LanguageSelector
-					disabled={isTransitioning || isLanguageTransitioning}
+					disabled={!controlsReady || isLanguageTransitioning}
 				/>
 			</div>
 
@@ -368,7 +369,7 @@ export const PageLayout = ({
 						? () => startup.setClusterVisible(!startup.clusterVisible)
 						: undefined
 				}
-				disabled={isTransitioning || isLanguageTransitioning}
+				disabled={!controlsReady || isLanguageTransitioning}
 				fadeStyle={startup.controlFadeStyle}
 			/>
 
@@ -379,7 +380,7 @@ export const PageLayout = ({
 				}
 			>
 				<DebugControlsCorner
-					disabled={isTransitioning || isLanguageTransitioning}
+					disabled={!controlsReady || isLanguageTransitioning}
 					fadeStyle={startup.controlFadeStyle}
 				/>
 			</div>
@@ -411,14 +412,13 @@ export const PageLayout = ({
 						delay:
 							startupSequence?.enabled && !startup.startupComplete
 								? 0
-								: (transitionConfig.duration +
-										(transitionConfig.settlingDuration || 0)) /
-									1000,
+								: transitionConfig.controlsRevealDelay / 1000,
 					}}
 				>
 					<BackButton
 						direction="left"
 						onClick={handleBackClick}
+						disabled={isTransitioning}
 						aria-label="Back to home"
 					/>
 				</motion.div>
@@ -451,9 +451,7 @@ export const PageLayout = ({
 						delay:
 							startupSequence?.enabled && !startup.startupComplete
 								? 0
-								: (transitionConfig.duration +
-										(transitionConfig.settlingDuration || 0)) /
-									1000,
+								: transitionConfig.controlsRevealDelay / 1000,
 					}}
 				>
 					<BackButton
@@ -491,14 +489,13 @@ export const PageLayout = ({
 						delay:
 							startupSequence?.enabled && !startup.startupComplete
 								? 0
-								: (transitionConfig.duration +
-										(transitionConfig.settlingDuration || 0)) /
-									1000,
+								: transitionConfig.controlsRevealDelay / 1000,
 					}}
 				>
 					<BackButton
 						direction="right"
 						onClick={handleBackClick}
+						disabled={isTransitioning}
 						aria-label="Back to home"
 					/>
 				</motion.div>

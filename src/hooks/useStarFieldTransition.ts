@@ -32,6 +32,7 @@ interface UseStarFieldTransitionReturn {
 	currentContentOpacity: number // Opacity for currently visible content (Hero, Projects, Contact)
 	newContentOpacity: number // Opacity for content being transitioned to
 	isTransitioning: boolean
+	controlsReady: boolean // True when controlsRevealDelay has elapsed (or idle)
 }
 
 export const useStarFieldTransition = ({
@@ -49,6 +50,8 @@ export const useStarFieldTransition = ({
 	})
 
 	const animationFrameRef = useRef<number>(0)
+	const transitionStartTimeRef = useRef<number>(0) // Tracks original start time across phases
+	const [controlsReady, setControlsReady] = useState<boolean>(true)
 
 	// Cleanup animation frame on unmount
 	useEffect(() => {
@@ -68,6 +71,8 @@ export const useStarFieldTransition = ({
 			}
 
 			const startTime = performance.now()
+			transitionStartTimeRef.current = startTime
+			setControlsReady(false)
 			setTransitionState({
 				phase: 'transitioning',
 				direction,
@@ -132,6 +137,12 @@ export const useStarFieldTransition = ({
 			if (elapsed < 0) {
 				animationFrameRef.current = requestAnimationFrame(animate)
 				return // Skip this frame, startTime not set properly yet
+			}
+
+			// Check if controls should be revealed (time-based, independent of phase)
+			const totalElapsed = currentTime - transitionStartTimeRef.current
+			if (!controlsReady && totalElapsed >= config.controlsRevealDelay) {
+				setControlsReady(true)
 			}
 
 			const easingFn = EASING_FUNCTIONS[config.easingCurve]
@@ -252,6 +263,7 @@ export const useStarFieldTransition = ({
 					// Reset content opacity to idle state (current content visible, new content hidden)
 					setCurrentContentOpacity(1)
 					setNewContentOpacity(0)
+					setControlsReady(true)
 					onTransitionComplete?.()
 					return
 				}
@@ -277,6 +289,8 @@ export const useStarFieldTransition = ({
 		config.customEasing,
 		config.rollIntensity,
 		config.contentFade,
+		config.controlsRevealDelay,
+		controlsReady,
 		calculateContentOpacity,
 		onTransitionComplete,
 		onContentFadeComplete,
@@ -364,5 +378,6 @@ export const useStarFieldTransition = ({
 		currentContentOpacity,
 		newContentOpacity,
 		isTransitioning,
+		controlsReady,
 	}
 }

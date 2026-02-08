@@ -29,6 +29,7 @@ export interface CourseChangeConfig {
 	}
 	contentFade: ContentFadeConfig // 3-phase content fade timing
 	settlingDuration: number // Duration to return to forward motion
+	controlsRevealDelay: number // ms from transition start when UI controls begin fading in
 }
 
 export interface TransitionState {
@@ -74,20 +75,22 @@ export const COURSE_CHANGE_PRESETS: Record<
 			fadeInRatio: 0.35, // Last 35% - fade in new content
 		},
 		settlingDuration: 1200, // Extended for smoother drift
+		controlsRevealDelay: 1500, // Controls appear midway through transition
 	},
 	'banking-turn': {
 		variant: 'banking-turn',
 		duration: 3000,
 		parallaxIntensity: 0.8, // Moderate cinematic banking
 		maxLateralSpeed: 20000, // Increased back up for dramatic screen-wide motion
-		rollIntensity: 80, // Moderate banking roll (half of original 300)
+		rollIntensity: 100, // Slightly more pronounced banking roll
 		easingCurve: 'fast-in-slow-out', // Fixed timing race condition, back to advanced easing
 		contentFade: {
-			fadeOutRatio: 0.25,
-			starfieldOnlyRatio: 0.5,
-			fadeInRatio: 0.25,
+			fadeOutRatio: 0.2,
+			starfieldOnlyRatio: 0.3,
+			fadeInRatio: 0.5,
 		},
 		settlingDuration: 3000, // Extended for longer, smoother drift
+		controlsRevealDelay: 1500, // Controls appear at halfway point of main transition
 	},
 	'sharp-maneuver': {
 		variant: 'sharp-maneuver',
@@ -106,6 +109,7 @@ export const COURSE_CHANGE_PRESETS: Record<
 			fadeInRatio: 0.3, // Last 30% - quick fade in
 		},
 		settlingDuration: 800, // Extended for smoother drift
+		controlsRevealDelay: 800, // Controls appear shortly after midpoint
 	},
 }
 

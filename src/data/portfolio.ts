@@ -21,6 +21,7 @@ const baseProjects = [
 			'Supabase',
 			'Gemini',
 			'OpenAI',
+			'MCP',
 			'Docker',
 			'Fly.io',
 		],
@@ -40,6 +41,16 @@ const baseProjects = [
 				labelKey: 'gallery',
 				url: '#gallery',
 				type: 'gallery' as const,
+			},
+			{
+				labelKey: 'viewGithub',
+				url: 'https://github.com/beverage/levelang-mcp',
+				type: 'github' as const,
+			},
+			{
+				labelKey: 'apiDocs',
+				url: 'https://registry.scalar.com/@levelang/apis/levelangapp-backend/latest',
+				type: 'api' as const,
 			},
 			{
 				labelKey: 'visitWebsite',

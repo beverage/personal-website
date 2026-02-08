@@ -21,10 +21,12 @@
 	"projects": {
 		"levelang": {
 			"title": "levelang.app",
-			"description": "Skill-level-aware translation assistant for language learners",
-			"longDescription": "A translation application for iOS and Android that adapts translation complexity to match your language proficiency level and desired mood. Powered by large language models, it provides beginner-friendly, intermediate, or advanced translations tailored for learners. Features voice input/output, transliterations, and comprehensive language support for French, Italian, German, Mandarin Chinese, and Cantonese.",
+			"description": "Level-aware translation platform for language learners — mobile app & MCP server",
+			"longDescription": "A translation platform that adapts complexity to your language proficiency level and desired mood. The mobile app (iOS/Android) features voice input/output and transliterations, while an open-source MCP server brings level-aware translation directly into AI assistants like Claude and Cursor—enabling proficiency-constrained translations, multi-level comparisons, and language discovery. Supports French, Italian, German, Mandarin Chinese, and Cantonese at beginner through fluent levels.",
 			"links": {
 				"gallery": "Gallery",
+				"viewGithub": "MCP on GitHub",
+				"apiDocs": "API Documentation",
 				"visitWebsite": "Visit levelang.app"
 			}
 		},

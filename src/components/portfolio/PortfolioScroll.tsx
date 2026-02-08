@@ -6,7 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import type { Project } from '@/types/portfolio'
 import { LANGUAGE_TRANSITION_CONFIG } from '@/types/transitions'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ExternalLink, Github, Images } from 'lucide-react'
+import { BookOpen, ExternalLink, Github, Images } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MediaCarousel } from './MediaCarousel'
 import { NavigationArrow } from './NavigationArrows'
@@ -62,6 +62,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 				return <Github size={16} />
 			case 'gallery':
 				return <Images size={16} />
+			case 'api':
+				return <BookOpen size={16} />
 			default:
 				return <ExternalLink size={16} />
 		}
@@ -70,9 +72,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 	const getLinkColor = (type: string) => {
 		switch (type) {
 			case 'github':
-			case 'gallery':
 				return 'border-purple-400 text-purple-300 transition-all duration-700 hover:bg-purple-500 hover:text-white hover:shadow-lg hover:shadow-purple-500/40'
 			case 'demo':
+			case 'gallery':
 				return 'border-green-400 text-green-300 transition-all duration-700 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/40'
 			case 'api':
 				return 'border-blue-400 text-blue-300 transition-all duration-700 hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/40'

@@ -21,10 +21,12 @@
 	"projects": {
 		"levelang": {
 			"title": "levelang.app",
-			"description": "Assistant de traduction adapté au niveau pour apprenants de langues",
-			"longDescription": "Une application de traduction pour iOS et Android qui adapte la complexité des traductions à votre niveau de compétence linguistique et au ton souhaité. Alimentée par des grands modèles de langage, elle propose des traductions pour débutants, intermédiaires ou avancés, conçues pour les apprenants. Inclut la saisie/sortie vocale, les translittérations et une prise en charge complète pour le français, l'italien, l'allemand, le mandarin et le cantonais.",
+			"description": "Plateforme de traduction adaptée au niveau — application mobile et serveur MCP",
+			"longDescription": "Une plateforme de traduction qui adapte la complexité à votre niveau de compétence linguistique et au ton souhaité. L'application mobile (iOS/Android) offre la saisie/sortie vocale et les translittérations, tandis qu'un serveur MCP open source intègre la traduction adaptée au niveau directement dans les assistants IA comme Claude et Cursor — permettant des traductions contraintes par niveau, des comparaisons multi-niveaux et la découverte de langues. Prend en charge le français, l'italien, l'allemand, le mandarin et le cantonais, du débutant au niveau courant.",
 			"links": {
 				"gallery": "Galerie",
+				"viewGithub": "MCP sur GitHub",
+				"apiDocs": "Documentation API",
 				"visitWebsite": "Visiter levelang.app"
 			}
 		},

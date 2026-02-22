@@ -27,14 +27,16 @@ const baseProjects = [
 		],
 		imageUrl: '/images/portfolio/levelang-placeholder.svg',
 		previewVideos: [
-			'/videos/portfolio/levelang-preview-1-user-perspective-360.mp4',
-			'/videos/portfolio/levelang-preview-2-user-perspective-response-360.mp4',
-			'/videos/portfolio/levelang-preview-3-german-continuation-360.mp4',
+			'/videos/portfolio/levelang-hero-360.webm',
+			'/videos/portfolio/levelang-demo-right-360.webm',
+			'/videos/portfolio/levelang-demo-center-360.webm',
+			'/videos/portfolio/levelang-demo-voice-360.webm',
 		],
 		expandedVideos: [
-			'/videos/portfolio/levelang-preview-1-user-perspective-1024.mp4',
-			'/videos/portfolio/levelang-preview-2-user-perspective-response-1024.mp4',
-			'/videos/portfolio/levelang-preview-3-german-continuation-1024.mp4',
+			'/videos/portfolio/levelang-hero-1024.webm',
+			'/videos/portfolio/levelang-demo-right-1024.webm',
+			'/videos/portfolio/levelang-demo-center-1024.webm',
+			'/videos/portfolio/levelang-demo-voice-1024.webm',
 		],
 		links: [
 			{

@@ -221,9 +221,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 									}}
 								/>
 							)}
+							{project.status === 'pre-release' && (
+								<div className="absolute top-4 left-4 z-20 rounded-full bg-green-500/20 px-3 py-1 text-xs text-green-300 backdrop-blur-sm">
+									Pre-Release
+								</div>
+							)}
 							{project.status === 'in-progress' && (
 								<div className="absolute top-4 left-4 z-20 rounded-full bg-yellow-500/20 px-3 py-1 text-xs text-yellow-300 backdrop-blur-sm">
-									In Progress
+									Under Development
 								</div>
 							)}
 						</div>

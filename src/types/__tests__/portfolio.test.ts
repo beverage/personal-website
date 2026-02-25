@@ -22,7 +22,12 @@ describe('Portfolio Types', () => {
 
 	describe('PROJECT_STATUS', () => {
 		it('should contain all expected status values', () => {
-			expect(PROJECT_STATUS).toEqual(['completed', 'in-progress', 'planned'])
+			expect(PROJECT_STATUS).toEqual([
+				'completed',
+				'pre-release',
+				'in-progress',
+				'planned',
+			])
 		})
 	})
 

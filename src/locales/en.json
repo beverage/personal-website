@@ -22,7 +22,7 @@
 		"levelang": {
 			"title": "levelang.app",
 			"description": "Level-aware translation platform for language learners — mobile app & MCP server",
-			"longDescription": "A translation platform that adapts complexity to your language proficiency level and desired mood. The mobile app (iOS/Android) features voice input/output and transliterations, while an open-source MCP server brings level-aware translation directly into AI assistants like Claude and Cursor—enabling proficiency-constrained translations, multi-level comparisons, and language discovery. Supports French, Italian, German, Mandarin Chinese, and Cantonese at beginner through fluent levels.",
+			"longDescription": "A translation platform that adapts complexity to your language proficiency level, tone (casual or formal), and mode (written or spoken). The mobile app (iOS/Android) features voice input/output and transliterations, while an open-source MCP server brings level-aware translation directly into AI assistants like Claude and Cursor—enabling proficiency-constrained translations, multi-level comparisons, and language discovery. Supports French, Italian, German, and Mandarin Chinese at beginner through fluent levels.",
 			"links": {
 				"gallery": "Gallery",
 				"viewGithub": "MCP on GitHub",

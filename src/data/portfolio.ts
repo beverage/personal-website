@@ -60,7 +60,7 @@ const baseProjects = [
 				type: 'website' as const,
 			},
 		],
-		status: 'in-progress' as const,
+		status: 'pre-release' as const,
 		translationKey: 'levelang' as const,
 	},
 	{

@@ -181,7 +181,7 @@ describe('PortfolioScroll', () => {
 				</LanguageProvider>,
 			)
 
-			expect(screen.getByText('In Progress')).toBeInTheDocument()
+			expect(screen.getByText('Under Development')).toBeInTheDocument()
 		})
 	})
 

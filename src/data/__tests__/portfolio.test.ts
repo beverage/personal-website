@@ -72,7 +72,7 @@ describe('Portfolio Data', () => {
 			const levelang = projects[0]
 			expect(levelang.id).toBe('levelang-app')
 			expect(levelang.title).toBe('levelang.app')
-			expect(levelang.status).toBe('in-progress')
+			expect(levelang.status).toBe('pre-release')
 		})
 
 		it('should have AI Language Quiz Generator as second project', () => {

@@ -11,7 +11,12 @@ export const PROJECT_LINK_TYPES = [
 ] as const
 export type ProjectLinkType = (typeof PROJECT_LINK_TYPES)[number]
 
-export const PROJECT_STATUS = ['completed', 'in-progress', 'planned'] as const
+export const PROJECT_STATUS = [
+	'completed',
+	'pre-release',
+	'in-progress',
+	'planned',
+] as const
 export type ProjectStatus = (typeof PROJECT_STATUS)[number]
 
 export interface ProjectLink {

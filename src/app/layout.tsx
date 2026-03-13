@@ -29,59 +29,85 @@ const exo2 = localFont({
 })
 
 export const metadata: Metadata = {
-	title: 'beverage.me - Alex Beverage',
-	description: "Alex Beverage's Personal Website",
+	title: 'Alex Beverage — Agentic Software Engineer | beverage.me',
+	description:
+		'Alex Beverage is an agentic software engineer building ' +
+		'AI-powered tools including levelang.app, a translator that ' +
+		'adapts to your skill level, mood, and register. ' +
+		'Explore projects, connect, and learn more.',
 
-	// SEO Keywords and Author Info
 	keywords: [
 		'Alex Beverage',
+		'software engineer',
 		'agentic developer',
+		'agentic software engineer',
+		'AI developer',
 		'portfolio',
-		'personal website',
-		'ai',
-		'sotware engineer',
+		'beverage.me',
+		'levelang',
+		'language translation',
+		'language learning',
+		'React',
+		'TypeScript',
+		'Python',
+		'full stack developer',
 	],
-	authors: [{ name: 'Alex Beverage' }],
+	authors: [{ name: 'Alex Beverage', url: 'https://www.beverage.me' }],
 	creator: 'Alex Beverage',
 
-	// Canonical URL
 	metadataBase: new URL('https://www.beverage.me'),
 	alternates: {
 		canonical: 'https://www.beverage.me',
 	},
 
-	// OpenGraph tags for Facebook, LinkedIn, etc.
 	openGraph: {
 		type: 'website',
 		locale: 'en_US',
 		url: 'https://www.beverage.me',
-		title: 'beverage.me - Alex Beverage',
-		description: "Alex Beverage's Personal Portfolio Website",
+		title: 'Alex Beverage — Agentic Software Engineer',
+		description:
+			'Agentic software engineer building AI-powered tools ' +
+			'including levelang.app — a translator that adapts to skill, ' +
+			'mood, and register.',
 		siteName: 'beverage.me',
 		images: [
 			{
-				url: '/favicon.ico', // Temporary - replace with social preview image later
-				width: 32,
-				height: 32,
-				alt: 'beverage.me logo',
+				url: '/images/og-preview.png',
+				width: 1200,
+				height: 630,
+				alt: 'Alex Beverage — Agentic Software Engineer',
 			},
 		],
 	},
 
-	// Twitter Card tags
 	twitter: {
 		card: 'summary_large_image',
-		title: 'beverage.me - Alex Beverage',
-		description: "Alex Beverage's Personal Portfolio Website",
-		images: ['/favicon.ico'], // Temporary - replace with social preview image later
-		// creator: '@yourtwitterhandle', // Add your Twitter handle here
+		title: 'Alex Beverage — Agentic Software Engineer',
+		description:
+			'Agentic software engineer building AI-powered tools ' +
+			'including levelang.app — a translator that adapts to skill, ' +
+			'mood, and register.',
+		images: [
+			{
+				url: '/images/og-preview.png',
+				width: 1200,
+				height: 630,
+				alt: 'Alex Beverage — Agentic Software Engineer',
+			},
+		],
 	},
 
 	robots: {
 		index: true,
 		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
 	},
-	// Security: Prevent referrer leakage
 	referrer: 'strict-origin-when-cross-origin',
 }
 

@@ -108,6 +108,20 @@ export const metadata: Metadata = {
 			'max-snippet': -1,
 		},
 	},
+
+	icons: {
+		icon: [
+			{
+				url: '/images/icon-dark.png',
+				media: '(prefers-color-scheme: dark)',
+			},
+			{
+				url: '/images/icon-light.png',
+				media: '(prefers-color-scheme: light)',
+			},
+		],
+	},
+
 	referrer: 'strict-origin-when-cross-origin',
 }
 

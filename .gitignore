@@ -50,6 +50,3 @@ commit-msg-temp.txt
 # starfield capture temp directories
 .starfield-frames
 .starfield-blended
-
-# design concepts
-/design

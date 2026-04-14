@@ -222,18 +222,25 @@ export const useStarFieldTransition = ({
 				const progress = Math.min(elapsed / config.settlingDuration, 1)
 				const easedProgress = settlingEase(progress)
 
-				// Calculate remaining lateral velocity during settling (drift to zero)
-				const remainingLateralVelocity = 1 - easedProgress
+				// Lateral motion decays on the exponential settling curve
+				// (fast early drop, slow late tail) — the drift stops quickly
+				// after the turn completes.
+				// Bank roll decays independently on a cubic (1 - t³) using
+				// raw progress instead of eased. That curve stays flat near
+				// t=0 and gets very steep near t=1, so the bank holds near
+				// its peak for most of the settle and then rolls back to
+				// level in the final third. Reads as "the ship stops drifting,
+				// holds its tilt, then the pilot straightens out."
+				const remainingBankMagnitude = 1 - progress * progress * progress
 
-				// Update banking roll during settling (reduce roll as lateral velocity decreases)
+				// Update banking roll during settling
 				if (Math.floor(elapsed / 50) !== Math.floor((elapsed - 16) / 50)) {
 					// Update every ~50ms instead of every frame
 					const directionMultiplier =
 						transitionState.direction === 'left' ? 1 : -1
-					// Bank angle proportional to remaining lateral velocity
 					const bankingRollAmount =
 						((config.rollIntensity * Math.PI) / 180) *
-						remainingLateralVelocity *
+						remainingBankMagnitude *
 						directionMultiplier
 					setBankingRoll({
 						foregroundRollSpeed: -1.5 + bankingRollAmount, // Gradually return to base roll

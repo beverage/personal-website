@@ -15,6 +15,10 @@ const ConfigSchema = z.object({
 			}),
 		])
 		.optional(),
+	// Contact form relay — Supabase edge function URL + shared secret.
+	// Server-only; never exposed via getClientConfig().
+	contactRelayUrl: z.string().url().optional(),
+	contactRelayToken: z.string().min(16).optional(),
 })
 
 export type Config = z.infer<typeof ConfigSchema>
@@ -28,6 +32,8 @@ function parseConfig(): Config {
 		instagramUrl: process.env.INSTAGRAM_PROFILE_URL,
 		emailAddress: process.env.CONTACT_EMAIL_ADDRESS,
 		cvUrl: process.env.CV_URL,
+		contactRelayUrl: process.env.CONTACT_RELAY_URL,
+		contactRelayToken: process.env.CONTACT_RELAY_TOKEN,
 	}
 
 	try {

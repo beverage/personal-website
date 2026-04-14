@@ -9,6 +9,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import { PortfolioScroll } from '../portfolio/PortfolioScroll'
 import { QuizPage } from '../quiz/QuizPage'
+import { ContactForm, type ContactFormStrings } from './ContactForm'
 import { HeroSection } from './HeroSection'
 
 interface HeroProps {
@@ -25,6 +26,7 @@ interface ContactProps {
 	title: string
 	description: string
 	language: string
+	form: ContactFormStrings
 }
 
 interface ContentSectionProps {
@@ -133,7 +135,7 @@ export function ContentSection({
 						pointerEvents: getContentOpacity('contact') === 0 ? 'none' : 'auto',
 					}}
 				>
-					<div className="max-w-7xl text-center">
+					<div className="w-full max-w-3xl text-center">
 						<AnimatePresence mode="wait">
 							<motion.div
 								key={`contact-text-${contactProps.language}`}
@@ -148,14 +150,18 @@ export function ContentSection({
 									pointerEvents: heroTextVisible ? 'auto' : 'none',
 								}}
 							>
-								<h1 className="font-exo2 mb-8 text-6xl tracking-wider sm:text-8xl">
+								<h1 className="font-exo2 mb-4 text-5xl tracking-wider sm:text-6xl md:text-7xl">
 									<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
 										{contactProps.title}
 									</span>
 								</h1>
-								<p className="font-exo2 mx-auto mb-8 max-w-5xl text-xl leading-relaxed text-white/90 sm:text-2xl">
+								<p className="font-exo2 mx-auto mb-8 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
 									{contactProps.description}
 								</p>
+								<ContactForm
+									form={contactProps.form}
+									disabled={!heroTextVisible}
+								/>
 							</motion.div>
 						</AnimatePresence>
 					</div>

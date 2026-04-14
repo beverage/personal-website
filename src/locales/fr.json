@@ -16,7 +16,22 @@
 	},
 	"contact": {
 		"title": "Contactez-moi",
-		"description": "Connectons-nous pour créer quelque chose d'incroyable ensemble."
+		"description": "Questions, opportunités ou simple bonjour — écrivez-moi.",
+		"form": {
+			"nameLabel": "Nom",
+			"namePlaceholder": "Votre nom (optionnel)",
+			"emailLabel": "Email",
+			"emailPlaceholder": "vous@exemple.com",
+			"messageLabel": "Message",
+			"messagePlaceholder": "Qu'avez-vous en tête ?",
+			"submit": "Envoyer",
+			"submitting": "Envoi…",
+			"success": "Merci — votre message est en route.",
+			"sendAnother": "Envoyer un autre",
+			"errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+			"errorValidation": "Veuillez vérifier vos entrées et réessayer.",
+			"errorRateLimit": "Trop de messages. Veuillez patienter un instant et réessayer."
+		}
 	},
 	"projects": {
 		"levelang": {

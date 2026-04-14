@@ -16,7 +16,22 @@
 	},
 	"contact": {
 		"title": "Get In Touch",
-		"description": "Let's connect and build something amazing together."
+		"description": "Questions, opportunities, or just want to say hi — drop a line.",
+		"form": {
+			"nameLabel": "Name",
+			"namePlaceholder": "Your name (optional)",
+			"emailLabel": "Email",
+			"emailPlaceholder": "you@example.com",
+			"messageLabel": "Message",
+			"messagePlaceholder": "What's on your mind?",
+			"submit": "Send",
+			"submitting": "Sending…",
+			"success": "Thanks — your message is on its way.",
+			"sendAnother": "Send another",
+			"errorGeneric": "Something went wrong. Please try again.",
+			"errorValidation": "Please check your entries and try again.",
+			"errorRateLimit": "Too many messages. Please wait a moment and try again."
+		}
 	},
 	"projects": {
 		"levelang": {

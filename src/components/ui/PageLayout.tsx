@@ -608,6 +608,7 @@ export const PageLayout = ({
 						title: t.contact.title,
 						description: t.contact.description,
 						language: language,
+						form: t.contact.form,
 					}}
 					onNavigateToQuiz={handleNavigateToQuiz}
 					onBackFromQuiz={handleBackFromQuiz}

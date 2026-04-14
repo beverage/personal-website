@@ -279,7 +279,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 						{/* Title - linked to website if available */}
 						{(() => {
 							const websiteLink = project.links.find(l => l.type === 'website')
-							const titleContent = (
+							return (
 								<motion.h3
 									className="font-exo2 mb-2 text-xl font-bold text-white sm:mb-4 sm:text-3xl"
 									initial={{ opacity: 0, y: 20 }}
@@ -291,19 +291,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 											href={websiteLink.url}
 											target="_blank"
 											rel="noopener noreferrer"
-											className="transition-colors hover:text-cyan-300"
+											className="group inline-flex items-center gap-2 transition-colors hover:text-cyan-300"
 										>
 											{project.title}
+											<ExternalLink
+												size={18}
+												className="text-cyan-400/60 transition-all group-hover:translate-x-0.5 group-hover:text-cyan-300"
+											/>
 										</a>
 									) : (
 										project.title
 									)}
 								</motion.h3>
 							)
-							return titleContent
 						})()}
 						<motion.p
-							className="text-sm leading-relaxed whitespace-pre-line text-white/90 sm:text-lg"
+							className="portfolio-description text-sm leading-relaxed whitespace-pre-line text-white/90 sm:max-h-[260px] sm:overflow-y-auto sm:pr-3 sm:text-lg lg:max-h-[420px]"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.8, delay: 0.4 }}

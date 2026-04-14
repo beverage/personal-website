@@ -36,12 +36,11 @@
 	"projects": {
 		"levelang": {
 			"title": "levelang.app",
-			"description": "Plateforme de traduction adaptée au niveau — application mobile et serveur MCP",
-			"longDescription": "Une plateforme de traduction qui adapte la complexité à votre niveau de compétence linguistique, au ton (familier ou soutenu) et au mode (écrit ou oral). L'application mobile (iOS/Android) offre la saisie/sortie vocale et les translittérations, tandis qu'un serveur MCP open source intègre la traduction adaptée au niveau directement dans les assistants IA comme Claude et Cursor — permettant des traductions contraintes par niveau, des comparaisons multi-niveaux et la découverte de langues. Prend en charge le français, l'italien, l'allemand et le mandarin, du débutant au niveau courant.",
+			"description": "Traduction calibrée au lecteur, avec niveau, mode et registre comme paramètres. Quatre langues, en profondeur.",
+			"longDescription": "La traduction classique produit une sortie destinée aux locuteurs natifs, souvent inutilisable pour quelqu'un qui apprend encore la langue. Levelang calibre sa sortie selon trois axes indépendants : le niveau, le mode (écrit ou oral) et le registre (familier ou formel), produisant jusqu'à seize traductions distinctes par langue. Le même moteur fonctionne entre langues (de l'anglais vers le français débutant) et au sein d'une même langue, où il peut reformuler un français courant en français débutant, ou transformer un français écrit en français oral.\n\nQuatre langues sont prises en charge en profondeur plutôt qu'en largeur : français, allemand, italien et mandarin. Chaque combinaison est validée par un pipeline de tests adversariaux avec des juges automatisés, et aucune n'est publiée avec des défaillances connues. Ces capacités sont accessibles via une application mobile, un client de chat web, et un serveur MCP open source qui met la traduction calibrée au niveau à disposition des assistants IA.",
 			"links": {
 				"gallery": "Galerie",
 				"viewGithub": "MCP sur GitHub",
-				"apiDocs": "Documentation API",
 				"visitWebsite": "Visiter levelang.app"
 			}
 		},

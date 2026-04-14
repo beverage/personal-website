@@ -14,16 +14,16 @@ const baseProjects = [
 		id: 'levelang-app',
 		technologies: [
 			'React Native',
+			'Expo',
 			'TypeScript',
-			'FastAPI',
 			'Python',
+			'FastAPI',
 			'PostgreSQL',
 			'Supabase',
+			'Redis',
 			'Gemini',
-			'OpenAI',
 			'MCP',
-			'Docker',
-			'Fly.io',
+			'OpenTelemetry',
 		],
 		imageUrl: '/images/portfolio/levelang-placeholder.svg',
 		previewVideos: [
@@ -48,11 +48,6 @@ const baseProjects = [
 				labelKey: 'viewGithub',
 				url: 'https://github.com/beverage/levelang-mcp',
 				type: 'github' as const,
-			},
-			{
-				labelKey: 'apiDocs',
-				url: 'https://registry.scalar.com/@levelang/apis/levelangapp-backend/latest',
-				type: 'api' as const,
 			},
 			{
 				labelKey: 'visitWebsite',

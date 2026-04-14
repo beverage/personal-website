@@ -4,9 +4,32 @@ export type CourseChangeVariant =
 	| 'sharp-maneuver'
 
 export interface ContentFadeConfig {
-	fadeOutRatio: number // 0.0-1.0: Portion of transition for fading out current content (e.g., 0.33 = first 1/3)
-	starfieldOnlyRatio: number // 0.0-1.0: Portion of transition for pure starfield visibility (e.g., 0.33 = middle 1/3)
-	fadeInRatio: number // 0.0-1.0: Portion of transition for fading in new content (e.g., 0.33 = last 1/3)
+	fadeOutRatio: number // 0.0-1.0: Portion of transition for fading out current content
+	/**
+	 * Duration of pure starfield visibility between fade-out and fade-in.
+	 *
+	 * - Positive: sequential fade-out → starfield-only pause → fade-in.
+	 * - Zero: fade-out immediately gives way to fade-in with no visible gap.
+	 * - Negative: the two fades overlap, producing a true crossfade. In this
+	 *   mode the `punchy` curves are used automatically regardless of
+	 *   `fadeStyle`, otherwise the overlap would collapse to near-black.
+	 */
+	starfieldOnlyRatio: number
+	fadeInRatio: number // 0.0-1.0: Portion of transition for fading in new content
+	/**
+	 * Easing shape for the fade curves. Defaults to 'classic'.
+	 *
+	 * - `classic`: fade-out drops fast at the start then idles near 0,
+	 *   fade-in idles near 0 then rises fast at the end. Gives a long "held"
+	 *   feel where the starfield dominates most of the transition — matches
+	 *   the slower cinematic presets (gentle-drift, sharp-maneuver).
+	 * - `smooth`: smoothstep S-curve (t² × (3 − 2t)) applied symmetrically to
+	 *   both fade-out and fade-in. The action is centered in the middle of
+	 *   each phase — slow start, fast middle, slow end — so nothing bursts
+	 *   and nothing holds. Produces perceptually symmetric fades on either
+	 *   side of the gap.
+	 */
+	fadeStyle?: 'classic' | 'smooth'
 }
 
 export interface CourseChangeConfig {
@@ -85,9 +108,18 @@ export const COURSE_CHANGE_PRESETS: Record<
 		rollIntensity: 100, // Slightly more pronounced banking roll
 		easingCurve: 'fast-in-slow-out', // Fixed timing race condition, back to advanced easing
 		contentFade: {
-			fadeOutRatio: 0.2,
-			starfieldOnlyRatio: 0.3,
-			fadeInRatio: 0.5,
+			// Sequential with matched fade durations. The original banking-turn
+			// used 0.2 / 0.3 / 0.5 — the duration (900ms hold + 1500ms slow
+			// fade-in tail) was what felt "held too long", not the curve shape.
+			// With 0.2 / 0.15 / 0.2 the total near-dark time drops from ~1650ms
+			// to ~930ms, so the default 'classic' cubic curves (fast-drop / slow-
+			// rise) can do their job: they are time-asymmetric on purpose so
+			// that the fast action of each fade is pushed AWAY from the gap,
+			// compensating for the eye's perceptual asymmetry between onset
+			// and offset of brightness.
+			fadeOutRatio: 0.25,
+			starfieldOnlyRatio: 0.15,
+			fadeInRatio: 0.25,
 		},
 		settlingDuration: 3000, // Extended for longer, smoother drift
 		controlsRevealDelay: 1500, // Controls appear at halfway point of main transition

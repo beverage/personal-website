@@ -83,45 +83,43 @@ export const useStarFieldTransition = ({
 		[transitionState.phase],
 	)
 
-	// Calculate content opacity based on 3-phase fade system using LINEAR time distribution
+	// Calculate content opacity. Fade-out and fade-in are computed independently
+	// on the linear progress timeline so they can overlap (crossfade) when
+	// starfieldOnlyRatio is negative.
 	const calculateContentOpacity = useCallback(
 		(rawProgress: number) => {
-			const { fadeOutRatio, starfieldOnlyRatio, fadeInRatio } =
+			const { fadeOutRatio, starfieldOnlyRatio, fadeInRatio, fadeStyle } =
 				config.contentFade
 
-			// CRITICAL: Use LINEAR progress for accurate phase timing (ignore easing curves)
-			// This separates phase timing from opacity smoothing, ensuring fade phases get
-			// exactly the time allocation specified in the config ratios
-			const linearProgress = rawProgress
+			// Phase boundaries on the progress timeline (0 → 1).
+			const fadeOutEnd = fadeOutRatio
+			const fadeInStart = fadeOutRatio + starfieldOnlyRatio
 
-			// Phase 1: Current content fades out (0 → fadeOutRatio)
-			if (linearProgress <= fadeOutRatio) {
-				const fadeOutProgress = linearProgress / fadeOutRatio // 0 → 1
-				// Apply smooth cubic ease-out curve for natural fade
-				const easedFadeOut = 1 - Math.pow(1 - fadeOutProgress, 3)
-				return {
-					currentContentOpacity: 1 - easedFadeOut, // 1 → 0 with smooth easing
-					newContentOpacity: 0, // Hidden
-				}
+			// Curve selection: crossfading forces 'smooth' because the classic
+			// curves would collapse the overlap zone to near-black. For sequential
+			// mode, honor the preset's fadeStyle hint (default 'classic').
+			const isCrossfading = starfieldOnlyRatio < 0
+			const useSmooth = isCrossfading || fadeStyle === 'smooth'
+
+			// Current content (fading out).
+			let currentContentOpacity = 0
+			if (fadeOutRatio > 0 && rawProgress <= fadeOutEnd) {
+				const t = rawProgress / fadeOutEnd // 0 → 1
+				currentContentOpacity = useSmooth
+					? 1 - t * t * (3 - 2 * t) // Smoothstep, inverted — action in the middle
+					: Math.pow(1 - t, 3) // Classic: drop fast early, linger near 0
 			}
 
-			// Phase 2: Pure starfield (fadeOutRatio → fadeOutRatio + starfieldOnlyRatio)
-			const starfieldEnd = fadeOutRatio + starfieldOnlyRatio
-			if (linearProgress <= starfieldEnd) {
-				return {
-					currentContentOpacity: 0, // Hidden
-					newContentOpacity: 0, // Hidden
-				}
+			// New content (fading in).
+			let newContentOpacity = 0
+			if (fadeInRatio > 0 && rawProgress >= Math.max(fadeInStart, 0)) {
+				const t = Math.min((rawProgress - fadeInStart) / fadeInRatio, 1)
+				newContentOpacity = useSmooth
+					? t * t * (3 - 2 * t) // Smoothstep — mirrors the fade-out shape
+					: Math.pow(t, 3) // Classic: linger near 0, rise fast at the end
 			}
 
-			// Phase 3: New content fades in (starfieldEnd → 1.0)
-			const fadeInProgress = (linearProgress - starfieldEnd) / fadeInRatio // 0 → 1
-			// Apply smooth cubic ease-in curve for natural fade (matches fade-out)
-			const easedFadeIn = Math.pow(fadeInProgress, 3)
-			return {
-				currentContentOpacity: 0, // Hidden
-				newContentOpacity: easedFadeIn, // 0 → 1 with smooth easing
-			}
+			return { currentContentOpacity, newContentOpacity }
 		},
 		[config.contentFade],
 	)

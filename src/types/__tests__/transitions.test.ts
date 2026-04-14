@@ -32,18 +32,36 @@ describe('Transition Configuration', () => {
 					'custom',
 				]).toContain(config.easingCurve)
 
-				// Validate content fade configuration
+				// Validate content fade configuration.
+				// With the smoothstep fade model, fade-out and fade-in are computed
+				// independently on the progress timeline, so the three ratios no
+				// longer have to sum to exactly 1:
+				// - starfieldOnlyRatio may be negative (crossfade overlap)
+				// - fadeInEnd may be less than 1 (remainder is settle time with
+				//   new content already at full opacity)
 				expect(config.contentFade).toBeDefined()
 				expect(config.contentFade.fadeOutRatio).toBeGreaterThan(0)
-				expect(config.contentFade.starfieldOnlyRatio).toBeGreaterThanOrEqual(0)
 				expect(config.contentFade.fadeInRatio).toBeGreaterThan(0)
 
-				// Phase ratios should sum to approximately 1
-				const sum =
+				// fadeInStart = fadeOutRatio + starfieldOnlyRatio must be >= 0.
+				// Negative starfieldOnlyRatio is allowed, but cannot exceed the
+				// fade-out duration — otherwise fade-in would start before the
+				// transition begins.
+				const fadeInStart =
 					config.contentFade.fadeOutRatio +
-					config.contentFade.starfieldOnlyRatio +
-					config.contentFade.fadeInRatio
-				expect(sum).toBeCloseTo(1, 2)
+					config.contentFade.starfieldOnlyRatio
+				expect(fadeInStart).toBeGreaterThanOrEqual(0)
+
+				// fadeInEnd must be within (0, 1]. Any shortfall from 1 becomes
+				// settle time — valid by design.
+				const fadeInEnd = fadeInStart + config.contentFade.fadeInRatio
+				expect(fadeInEnd).toBeGreaterThan(0)
+				expect(fadeInEnd).toBeLessThanOrEqual(1.0001)
+
+				// fadeStyle, if specified, must be a known value.
+				if (config.contentFade.fadeStyle !== undefined) {
+					expect(['classic', 'smooth']).toContain(config.contentFade.fadeStyle)
+				}
 			})
 		})
 

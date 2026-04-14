@@ -29,18 +29,18 @@ const exo2 = localFont({
 })
 
 export const metadata: Metadata = {
-	title: 'Alex Beverage — Agentic Software Engineer | beverage.me',
+	title: 'Alex Beverage — Software Engineer | beverage.me',
 	description:
-		'Alex Beverage is an agentic software engineer building ' +
-		'AI-powered tools including levelang.app, a translator that ' +
-		'adapts to your skill level, mood, and register. ' +
+		'Alex Beverage is a software engineer building LLM products, ' +
+		'including levelang.app, a proficiency-aware translation service ' +
+		'with level, mode, and mood as parameters. ' +
 		'Explore projects, connect, and learn more.',
 
 	keywords: [
 		'Alex Beverage',
 		'software engineer',
-		'agentic developer',
-		'agentic software engineer',
+		'LLM developer',
+		'LLM products',
 		'AI developer',
 		'portfolio',
 		'beverage.me',
@@ -64,35 +64,35 @@ export const metadata: Metadata = {
 		type: 'website',
 		locale: 'en_US',
 		url: 'https://www.beverage.me',
-		title: 'Alex Beverage — Agentic Software Engineer',
+		title: 'Alex Beverage — Software Engineer',
 		description:
-			'Agentic software engineer building AI-powered tools ' +
-			'including levelang.app — a translator that adapts to skill, ' +
-			'mood, and register.',
+			'Software engineer building LLM products, including ' +
+			'levelang.app, a proficiency-aware translation service ' +
+			'with level, mode, and mood as parameters.',
 		siteName: 'beverage.me',
 		images: [
 			{
 				url: '/images/og-preview.png',
 				width: 1200,
 				height: 630,
-				alt: 'Alex Beverage — Agentic Software Engineer',
+				alt: 'Alex Beverage — Software Engineer',
 			},
 		],
 	},
 
 	twitter: {
 		card: 'summary_large_image',
-		title: 'Alex Beverage — Agentic Software Engineer',
+		title: 'Alex Beverage — Software Engineer',
 		description:
-			'Agentic software engineer building AI-powered tools ' +
-			'including levelang.app — a translator that adapts to skill, ' +
-			'mood, and register.',
+			'Software engineer building LLM products, including ' +
+			'levelang.app, a proficiency-aware translation service ' +
+			'with level, mode, and mood as parameters.',
 		images: [
 			{
 				url: '/images/og-preview.png',
 				width: 1200,
 				height: 630,
-				alt: 'Alex Beverage — Agentic Software Engineer',
+				alt: 'Alex Beverage — Software Engineer',
 			},
 		],
 	},

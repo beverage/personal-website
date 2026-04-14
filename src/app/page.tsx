@@ -14,11 +14,11 @@ function getJsonLd() {
 			'@type': 'Person',
 			name: 'Alex Beverage',
 			url: 'https://www.beverage.me',
-			jobTitle: 'Agentic Software Engineer',
+			jobTitle: 'Software Engineer',
 			description:
-				'Agentic software engineer building AI-powered tools ' +
-				'including levelang.app, a translator that adapts to ' +
-				'skill level, mood, and register.',
+				'Software engineer building LLM products, including ' +
+				'levelang.app, a proficiency-aware translation service ' +
+				'with level, mode, and mood as parameters.',
 			knowsAbout: [
 				'Artificial Intelligence',
 				'Software Engineering',
@@ -41,7 +41,7 @@ function getJsonLd() {
 			url: 'https://www.beverage.me',
 			description:
 				'Personal website and portfolio of Alex Beverage, ' +
-				'an agentic software engineer.',
+				'a software engineer building LLM products.',
 			author: {
 				'@type': 'Person',
 				name: 'Alex Beverage',

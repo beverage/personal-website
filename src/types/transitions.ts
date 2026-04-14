@@ -105,7 +105,7 @@ export const COURSE_CHANGE_PRESETS: Record<
 		duration: 3000,
 		parallaxIntensity: 0.8, // Moderate cinematic banking
 		maxLateralSpeed: 20000, // Increased back up for dramatic screen-wide motion
-		rollIntensity: 100, // Slightly more pronounced banking roll
+		rollIntensity: 250, // Strong banking roll — this is the signature preset
 		easingCurve: 'fast-in-slow-out', // Fixed timing race condition, back to advanced easing
 		contentFade: {
 			// Sequential with matched fade durations. The original banking-turn

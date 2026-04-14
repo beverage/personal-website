@@ -40,7 +40,11 @@ function getClientIp(request: Request): string {
 }
 
 export async function POST(request: Request) {
-	if (!config.contactRelayUrl || !config.contactRelayToken) {
+	if (
+		!config.contactRelayUrl ||
+		!config.contactRelayToken ||
+		!config.supabaseAnonKey
+	) {
 		console.error('Contact relay not configured')
 		return NextResponse.json(
 			{ error: 'Contact form is temporarily unavailable.' },
@@ -81,7 +85,12 @@ export async function POST(request: Request) {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${config.contactRelayToken}`,
+				// Supabase gateway requires a valid apikey on every request, even
+				// when the function has verify_jwt = false. The real shared secret
+				// goes in a custom header so the gateway does not try to parse it
+				// as a JWT.
+				apikey: config.supabaseAnonKey,
+				'x-contact-relay-token': config.contactRelayToken,
 			},
 			body: JSON.stringify({
 				name: parsed.data.name || undefined,

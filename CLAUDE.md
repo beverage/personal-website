@@ -83,9 +83,17 @@ Current env vars:
 - `CONTACT_RELAY_URL` — Supabase edge function URL for the contact form
   (`https://<ref>.supabase.co/functions/v1/contact-relay`). Server-only.
 - `CONTACT_RELAY_TOKEN` — shared secret validated by the `contact-relay` edge
-  function. Server-only; never sent to the client. Generate with
+  function. Server-only; never sent to the client. Sent over the wire in a
+  custom `x-contact-relay-token` header (not Authorization) so the Supabase
+  gateway does not try to parse it as a JWT. Generate with
   `openssl rand -hex 32` and set the **same** value as `CONTACT_RELAY_TOKEN`
   on the Supabase project.
+- `SUPABASE_ANON_KEY` — the Levelang Supabase project's anon/publishable key.
+  Required by Supabase's gateway on every edge function call, even when
+  `verify_jwt = false`. Passed as the `apikey` header alongside our real
+  shared secret. Safe to expose (it's the same key any client-side Supabase
+  SDK would carry), but kept server-only here because the contact relay is
+  called server-to-server from `/api/contact`.
 
 Fly.io holds the production values. For local dev, set them in `.env.local`
 (gitignored). Never commit a real email or API key.

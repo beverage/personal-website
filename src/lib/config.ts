@@ -19,6 +19,11 @@ const ConfigSchema = z.object({
 	// Server-only; never exposed via getClientConfig().
 	contactRelayUrl: z.string().url().optional(),
 	contactRelayToken: z.string().min(16).optional(),
+	// Supabase anon/publishable key. Required by the Supabase gateway on
+	// every edge function call, even when verify_jwt is false. Safe to
+	// expose (it's the same key any client-side Supabase SDK would use),
+	// but kept server-side because the contact relay has no browser path.
+	supabaseAnonKey: z.string().min(20).optional(),
 })
 
 export type Config = z.infer<typeof ConfigSchema>
@@ -34,6 +39,7 @@ function parseConfig(): Config {
 		cvUrl: process.env.CV_URL,
 		contactRelayUrl: process.env.CONTACT_RELAY_URL,
 		contactRelayToken: process.env.CONTACT_RELAY_TOKEN,
+		supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
 	}
 
 	try {

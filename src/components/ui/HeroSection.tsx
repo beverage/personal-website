@@ -90,9 +90,7 @@ export const HeroSection = ({
 						}}
 					>
 						<h1 className="font-exo2 mb-6 text-5xl tracking-wider whitespace-nowrap sm:text-6xl md:text-7xl lg:text-8xl">
-							<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
-								{title}
-							</span>
+							<span className="text-cyan-glow text-cyan-300">{title}</span>
 						</h1>
 						<p className="font-exo2 mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-white/90 sm:text-xl md:text-2xl lg:text-3xl">
 							{heroDescription}

@@ -426,7 +426,7 @@ export function VariantsClient({ cvUrl, clientConfig }: VariantsClientProps) {
 							<div className="max-w-5xl text-center">
 								<div className="mb-8 p-12">
 									<h1 className="font-exo2 mb-6 text-6xl tracking-wider sm:text-8xl">
-										<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+										<span className="text-cyan-glow text-cyan-300">
 											Alex Beverage
 										</span>
 									</h1>

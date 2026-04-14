@@ -12,6 +12,15 @@
 		font-family: var(--font-exo2), sans-serif;
 	}
 
+	/* Soft cyan halo for hero / section titles — reads as "lit by the
+	 * starfield" rather than the old gradient-text template. Two-layer
+	 * text-shadow: tight inner glow + wider outer diffusion. */
+	.text-cyan-glow {
+		text-shadow:
+			0 0 20px rgba(103, 232, 249, 0.55),
+			0 0 48px rgba(103, 232, 249, 0.25);
+	}
+
 	/* Hide scrollbars while keeping scroll functionality */
 	.scrollbar-hide {
 		-ms-overflow-style: none; /* IE and Edge */

@@ -476,7 +476,7 @@ export const PortfolioScroll: React.FC<PortfolioScrollProps> = ({
 										viewport={{ once: false }}
 										transition={{ duration: 0.8, delay: 0.2 }}
 									>
-										<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+										<span className="text-cyan-glow text-cyan-300">
 											{t.projectsPage.title}
 										</span>
 									</motion.h1>

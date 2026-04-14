@@ -151,7 +151,7 @@ export function ContentSection({
 								}}
 							>
 								<h1 className="font-exo2 mb-4 text-5xl tracking-wider sm:text-6xl md:text-7xl">
-									<span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+									<span className="text-cyan-glow text-cyan-300">
 										{contactProps.title}
 									</span>
 								</h1>
